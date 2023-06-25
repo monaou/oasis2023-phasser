@@ -5,7 +5,7 @@ export default class PlayerCharacter {
   constructor(runnerScene, audioRefs, spriteType = 'dino') {
     this.runnerScene = runnerScene
     this.audioRefs = audioRefs
-    this.runSpeed = constants.PLAYER.BASE_RUN_SPEED
+    this.runSpeed = 0;//constants.PLAYER.BASE_RUN_SPEED
     this.sprite
 
     // Set spriteType to 'dino' if no custom art selected
@@ -79,6 +79,20 @@ export default class PlayerCharacter {
       this.audioRefs.jumpSfx.play()
     }
   }
+
+  tryWalk = () => {
+    if(!this.runnerScene.isGameOver && this.sprite.body.touching.down) {
+      this.sprite.setVelocityX(constants.PLAYER.BASE_RUN_SPEED)
+      this.audioRefs.walkSfx.play()
+    }
+  }
+
+  tryWalkStop = () => {
+    if(!this.runnerScene.isGameOver && this.sprite.body.touching.down) {
+      this.sprite.setVelocityX(0)
+    }
+  }
+
 
   getTravelDistance = () => {
     return this.sprite.x

@@ -87,6 +87,7 @@ export default class Runner extends Phaser.Scene {
     this.load.audio('lose', assets.audio.loseAudio)
     this.load.audio('win', assets.audio.winAudio)
     this.load.audio('select', assets.audio.selectAudio)
+    this.load.audio('walk', assets.audio.walkAudio)
 
     this.load.addFile(new WebFontFile(this.load, 'Press Start 2P'))
   }
@@ -109,11 +110,13 @@ export default class Runner extends Phaser.Scene {
     // Set up jump input for keyboard and screen tap
     this.cursors = this.input.keyboard.createCursorKeys()
     this.input.on('pointerdown', this.playerCharacter.tryJump)
+    this.input.on('walk', this.playerCharacter.tryWalk)
   
     this.audioRefs.jumpSfx = this.sound.add('jump')
     this.audioRefs.loseSfx = this.sound.add('lose')
     this.audioRefs.selectSfx = this.sound.add('select')
     this.audioRefs.winSfx = this.sound.add('win')
+    this.audioRefs.walkSfx = this.sound.add('walk')
 
     if(this.groundManager) {
       this.physics.add.collider(this.playerCharacter.sprite, this.groundManager.platforms)
@@ -139,6 +142,14 @@ export default class Runner extends Phaser.Scene {
     
     if(this.cursors.space.isDown) {
       this.playerCharacter.tryJump()
+    }
+
+    if(this.cursors.right.isDown) {
+      this.playerCharacter.tryWalk()
+    }
+
+    if(this.cursors.right.isUp) {
+      this.playerCharacter.tryWalkStop()
     }
 
     if(this.playerCharacter) {

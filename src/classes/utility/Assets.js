@@ -51,6 +51,7 @@ import buttonRightUpImage from "../../assets/images/buttons/btn_right_up.png"
 import buttonRightDownImage from "../../assets/images/buttons/btn_right_down.png"
 
 import jumpAudio  from "../../assets/audio/jump.wav"
+import walkAudio  from "../../assets/audio/walk.wav"
 import loseAudio  from "../../assets/audio/lose.wav"
 import winAudio  from "../../assets/audio/win.wav"
 import selectAudio  from "../../assets/audio/select.ogg"
@@ -113,6 +114,7 @@ const ui = {
 
 const audio = {
   jumpAudio,
+  walkAudio,
   loseAudio,
   winAudio,
   selectAudio,
