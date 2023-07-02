@@ -1,5 +1,7 @@
 import backgroundImage from '../../assets/images/environment/background.png'
 import groundImage from '../../assets/images/environment/ground.png'
+import chainImage from '../../assets/images/effects/chain.png'
+import blockImage from '../../assets/images/effects/block.png'
 import rockTallImage from '../../assets/images/obstacles/rockTall.png'
 import rockDuoImage from '../../assets/images/obstacles/rockDuo.png'
 import rockWideImage from '../../assets/images/obstacles/rockWide.png'
@@ -60,6 +62,8 @@ import switchAudio from "../../assets/audio/switch.ogg"
 const img = {
   backgroundImage,
   groundImage,
+  chainImage,
+  blockImage,
   rockTallImage,
   rockDuoImage,
   rockWideImage,

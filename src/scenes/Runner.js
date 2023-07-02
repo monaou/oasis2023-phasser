@@ -63,6 +63,8 @@ export default class Runner extends Phaser.Scene {
     }
 
     this.load.image('ground', assets.img.groundImage)
+    this.load.image('chain', assets.img.chainImage)
+    this.load.image('block', assets.img.blockImage)
   
     this.load.image('rockTall', assets.img.rockTallImage)
     this.load.image('rockDuo', assets.img.rockDuoImage)
@@ -98,7 +100,7 @@ export default class Runner extends Phaser.Scene {
     this.playerCharacter = new PlayerCharacter(this, this.audioRefs, this.selectedCharSprite)
     this.cameras.main.startFollow(this.playerCharacter.sprite)
     this.cameras.main.setLerp(1, 0) // Only follow horizontally
-    this.cameras.main.originX = 0.08
+    this.cameras.main.originX = 0.5
 
     // Initialize an instance for each manager class
     // Each of these can be simply commented out to disable a module if it isn't needed
@@ -109,9 +111,7 @@ export default class Runner extends Phaser.Scene {
   
     // Set up jump input for keyboard and screen tap
     this.cursors = this.input.keyboard.createCursorKeys()
-    this.input.on('pointerdown', this.playerCharacter.tryJump)
-    this.input.on('walk', this.playerCharacter.tryWalk)
-  
+
     this.audioRefs.jumpSfx = this.sound.add('jump')
     this.audioRefs.loseSfx = this.sound.add('lose')
     this.audioRefs.selectSfx = this.sound.add('select')
@@ -145,11 +145,27 @@ export default class Runner extends Phaser.Scene {
     }
 
     if(this.cursors.right.isDown) {
-      this.playerCharacter.tryWalk()
+      this.playerCharacter.tryWalkRight()
     }
 
-    if(this.cursors.right.isUp) {
-      this.playerCharacter.tryWalkStop()
+    if(this.cursors.left.isDown) {
+      this.playerCharacter.tryWalkLeft()
+    }
+
+    if(this.cursors.right.isUp && this.cursors.left.isUp) {
+      this.playerCharacter.tryStopWalk()
+    }
+
+    if(this.cursors.down.isDown) {
+      this.playerCharacter.tryGuard()
+    }
+
+    if(this.cursors.down.isUp) {
+      this.playerCharacter.tryGuardStop()
+    }
+
+    if(this.cursors.up.isDown) {
+     this.playerCharacter.tryNormalAttack()
     }
 
     if(this.playerCharacter) {
