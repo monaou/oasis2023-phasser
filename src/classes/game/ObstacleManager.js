@@ -1,103 +1,75 @@
 import * as utils from "../../utils.js"
 import * as constants from "../../constants.js"
 import { web3Connection } from "../../index.js"
+import fs from 'fs'
+import yaml from 'js-yaml'
+import obstacles_map from "../../yaml/ipfs_data.yaml"
+// import ipfsClient from 'ipfs-http-client'
+
+// const ipfs = ipfsClient('http://localhost:5001') // あなたのIPFS APIのエンドポイントに変更
 
 export default class ObstacleManager {
-  constructor(runnerScene, player, obstacleSprite) {
+  constructor(runnerScene, player, selectedYamlSprite) {
     this.runnerScene = runnerScene
     this.player = player
-    this.selectedObstacleSprite = obstacleSprite
-    this.obstacles
+    this.selectedYamlSprite = selectedYamlSprite
     this.activeObstacles = []
-    this.hardObstacleSpawnChance = constants.OBSTACLES.HARD_SPAWN_CHANCE_BASE
-    this.spawnObstacleTrigger = constants.OBSTACLES.FIRST_SPAWN_POSITION
   
     this.initObstacles()
   }
 
   // Prepare obstacle collision group
-  initObstacles = () => {
-    this.obstacles = this.runnerScene.physics.add.staticGroup()
+  initObstacles = async () => {
+    try {
+      // // IPFSからYAMLデータを取得
+      // const ipfsData = await ipfs.cat('Qm...') // あなたのIPFSハッシュに変更
+      // // YAMLをパース
+      // const obstacles_map = yaml.load(ipfsData.toString())
+      
+      // const obstacles_map = yaml.load(yaml_data)
+      // 障害物を生成
+      let index = 0
+      obstacles_map.forEach((obstacle) => {
+        if (obstacle.obj_type === "obstacle"){
+          this.createObstacle(index, obstacle.x, obstacle.y, obstacle.size_x, obstacle.size_y, obstacle.obj_type)
+          index++
+        }
+      })
+    } catch (e) {
+      console.log('Error while loading obstacles:', e)
+    }
   }
 
   // Create new obstacle at passed x position
-  createObstacle = (posX) => {
-    let obstacleType
-    let props = {}
+  createObstacle = (id, posX, posY, sizeX, sizeY, obj_type) => {
+    let obstacleType = obj_type === "obstacle" ? "rockTall" : ""//obj_type
 
-    if(this.selectedObstacleSprite === 'rockTall') {
-      // Select any of default rocks if no custom art is selected
-      const rand =  utils.randomNumInRange(1, 100)
-      if(rand < this.hardObstacleSpawnChance / 2) {
-        obstacleType = 'rockWide'
-        props = {posY: 572, sizeX: 200, sizeY: 100, offsetX: 20, offsetY: 28}
-      } else if(rand < this.hardObstacleSpawnChance) {
-        obstacleType = 'rockDuo'
-        props = {posY: 570, sizeX: 160, sizeY: 110, offsetX: 0, offsetY: 22}
-      } else {
-        obstacleType = 'rockTall'
-        props = {posY: 586, sizeX: 80, sizeY: 90, offsetX: 0, offsetY: 10}
-      }  
-    } else {
-      // Select random image from registered art if randomAll is selected
-      if(this.selectedObstacleSprite === 'randomAll') {
-        const obstacleArts = utils.getSavedArtsForType("obstacles")
-        const rand = Math.floor(Math.random() * obstacleArts.length)
-        obstacleType = obstacleArts[rand].imageLink
-      } else {
-        obstacleType = this.selectedObstacleSprite
-      }
+    // Need this to move collision to ground level
+    const texture = this.runnerScene.textures.get(obstacleType)
+    const scale = utils.getIdealSpriteScale(texture, true)
+    const offset = texture.getSourceImage().height
 
-      // Need this to move collision to ground level
-      const texture = this.runnerScene.textures.get(obstacleType)
-      const scale = utils.getIdealSpriteScale(texture, true)
-      const offset = texture.getSourceImage().height * scale / 2
-      props = {posY: 636 - offset}      
-    }
-  
     // Move spawn trigger to next position
-    this.spawnObstacleTrigger = posX
-    const obstacle = this.obstacles.create(posX, props.posY, obstacleType)
-
+    const obstacle = this.runnerScene.physics.add.sprite(
+      Number(posX) + constants.GAME.START_POS,
+      Number(posY) + constants.GAME.START_HEIGHT + offset / 2,
+      obstacleType
+    )
     // Adjust size, scale and offsets depending on obstacle type
-    if(this.selectedObstacleSprite === 'rockTall') {
-      obstacle.setSize(props.sizeX, props.sizeY, 0, 0)
-      obstacle.setOffset(props.offsetX, props.offsetY)  
-    } else {
-      const texture = this.runnerScene.textures.get(obstacleType)
-      const scale = utils.getIdealSpriteScale(texture, true)
-      obstacle.setSize(texture.getSourceImage().width * scale, texture.getSourceImage().height * scale)
-      obstacle.setScale(scale)
-      obstacle.setOrigin(0.5, 0.5)
-    }
+    obstacle.setDisplaySize(sizeX, sizeY, 0, 0)
+    // obstacle.setOffset(0, offset)
 
-    this.activeObstacles.push(obstacle)
-    this.clearObstacle()
-    return obstacle
+    this.activeObstacles[id] = obstacle
   }
   
   // Remove first obstacle if over instance limit
-  clearObstacle = () => {
+  destroyObstacle = (id) => {
     if(this.activeObstacles.length >= constants.OBSTACLES.MAX_INSTANCES) {
-      this.activeObstacles[0].destroy()
-      this.activeObstacles.shift()
+      this.activeObstacles[id].destroy()
     }
-  }
-
-  // Set difficulty to next level
-  increaseDifficulty = () => {
-    this.hardObstacleSpawnChance = Math.min(
-      this.hardObstacleSpawnChance + constants.OBSTACLES.hardObstacleSpawnChanceStep,
-      constants.OBSTACLES.HARD_SPAWN_CHANCE_MAX
-    )
   }
 
   // Check for player position on update to determine if new Obstacle should spawn
   update() {
-    if(this.player.x >= this.spawnObstacleTrigger) {
-      const min = this.spawnObstacleTrigger - constants.OBSTACLES.POS_TOLERANCE_MIN
-      const position = utils.randomNumInRange(this.spawnObstacleTrigger + constants.OBSTACLES.POS_TOLERANCE_MAX, min)
-      this.createObstacle(position + constants.GROUND.IMAGE_LENGTH)
-    }
   }
 }

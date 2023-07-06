@@ -24,13 +24,14 @@ export default class Runner extends Phaser.Scene {
     this.selectedCharSprite = 'pixelDinoGreen'
     this.selectedObstacleSprite = 'rockTall'
     this.selectedCloudSprite = 'cloud'
+    this.selectedYamlSprite = 1
 
     this.score = 0
     this.difficultyLevel = 1
 
     this.cursors
     this.audioRefs = {}
-    this.objectChannel
+    this.objectChannel = []
 
     this.isGameOver = false
   }
@@ -46,6 +47,7 @@ export default class Runner extends Phaser.Scene {
     if(data.cloudSprite) {
       this.selectedCloudSprite = data.cloudSprite
     }
+    // this.selectedYamlSprite = 1
   }
 
   // Preload images, audio and other assets
@@ -106,7 +108,7 @@ export default class Runner extends Phaser.Scene {
     // Each of these can be simply commented out to disable a module if it isn't needed
     this.environmentManager = new EnvironmentManager(this, this.playerCharacter.sprite, this.selectedCloudSprite)
     this.groundManager = new GroundManager(this, this.playerCharacter.sprite)
-    this.obstacleManager = new ObstacleManager(this, this.playerCharacter.sprite, this.selectedObstacleSprite)
+    this.obstacleManager = new ObstacleManager(this, this.playerCharacter.sprite, this.selectedYamlSprite)
     this.userInterface = new UserInterface(this, this.restartGame, this.returnToMenu, this.audioRefs)
   
     // Set up jump input for keyboard and screen tap
@@ -123,9 +125,14 @@ export default class Runner extends Phaser.Scene {
     }
 
     if(this.obstacleManager) {
-      this.objectChannel = this.physics.add.overlap(this.playerCharacter.sprite, this.obstacleManager.obstacles, this.hitObstacle)
+      this.obstacleManager.activeObstacles.forEach((obstacle_ch, index) => {
+        this.objectChannel[index] = this.physics.add.overlap(this.playerCharacter.sprite, obstacle_ch, () => this.hitObstacle(index))
+        if(this.groundManager) {
+          this.physics.add.collider(obstacle_ch, this.groundManager.platforms)
+        }
+      })
     }
-
+    
     if(web3Connection && this.userInterface) {
       this.userInterface.updateAddressText(web3Connection.web3Address)
     }
@@ -136,10 +143,6 @@ export default class Runner extends Phaser.Scene {
     if(this.isGameOver) { return }
     this.updateScore()
 
-    if(this.score > constants.GAME.DIFFICULTY_INCREASE_THRESHOLD * this.difficultyLevel) {
-      this.increaseDifficulty()
-    }
-    
     if(this.cursors.space.isDown) {
       this.playerCharacter.tryJump()
     }
@@ -184,17 +187,6 @@ export default class Runner extends Phaser.Scene {
       this.environmentManager.update()
     }
   }
-
-  increaseDifficulty = () => {
-    this.difficultyLevel++
-    
-    const runSpeed = Math.min(constants.PLAYER.RUN_SPEED_STEP_MULTIPLIER * this.playerCharacter.runSpeed, constants.PLAYER.MAX_RUN_SPEED)
-    this.playerCharacter.setRunSpeed(runSpeed)
-
-    if(this.obstacleManager) {
-      this.obstacleManager.increaseDifficulty()
-    }
-  }
   
   updateScore = () => {   
     this.score = Math.floor((this.playerCharacter.getTravelDistance() - constants.GAME.START_POS) * constants.GAME.SCORE_MULTIPLIER)
@@ -204,13 +196,14 @@ export default class Runner extends Phaser.Scene {
     }
   }
     
-  hitObstacle = () => {
+  hitObstacle = (index) => {
+    console.log(index)
     this.isGameOver = true
     this.playerCharacter.die()
     this.audioRefs.loseSfx.play()
 
-    if(this.objectChannel) {
-      this.objectChannel.destroy()
+    if(this.objectChannel[index]) {
+      this.objectChannel[index].destroy()
     }
 
     if(this.userInterface) {
