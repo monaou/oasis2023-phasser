@@ -167,6 +167,7 @@ export default class PlayerCharacter {
         'block'
       ).setScale(this.sprite.scaleX / 7, this.sprite.scaleY / 7);
       block.body.setAllowGravity(false);
+      block.body.setImmovable(true);;
       this.block = block;
 
       this.canGuard = false;

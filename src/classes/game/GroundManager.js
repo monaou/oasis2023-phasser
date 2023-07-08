@@ -1,4 +1,7 @@
 import * as constants from "../../constants.js"
+import fs from 'fs'
+import yaml from 'js-yaml'
+import map from "../../yaml/ipfs_data.yaml"
 
 export default class GroundManager {
   constructor(runnerScene, player) {
@@ -6,48 +9,41 @@ export default class GroundManager {
     this.player = player
     this.platforms
     this.activePlatforms = []
-
-    this.spawnPlatformTrigger = constants.GROUND.IMAGE_LENGTH / 2
-    this.platformCounter = 0
+    this.posX = 2960
 
     this.initGround()
   }
 
   // Initialize first two platforms
-  initGround = () => {
+  initGround =  async () => {
+    try {
+      // // IPFSからYAMLデータを取得
+      // const ipfsData = await ipfs.cat('Qm...') // あなたのIPFSハッシュに変更
+      // // YAMLをパース
+      // const enemies_map = yaml.load(ipfsData.toString())
+
+      // const enemies_map = yaml.load(yaml_data)
+
+      map.forEach((v) => {
+        this.posX = v.x > this.posX ? v.x * 2 : this.posX;
+      })
+    } catch (e) {
+      console.log('Error while loading enemies:', e)
+    }
     this.platforms = this.runnerScene.physics.add.staticGroup()
 
     // Start out with 2 platforms
-    this.createPlatform()
     this.createPlatform()
   }
 
   // Seemlessly create next platform
   createPlatform = () => {
-    const posX = constants.GROUND.FIRST_PLATFORM_POS + this.platformCounter * constants.GROUND.IMAGE_LENGTH
-    const ground = this.platforms.create(posX, constants.GROUND.Y_POS, 'ground')
-    this.platformCounter++
-    this.activePlatforms.push(ground)
-
-    return ground
-  }
-
-  // Clear the earliest platform when over max instances
-  clearPlatform = () => {
-    if(this.activePlatforms.length >= constants.GROUND.MAX_INSTANCE_AMOUNT) {
-      const platform = this.activePlatforms[0]
-
-      platform.destroy()
-      this.activePlatforms.shift()
+    for (let platformCounter = 0; constants.GROUND.FIRST_PLATFORM_POS + (platformCounter - 1) * constants.GROUND.IMAGE_LENGTH < this.posX; platformCounter++){
+      this.platforms.create(constants.GROUND.FIRST_PLATFORM_POS + platformCounter * constants.GROUND.IMAGE_LENGTH, constants.GROUND.Y_POS, 'ground')
     }
   }
 
   // Check player xPos on update to spawn and clean up platforms if needed
   update() {
-    if(this.player.x >= this.spawnPlatformTrigger) {
-      this.spawnPlatformTrigger += constants.GROUND.IMAGE_LENGTH
-      this.createPlatform()
-      this.clearPlatform()
-    }
   }
 }

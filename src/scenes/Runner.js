@@ -11,8 +11,10 @@ import ObstacleManager from "../classes/game/ObstacleManager.js"
 import StoneManager from "../classes/game/StoneManager.js"
 import GoalManager from "../classes/game/GoalManager.js"
 import CoinManager from "../classes/game/CoinManager.js"
+import EnemyManager from "../classes/game/EnemyManager.js"
 import UserInterface from "../classes/game/UserInterface.js"
 import PlayerCharacter from "../classes/game/PlayerCharacter.js"
+
 
 // Main game scene
 export default class Runner extends Phaser.Scene {
@@ -24,6 +26,7 @@ export default class Runner extends Phaser.Scene {
     this.stoneManager = null
     this.goalManager = null
     this.coinManager = null
+    this.enemyManager = null
     this.userInterface = null
     this.playerCharacter = null
 
@@ -40,6 +43,7 @@ export default class Runner extends Phaser.Scene {
     this.audioRefs = {}
     this.objectChannel = []
     this.coinChannel = []
+    this.enemyChannel = []
 
     this.isGameOver = false
     this.isGoal = false
@@ -121,6 +125,7 @@ export default class Runner extends Phaser.Scene {
     this.stoneManager = new StoneManager(this, this.playerCharacter.sprite, this.selectedYamlSprite)
     this.goalManager = new GoalManager(this, this.playerCharacter.sprite, this.selectedYamlSprite)
     this.coinManager = new CoinManager(this, this.playerCharacter.sprite, this.selectedYamlSprite)
+    this.enemyManager = new EnemyManager(this, this.playerCharacter.sprite, this.selectedYamlSprite)
     this.userInterface = new UserInterface(this, this.restartGame, this.returnToMenu, this.reachGoal, this.audioRefs)
 
     // Set up jump input for keyboard and screen tap
@@ -138,7 +143,7 @@ export default class Runner extends Phaser.Scene {
 
     if (this.obstacleManager) {
       this.obstacleManager.activeObstacles.forEach((obstacle_ch, index) => {
-        this.objectChannel[index] = this.physics.add.overlap(this.playerCharacter.sprite, obstacle_ch, () => this.hitObstacle(index))
+        this.objectChannel[index] = this.physics.add.overlap(this.playerCharacter.sprite, obstacle_ch, this.hitObstacle)
         if (this.groundManager) {
           this.physics.add.collider(obstacle_ch, this.groundManager.platforms)
         }
@@ -163,6 +168,15 @@ export default class Runner extends Phaser.Scene {
       console.log("init")
       this.coinManager.activeCoins.forEach((coin_ch, index) => {
         this.coinChannel[index] = this.physics.add.overlap(this.playerCharacter.sprite, coin_ch, () => this.hitCoin(index))
+      })
+    }
+
+    if (this.enemyManager) {
+      this.enemyManager.activeEnemies.forEach((enemy_ch, index) => {
+        this.enemyChannel[index] = this.physics.add.overlap(this.playerCharacter.sprite, enemy_ch, this.hitObstacle)
+        if (this.groundManager) {
+          this.physics.add.collider(enemy_ch, this.groundManager.platforms)
+        }
       })
     }
 
@@ -208,10 +222,23 @@ export default class Runner extends Phaser.Scene {
       this.playerCharacter.update()
     }
 
-    if (this.obstacleManager && this.playerCharacter && this.playerCharacter.chain) {
-      this.obstacleManager.activeObstacles.forEach((obstacle_ch, index) => {
-        // チェーンと岩が接触したら岩を壊す
-        this.physics.add.overlap(this.playerCharacter.chain, obstacle_ch, () => this.obstacleManager.destroyObstacle(index));
+    if (this.playerCharacter && this.playerCharacter.chain) {
+      if(this.obstacleManager){
+        this.obstacleManager.activeObstacles.forEach((obstacle_ch, index) => {
+          this.physics.add.overlap(this.playerCharacter.chain, obstacle_ch, () => this.obstacleManager.destroyObstacle(index));
+        });
+      }
+      if(this.enemyManager){
+        this.enemyManager.activeEnemies.forEach((enemy_ch, index) => {
+          this.physics.add.overlap(this.playerCharacter.chain, enemy_ch, () => this.enemyManager.destroyEnemy(index));
+        });
+      }
+    }
+    
+
+    if (this.enemyManager && this.playerCharacter && this.playerCharacter.block) {
+      this.enemyManager.activeEnemies.forEach((enemy_ch, index) => {
+        this.enemyChannel[index] = this.physics.add.collider(this.playerCharacter.block, enemy_ch);
       });
     }
 
@@ -221,6 +248,10 @@ export default class Runner extends Phaser.Scene {
 
     if (this.environmentManager) {
       this.environmentManager.update()
+    }
+
+    if (this.enemyManager) {
+      this.enemyManager.update()
     }
   }
 
@@ -232,15 +263,10 @@ export default class Runner extends Phaser.Scene {
     }
   }
 
-  hitObstacle = (index) => {
-    console.log(index)
+  hitObstacle = () => {
     this.isGameOver = true
     this.playerCharacter.die()
     this.audioRefs.loseSfx.play()
-
-    if (this.objectChannel[index]) {
-      this.objectChannel[index].destroy()
-    }
 
     if (this.userInterface) {
       this.userInterface.restartButton.setVisible(true)

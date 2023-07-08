@@ -109,6 +109,6 @@ export default class UserInterface {
   }
 
   updateCoinText = (coin) => {
-    this.coinText.setText('Score: ' + coin)
+    this.coinText.setText('SatoshiCoin: ' + coin)
   }
 }
