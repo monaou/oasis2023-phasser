@@ -8,6 +8,9 @@ import * as utils from "../utils.js"
 import EnvironmentManager from "../classes/game/EnvironmentManager.js"
 import GroundManager from "../classes/game/GroundManager.js"
 import ObstacleManager from "../classes/game/ObstacleManager.js"
+import StoneManager from "../classes/game/StoneManager.js"
+import GoalManager from "../classes/game/GoalManager.js"
+import CoinManager from "../classes/game/CoinManager.js"
 import UserInterface from "../classes/game/UserInterface.js"
 import PlayerCharacter from "../classes/game/PlayerCharacter.js"
 
@@ -18,6 +21,9 @@ export default class Runner extends Phaser.Scene {
     this.environmentManager = null
     this.groundManager = null
     this.obstacleManager = null
+    this.stoneManager = null
+    this.goalManager = null
+    this.coinManager = null
     this.userInterface = null
     this.playerCharacter = null
 
@@ -27,13 +33,16 @@ export default class Runner extends Phaser.Scene {
     this.selectedYamlSprite = 1
 
     this.score = 0
+    this.coin = 0
     this.difficultyLevel = 1
 
     this.cursors
     this.audioRefs = {}
     this.objectChannel = []
+    this.coinChannel = []
 
     this.isGameOver = false
+    this.isGoal = false
   }
 
   // Process selected sprite data from main menu
@@ -109,7 +118,10 @@ export default class Runner extends Phaser.Scene {
     this.environmentManager = new EnvironmentManager(this, this.playerCharacter.sprite, this.selectedCloudSprite)
     this.groundManager = new GroundManager(this, this.playerCharacter.sprite)
     this.obstacleManager = new ObstacleManager(this, this.playerCharacter.sprite, this.selectedYamlSprite)
-    this.userInterface = new UserInterface(this, this.restartGame, this.returnToMenu, this.audioRefs)
+    this.stoneManager = new StoneManager(this, this.playerCharacter.sprite, this.selectedYamlSprite)
+    this.goalManager = new GoalManager(this, this.playerCharacter.sprite, this.selectedYamlSprite)
+    this.coinManager = new CoinManager(this, this.playerCharacter.sprite, this.selectedYamlSprite)
+    this.userInterface = new UserInterface(this, this.restartGame, this.returnToMenu, this.reachGoal, this.audioRefs)
 
     // Set up jump input for keyboard and screen tap
     this.cursors = this.input.keyboard.createCursorKeys()
@@ -133,6 +145,27 @@ export default class Runner extends Phaser.Scene {
       })
     }
 
+    if (this.stoneManager) {
+      this.stoneManager.activeStones.forEach((stone_ch) => {
+        if (this.playerCharacter) {
+          this.physics.add.collider(this.playerCharacter.sprite, stone_ch)
+        }
+      })
+    }
+
+    if (this.goalManager) {
+      this.goalManager.activeGoals.forEach((goal_ch, index) => {
+        this.physics.add.overlap(this.playerCharacter.sprite, goal_ch, () => this.hitGoal(index))
+      })
+    }
+
+    if (this.coinManager) {
+      console.log("init")
+      this.coinManager.activeCoins.forEach((coin_ch, index) => {
+        this.coinChannel[index] = this.physics.add.overlap(this.playerCharacter.sprite, coin_ch, () => this.hitCoin(index))
+      })
+    }
+
     if (web3Connection && this.userInterface) {
       this.userInterface.updateAddressText(web3Connection.web3Address)
     }
@@ -140,7 +173,7 @@ export default class Runner extends Phaser.Scene {
 
   // Called on each frame to check for inputs, update score and call update on all managers
   update() {
-    if (this.isGameOver) { return }
+    if (this.isGameOver || this.isGoal) { return }
     this.updateScore()
 
     if (this.cursors.space.isDown) {
@@ -182,8 +215,6 @@ export default class Runner extends Phaser.Scene {
       });
     }
 
-
-
     if (this.groundManager) {
       this.groundManager.update()
     }
@@ -220,6 +251,32 @@ export default class Runner extends Phaser.Scene {
     }
   }
 
+  hitGoal = (index) => {
+    this.isGoal = true
+    this.playerCharacter.win()
+    // this.audioRefs.loseSfx.play()
+
+    if (this.userInterface) {
+      this.userInterface.resultButton.setVisible(true)
+      this.userInterface.menuButton.setVisible(true)
+    } else {
+      // Automatically return to menu if interface doesn't exist
+      this.time.delayedCall(1000, this.returnToMenu)
+    }
+  }
+
+  hitCoin = (index) => {
+    console.log("hitCoin")
+    this.coin++
+    if (this.userInterface) {
+      this.userInterface.updateCoinText(this.coin)
+    }
+    if (this.coinChannel[index]) {
+      this.coinChannel[index].destroy()
+      this.coinManager.destroyCoin(index)
+    }
+  }
+
   // Destroy scene and create new one with same options
   restartGame = () => {
     game.scene.remove("runner")
@@ -228,6 +285,11 @@ export default class Runner extends Phaser.Scene {
       obstacleSprite: this.selectedObstacleSprite,
       cloudSprite: this.selectedCloudSprite,
     })
+  }
+
+  // Destroy scene and create new one with same options
+  reachGoal = () => {
+    game.scene.remove("runner")
   }
 
   // Return to menu by reloading the page

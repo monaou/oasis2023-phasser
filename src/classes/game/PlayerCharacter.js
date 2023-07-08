@@ -55,6 +55,13 @@ export default class PlayerCharacter {
       })
 
       this.runnerScene.anims.create({
+        key: 'win',
+        frames: this.runnerScene.anims.generateFrameNumbers(this.spriteType, { start: 4, end: 4 }),
+        frameRate: 0,
+        repeat: 0
+      })
+
+      this.runnerScene.anims.create({
         key: 'jump',
         frames: this.runnerScene.anims.generateFrameNumbers(this.spriteType, { start: 4, end: 4 }),
         frameRate: 0,
@@ -244,9 +251,11 @@ export default class PlayerCharacter {
   }
 
   die = () => {
-    if (this.spriteType === 'dino') {
-      this.sprite.anims.play('die', false)
-    }
+    this.sprite.anims.play('die', false)
+    this.setRunSpeed(0)
+  }
+  win = () => {
+    this.sprite.anims.play('win', false)
     this.setRunSpeed(0)
   }
 

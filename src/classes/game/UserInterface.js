@@ -4,15 +4,17 @@ import Phaser from 'phaser'
 
 // Class for interface shown during runner game
 export default class UserInterface {
-  constructor(runnerScene, restartGame, returnToMenu, audioRefs) {
+  constructor(runnerScene, restartGame, returnToMenu, reachGoal, audioRefs) {
     this.runnerScene = runnerScene
     this.restartGame = restartGame
     this.returnToMenu = returnToMenu
+    this.reachGoal = reachGoal
     this.audioRefs = audioRefs
     this.textFont = '"Press Start 2P"'
     this.scoreText
     this.addressText
     this.restartButton
+    this.resultButton
     this.menuButton
 
     this.initUI()
@@ -20,7 +22,10 @@ export default class UserInterface {
 
   initUI = () => {
     this.scoreText = this.runnerScene.add.text(25, 65, 'Score: 0', { fontSize: '32px', fill: '#FFF', fontFamily: this.textFont })
+    this.coinText = this.runnerScene.add.text(25, 105, 'SatoshiCoin: 0', { fontSize: '32px', fill: '#FFF', fontFamily: this.textFont })
     this.addressText = this.runnerScene.add.text(25, 25, 'Address: 0x0', { fontSize: '20px', fill: '#FFF', fontFamily: this.textFont })
+    this.coinText.setScrollFactor(0)
+    this.coinText.setDepth(constants.INTERFACE.HUD_RENDER_DEPTH)
     this.scoreText.setScrollFactor(0)
     this.scoreText.setDepth(constants.INTERFACE.HUD_RENDER_DEPTH)
     this.addressText.setScrollFactor(0)
@@ -39,6 +44,7 @@ export default class UserInterface {
   }
 
   createMenuButtons = () => {
+    this.createResultButton()
     this.createRestartButton()
     this.createBackToMenuButton()
   }
@@ -60,6 +66,23 @@ export default class UserInterface {
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, this.restartClick)
   }
 
+  createResultButton = () => {
+    this.resultButton = new CustomFixedButton(
+      this.runnerScene, constants.GAME.CANVAS_WIDTH / 2,
+      constants.GAME.CANVAS_HEIGHT / 2 + 100,
+      'buttonRestartUp', 'buttonRestartDown',
+      1
+    )
+    this.runnerScene.add.existing(this.resultButton)
+    this.resultButton.setVisible(false)
+
+    // Set button interactive for desktop and mobile
+    this.resultButton.overImage.setInteractive()
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, this.restartClick)
+    this.resultButton.upImage.setInteractive()
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, this.restartClick)
+  }
+
   createBackToMenuButton = () => {
     this.menuButton = new CustomFixedButton(
       this.runnerScene, constants.GAME.CANVAS_WIDTH / 2,
@@ -76,12 +99,16 @@ export default class UserInterface {
     this.menuButton.upImage.setInteractive()
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, this.returnToMenu)
   }
-  
+
   updateAddressText = (address) => {
     this.addressText.setText('Address: ' + address)
   }
 
   updateScoreText = (score) => {
     this.scoreText.setText('Score: ' + score)
+  }
+
+  updateCoinText = (coin) => {
+    this.coinText.setText('Score: ' + coin)
   }
 }
