@@ -12,26 +12,26 @@ export default class PlayerCharacter {
     this.canAttack = true;
     this.canSpecial = false;
     this.block
-
+    this.chain
 
     // Set spriteType to 'dino' if no custom art selected
-    this.spriteType = 
+    this.spriteType =
       spriteType === 'pixelDinoGreen' ||
-      spriteType === 'pixelDinoBlue' ||
-      spriteType === 'pixelDinoRed' ?
-      'dino' : spriteType
-  
+        spriteType === 'pixelDinoBlue' ||
+        spriteType === 'pixelDinoRed' ?
+        'dino' : spriteType
+
     this.initPlayer()
   }
 
   // Init animations and player base settings
   initPlayer = () => {
-    if(this.spriteType === 'dino') {
+    if (this.spriteType === 'dino') {
       // Set up collision
       this.sprite = this.runnerScene.physics.add.sprite(constants.GAME.START_POS, constants.GAME.START_HEIGHT, this.spriteType)
       this.sprite.body.setSize(50, 90, 0, 0)
       this.sprite.body.setOffset(25, 0)
-    
+
       // Only add animations for default dino characters
       this.runnerScene.anims.create({
         key: 'run',
@@ -39,28 +39,28 @@ export default class PlayerCharacter {
         frameRate: 10,
         repeat: -1
       })
-    
+
       this.runnerScene.anims.create({
         key: 'runFast',
         frames: this.runnerScene.anims.generateFrameNumbers(this.spriteType, { start: 1, end: 2 }),
         frameRate: 15,
         repeat: -1
       })
-  
+
       this.runnerScene.anims.create({
         key: 'die',
         frames: this.runnerScene.anims.generateFrameNumbers(this.spriteType, { start: 3, end: 3 }),
         frameRate: 0,
         repeat: 0
       })
-    
+
       this.runnerScene.anims.create({
         key: 'jump',
         frames: this.runnerScene.anims.generateFrameNumbers(this.spriteType, { start: 4, end: 4 }),
         frameRate: 0,
         repeat: 0
       })
-    
+
       this.runnerScene.anims.create({
         key: 'fall',
         frames: this.runnerScene.anims.generateFrameNumbers(this.spriteType, { start: 5, end: 5 }),
@@ -94,14 +94,14 @@ export default class PlayerCharacter {
       const scale = utils.getIdealSpriteScale(this.runnerScene.textures.get(this.spriteType), false)
       this.sprite = this.runnerScene.physics.add.sprite(constants.GAME.START_POS, constants.GAME.START_HEIGHT, this.spriteType).setScale(scale, scale)
     }
-  
+
     this.sprite.setBounce(constants.PLAYER.BOUNCE)
     this.sprite.setDepth(constants.PLAYER.RENDER_DEPTH)
     this.setRunSpeed(this.runSpeed)
   }
 
   tryJump = () => {
-    if(!this.runnerScene.isGameOver && this.sprite.body.touching.down && this.actionStatus === 0) {
+    if (!this.runnerScene.isGameOver && this.sprite.body.touching.down && this.actionStatus === 0) {
       this.sprite.setVelocityY(-1 * constants.PLAYER.JUMP_STRENGTH)
       this.audioRefs.jumpSfx.play()
     }
@@ -110,15 +110,15 @@ export default class PlayerCharacter {
   turnLeft = () => {
     this.sprite.setScale(-1 * Math.abs(this.sprite.scaleX), this.sprite.scaleY); // 反転して左を向く
   }
-  
+
   turnRight = () => {
     this.sprite.setScale(Math.abs(this.sprite.scaleX), this.sprite.scaleY); // 反転して右を向く
   }
-  
+
 
   tryWalkRight = () => {
     this.turnRight()
-    if(!this.runnerScene.isGameOver && this.actionStatus === 0) {
+    if (!this.runnerScene.isGameOver && this.actionStatus === 0) {
       if (this.sprite.body.touching.down) {
         this.sprite.setVelocityX(constants.PLAYER.BASE_RUN_SPEED)
       } else {
@@ -130,7 +130,7 @@ export default class PlayerCharacter {
 
   tryWalkLeft = () => {
     this.turnLeft()
-    if(!this.runnerScene.isGameOver && this.actionStatus === 0) {
+    if (!this.runnerScene.isGameOver && this.actionStatus === 0) {
       if (this.sprite.body.touching.down) {
         this.sprite.setVelocityX(-1 * constants.PLAYER.BASE_RUN_SPEED)
       } else {
@@ -139,21 +139,21 @@ export default class PlayerCharacter {
       this.audioRefs.walkSfx.play()
     }
   }
-  
+
   tryStopWalk = () => {
-    if(!this.runnerScene.isGameOver && this.sprite.body.touching.down) {
+    if (!this.runnerScene.isGameOver && this.sprite.body.touching.down) {
       this.sprite.setVelocityX(0)
     }
   }
-  
+
 
   tryGuard = () => {
-    if(!this.runnerScene.isGameOver && this.canGuard)  {
+    if (!this.runnerScene.isGameOver && this.canGuard) {
       // 攻撃判定のオブジェクトを生成
-      const blockPositionX = this.sprite.scaleX > 0 
-      ? this.sprite.x + this.sprite.width / 2 + 50 // キャラクターが右を向いている場合
-      : this.sprite.x - this.sprite.width / 2 - 50; // キャラクターが左を向いている場合
-      
+      const blockPositionX = this.sprite.scaleX > 0
+        ? this.sprite.x + this.sprite.width / 2 + 50 // キャラクターが右を向いている場合
+        : this.sprite.x - this.sprite.width / 2 - 50; // キャラクターが左を向いている場合
+
       const block = this.runnerScene.physics.add.sprite(
         blockPositionX,
         this.sprite.y,
@@ -170,7 +170,7 @@ export default class PlayerCharacter {
   }
 
   tryGuardStop = () => {
-    if(!this.runnerScene.isGameOver &&  this.actionStatus === 1) {
+    if (!this.runnerScene.isGameOver && this.actionStatus === 1) {
       this.block.destroy()
       this.canGuard = true;
       this.canAttack = true;
@@ -181,19 +181,19 @@ export default class PlayerCharacter {
 
   // 追加
   tryNormalAttack = () => {
-    if (!this.canAttack ) {
+    if (!this.canAttack) {
       return; // canAttackがfalseの場合はchainを生成しない
     }
-    if (this.canSpecial){
+    if (this.canSpecial) {
       this.trySpecialAttack()
       return;
     }
 
     // 攻撃判定のオブジェクトを生成
-    const chainPositionX = this.sprite.scaleX > 0 
+    const chainPositionX = this.sprite.scaleX > 0
       ? this.sprite.x + this.sprite.width / 2 + 200 // キャラクターが右を向いている場合
       : this.sprite.x - this.sprite.width / 2 - 200; // キャラクターが左を向いている場合
-      
+
     const chain = this.runnerScene.physics.add.sprite(
       chainPositionX,
       this.sprite.y,
@@ -201,23 +201,23 @@ export default class PlayerCharacter {
     ).setScale(this.sprite.scaleX / 7, this.sprite.scaleY / 2);
 
     chain.body.setAllowGravity(false);
-    this.runnerScene.physics.add.overlap(chain, this.runnerScene.obstacleManager.obstacles, this.destroyRock); // chainと岩が接触したら岩を壊す
+    this.chain = chain
 
     this.canAttack = false; // canAttackをfalseに設定して次のchainを生成するのを防ぐ
     this.canGuard = false;
-    
+
     setTimeout(() => {
       this.actionStatus = 0;
-      chain.destroy(); // 500ms後にchainを消す
+      this.chain.destroy(); // 500ms後にchainを消す
       this.canAttack = true; // canAttackをtrueに設定して次のchainを生成できるようにする
       this.canGuard = true;
     }, 500);
   }
 
   // 追加
-  destroyRock = (chain, rock) => {
+  destroyRock = (rock) => {
     rock.destroy(); // 岩を壊す
-    chain.destroy(); // chainも消す
+    this.chain.destroy(); // chainも消す
 
     // スパークのエフェクトを作成
     var particles = this.runnerScene.add.particles('spark');
@@ -231,10 +231,10 @@ export default class PlayerCharacter {
     emitter.startFollow(rock);
     setTimeout(() => emitter.stop(), 200); // 200ms後にエフェクトを停止
   }
-  
+
 
   trySpecialAttack = () => {
-    if(!this.runnerScene.isGameOver) {
+    if (!this.runnerScene.isGameOver) {
       this.actionStatus = 3;
     }
   }
@@ -244,12 +244,12 @@ export default class PlayerCharacter {
   }
 
   die = () => {
-    if(this.spriteType === 'dino') {
+    if (this.spriteType === 'dino') {
       this.sprite.anims.play('die', false)
     }
     this.setRunSpeed(0)
   }
-  
+
   setRunSpeed = (speed) => {
     this.runSpeed = speed
     this.sprite.setVelocityX(speed)
@@ -257,7 +257,7 @@ export default class PlayerCharacter {
 
   // Play run anim if default character
   playRunAnim = () => {
-    if(this.spriteType !== 'dino') { return }
+    if (this.spriteType !== 'dino') { return }
 
     const anim = this.runSpeed >= 1400 ? 'runFast' : 'run'
     this.sprite.anims.play(anim, true)
@@ -265,21 +265,21 @@ export default class PlayerCharacter {
 
   // Update animation depending on velocity
   update() {
-    if(this.spriteType !== 'dino') { return }
+    if (this.spriteType !== 'dino') { return }
 
     // Set jump animation
-    if(this.sprite.body.velocity.y > 0) {
+    if (this.sprite.body.velocity.y > 0) {
       this.sprite.anims.play('fall', true)
-    } else if(this.sprite.body.velocity.y < 0) {
+    } else if (this.sprite.body.velocity.y < 0) {
       this.sprite.anims.play('jump', true)
-    } else if(this.actionStatus === 1){
+    } else if (this.actionStatus === 1) {
       this.sprite.anims.play('guard', true)
-    } else if(this.actionStatus === 2){
+    } else if (this.actionStatus === 2) {
       this.sprite.anims.play('normal_attack', true)
-    } else if(this.actionStatus === 3){
+    } else if (this.actionStatus === 3) {
       this.sprite.anims.play('special_attack', true)
     } else {
       this.playRunAnim()
-    }    
+    }
   }
 }

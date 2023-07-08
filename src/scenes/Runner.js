@@ -38,21 +38,21 @@ export default class Runner extends Phaser.Scene {
 
   // Process selected sprite data from main menu
   init(data) {
-    if(data.characterSprite) {
+    if (data.characterSprite) {
       this.selectedCharSprite = data.characterSprite
     }
-    if(data.obstacleSprite) {
+    if (data.obstacleSprite) {
       this.selectedObstacleSprite = data.obstacleSprite
     }
-    if(data.cloudSprite) {
+    if (data.cloudSprite) {
       this.selectedCloudSprite = data.cloudSprite
     }
     // this.selectedYamlSprite = 1
   }
 
   // Preload images, audio and other assets
-  preload () {
-    switch(this.selectedCharSprite) {
+  preload() {
+    switch (this.selectedCharSprite) {
       case "pixelDinoGreen":
         this.load.spritesheet('dino', assets.img.pixelDinoGreenImage, { frameWidth: 100, frameHeight: 90 })
         break
@@ -67,16 +67,16 @@ export default class Runner extends Phaser.Scene {
     this.load.image('ground', assets.img.groundImage)
     this.load.image('chain', assets.img.chainImage)
     this.load.image('block', assets.img.blockImage)
-  
+
     this.load.image('rockTall', assets.img.rockTallImage)
     this.load.image('rockDuo', assets.img.rockDuoImage)
     this.load.image('rockWide', assets.img.rockWideImage)
-  
+
     this.load.image('background', assets.img.backgroundImage)
     this.load.image('cloudLayer', assets.img.cloudLayerImage)
     this.load.image('backLayer', assets.img.backLayerImage)
     this.load.image('cloud', assets.img.cloudImage)
-  
+
     this.load.image('buttonRestartUp', assets.ui.buttonRestartUpImage)
     this.load.image('buttonRestartDown', assets.ui.buttonRestartDownImage)
     this.load.image('buttonMenuUp', assets.ui.buttonMenuUpImage)
@@ -86,7 +86,7 @@ export default class Runner extends Phaser.Scene {
     utils.getAllArtLinks(web3Connection.web3Address).forEach(a => {
       this.load.image(a.imageLink, a.imageLink)
     })
-    
+
     this.load.audio('jump', assets.audio.jumpAudio)
     this.load.audio('lose', assets.audio.loseAudio)
     this.load.audio('win', assets.audio.winAudio)
@@ -95,9 +95,9 @@ export default class Runner extends Phaser.Scene {
 
     this.load.addFile(new WebFontFile(this.load, 'Press Start 2P'))
   }
-  
+
   // Runs once to initialize the game
-  create () { 
+  create() {
     // Set player and follow camera
     this.playerCharacter = new PlayerCharacter(this, this.audioRefs, this.selectedCharSprite)
     this.cameras.main.startFollow(this.playerCharacter.sprite)
@@ -110,7 +110,7 @@ export default class Runner extends Phaser.Scene {
     this.groundManager = new GroundManager(this, this.playerCharacter.sprite)
     this.obstacleManager = new ObstacleManager(this, this.playerCharacter.sprite, this.selectedYamlSprite)
     this.userInterface = new UserInterface(this, this.restartGame, this.returnToMenu, this.audioRefs)
-  
+
     // Set up jump input for keyboard and screen tap
     this.cursors = this.input.keyboard.createCursorKeys()
 
@@ -120,93 +120,98 @@ export default class Runner extends Phaser.Scene {
     this.audioRefs.winSfx = this.sound.add('win')
     this.audioRefs.walkSfx = this.sound.add('walk')
 
-    if(this.groundManager) {
+    if (this.groundManager) {
       this.physics.add.collider(this.playerCharacter.sprite, this.groundManager.platforms)
     }
 
-    if(this.obstacleManager) {
+    if (this.obstacleManager) {
       this.obstacleManager.activeObstacles.forEach((obstacle_ch, index) => {
         this.objectChannel[index] = this.physics.add.overlap(this.playerCharacter.sprite, obstacle_ch, () => this.hitObstacle(index))
-        if(this.groundManager) {
+        if (this.groundManager) {
           this.physics.add.collider(obstacle_ch, this.groundManager.platforms)
         }
       })
     }
-    
-    if(web3Connection && this.userInterface) {
+
+    if (web3Connection && this.userInterface) {
       this.userInterface.updateAddressText(web3Connection.web3Address)
     }
   }
-  
+
   // Called on each frame to check for inputs, update score and call update on all managers
-  update () {
-    if(this.isGameOver) { return }
+  update() {
+    if (this.isGameOver) { return }
     this.updateScore()
 
-    if(this.cursors.space.isDown) {
+    if (this.cursors.space.isDown) {
       this.playerCharacter.tryJump()
     }
 
-    if(this.cursors.right.isDown) {
+    if (this.cursors.right.isDown) {
       this.playerCharacter.tryWalkRight()
     }
 
-    if(this.cursors.left.isDown) {
+    if (this.cursors.left.isDown) {
       this.playerCharacter.tryWalkLeft()
     }
 
-    if(this.cursors.right.isUp && this.cursors.left.isUp) {
+    if (this.cursors.right.isUp && this.cursors.left.isUp) {
       this.playerCharacter.tryStopWalk()
     }
 
-    if(this.cursors.down.isDown) {
+    if (this.cursors.down.isDown) {
       this.playerCharacter.tryGuard()
     }
 
-    if(this.cursors.down.isUp) {
+    if (this.cursors.down.isUp) {
       this.playerCharacter.tryGuardStop()
     }
 
-    if(this.cursors.up.isDown) {
-     this.playerCharacter.tryNormalAttack()
+    if (this.cursors.up.isDown) {
+      this.playerCharacter.tryNormalAttack()
     }
 
-    if(this.playerCharacter) {
+    if (this.playerCharacter) {
       this.playerCharacter.update()
     }
 
-    if(this.obstacleManager) {
-      this.obstacleManager.update()
+    if (this.obstacleManager && this.playerCharacter && this.playerCharacter.chain) {
+      this.obstacleManager.activeObstacles.forEach((obstacle_ch, index) => {
+        // チェーンと岩が接触したら岩を壊す
+        this.physics.add.overlap(this.playerCharacter.chain, obstacle_ch, () => this.obstacleManager.destroyObstacle(index));
+      });
     }
-  
-    if(this.groundManager) {
+
+
+
+    if (this.groundManager) {
       this.groundManager.update()
     }
 
-    if(this.environmentManager) {
+    if (this.environmentManager) {
       this.environmentManager.update()
     }
   }
-  
-  updateScore = () => {   
+
+  updateScore = () => {
     this.score = Math.floor((this.playerCharacter.getTravelDistance() - constants.GAME.START_POS) * constants.GAME.SCORE_MULTIPLIER)
 
-    if(this.userInterface) {
+    if (this.userInterface) {
       this.userInterface.updateScoreText(this.score)
     }
   }
-    
+
   hitObstacle = (index) => {
     console.log(index)
     this.isGameOver = true
     this.playerCharacter.die()
     this.audioRefs.loseSfx.play()
 
-    if(this.objectChannel[index]) {
+    if (this.objectChannel[index]) {
       this.objectChannel[index].destroy()
     }
 
-    if(this.userInterface) {
+    if (this.userInterface) {
       this.userInterface.restartButton.setVisible(true)
       this.userInterface.menuButton.setVisible(true)
     } else {
@@ -218,7 +223,7 @@ export default class Runner extends Phaser.Scene {
   // Destroy scene and create new one with same options
   restartGame = () => {
     game.scene.remove("runner")
-    game.scene.add("runner", Runner, true, { 
+    game.scene.add("runner", Runner, true, {
       characterSprite: this.selectedCharSprite,
       obstacleSprite: this.selectedObstacleSprite,
       cloudSprite: this.selectedCloudSprite,

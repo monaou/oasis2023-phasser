@@ -14,7 +14,7 @@ export default class ObstacleManager {
     this.player = player
     this.selectedYamlSprite = selectedYamlSprite
     this.activeObstacles = []
-  
+
     this.initObstacles()
   }
 
@@ -25,12 +25,12 @@ export default class ObstacleManager {
       // const ipfsData = await ipfs.cat('Qm...') // あなたのIPFSハッシュに変更
       // // YAMLをパース
       // const obstacles_map = yaml.load(ipfsData.toString())
-      
+
       // const obstacles_map = yaml.load(yaml_data)
       // 障害物を生成
       let index = 0
       obstacles_map.forEach((obstacle) => {
-        if (obstacle.obj_type === "obstacle"){
+        if (obstacle.obj_type === "obstacle") {
           this.createObstacle(index, obstacle.x, obstacle.y, obstacle.size_x, obstacle.size_y, obstacle.obj_type)
           index++
         }
@@ -61,12 +61,10 @@ export default class ObstacleManager {
 
     this.activeObstacles[id] = obstacle
   }
-  
+
   // Remove first obstacle if over instance limit
   destroyObstacle = (id) => {
-    if(this.activeObstacles.length >= constants.OBSTACLES.MAX_INSTANCES) {
-      this.activeObstacles[id].destroy()
-    }
+    this.activeObstacles[id].destroy()
   }
 
   // Check for player position on update to determine if new Obstacle should spawn
