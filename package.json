@@ -12,6 +12,7 @@
   "dependencies": {
     "@walletconnect/web3-provider": "^1.7.8",
     "ethers": "^5.6.2",
+    "filecoin.js": "^0.0.5-alpha",
     "ipfs-http-client": "^60.0.1",
     "js-yaml": "^4.1.0",
     "parcel": "^2.5.0",

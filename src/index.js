@@ -1,5 +1,6 @@
 import Menu from "./scenes/Menu.js"
 import Runner from "./scenes/Runner.js"
+import Edit from "./scenes/Edit.js"
 import Web3Connection from "./classes/utility/Web3Connection.js"
 import * as constants from "./constants.js"
 import Phaser from 'phaser'
@@ -19,7 +20,7 @@ var config = {
     }
   },
   // Initializes both the menu and runner scene
-  scene: [Menu, Runner],
+  scene: [Menu, Runner, Edit],
 
   // Center canvas element on website
   autoCenter: Phaser.Scale.CENTER_BOTH,

@@ -7,6 +7,7 @@ import * as assets from "../classes/utility/Assets.js"
 import WebFontFile from "../classes/utility/WebFontFile.js"
 import { ethers } from "ethers"
 import Toastify from 'toastify-js'
+import { Filecoin } from 'filecoin.js';
 
 
 // Main menu and customization scene
@@ -35,7 +36,7 @@ export default class Menu extends Phaser.Scene {
 
     this.load.image('buttonPlayUp', assets.ui.buttonPlayUpImage)
     this.load.image('buttonPlayDown', assets.ui.buttonPlayDownImage)
-    
+
     this.load.image('buttonConnectWalletUp', assets.ui.buttonConnectWalletUpImage)
     this.load.image('buttonConnectWalletDown', assets.ui.buttonConnectWalletDownImage)
     this.load.image('buttonDisconnectUp', assets.ui.buttonDisconnectUpImage)
@@ -57,19 +58,27 @@ export default class Menu extends Phaser.Scene {
     // Init both menus and set main menu to active
     this.initMainMenu()
     this.setMainMenuActive(true)
-  
+
     this.networkText = this.add.text(15, 15, 'Please connect Wallet', { fontSize: '20px', fill: '#FFF', fontFamily: 'Aldrich' })
-    if(web3Connection.web3Network) {
+    if (web3Connection.web3Network) {
       this.updateNetworkText(web3Connection.web3Network)
     }
   }
 
   initMainMenu = () => {
-    const startButton = new CustomContainerButton(this, constants.GAME.CANVAS_WIDTH / 2, constants.GAME.CANVAS_HEIGHT / 2 + 225, 'buttonPlayUp', 'buttonPlayDown', 1)
+    const startButton = new CustomContainerButton(this, constants.GAME.CANVAS_WIDTH / 2 - 225, constants.GAME.CANVAS_HEIGHT / 2 + 225, 'buttonPlayUp', 'buttonPlayDown', 1)
     this.add.existing(startButton)
     startButton.setInteractive()
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
         this.scene.start('runner')
+        this.selectSFX.play()
+      })
+
+    const editButton = new CustomContainerButton(this, constants.GAME.CANVAS_WIDTH / 2 + 225, constants.GAME.CANVAS_HEIGHT / 2 + 225, 'buttonPlayUp', 'buttonPlayDown', 1)
+    this.add.existing(editButton)
+    editButton.setInteractive()
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
+        this.scene.start('edit')
         this.selectSFX.play()
       })
 
@@ -81,7 +90,7 @@ export default class Menu extends Phaser.Scene {
         web3Connection.initWeb3()
         this.selectSFX.play()
       })
-    
+
     this.disconnectButton = new CustomContainerButton(this, 125, topButtonsHeight, 'buttonDisconnectUp', 'buttonDisconnectDown', 1)
     this.add.existing(this.disconnectButton)
     this.disconnectButton.setInteractive()
@@ -90,20 +99,20 @@ export default class Menu extends Phaser.Scene {
         this.selectSFX.play()
       })
     this.disconnectButton.setVisible(false)
-  
+
     // Save main menu items in group for visibility toggling
     this.mainMenuItems.push(
-      startButton
+      startButton, editButton
     )
   }
 
 
   setMainMenuActive = (setMainMenuActive) => {
-    if(setMainMenuActive) {
+    if (setMainMenuActive) {
       this.mainMenuItems.forEach(m => m.setVisible(true))
       this.customizationMenuItems.forEach(c => c.setVisible(false))
 
-      if(!!web3Connection.web3Network) {
+      if (!!web3Connection.web3Network) {
         this.setConnectWalletButtonVisibility(false)
       }
     } else {
@@ -114,25 +123,25 @@ export default class Menu extends Phaser.Scene {
   }
 
   updateNetworkText = (web3Network) => {
-    if(!this.networkText) { return }
+    if (!this.networkText) { return }
     const baseString = "Connected to: "
     const chainId = web3Network.chainId
     let networkName = web3Network.name
 
     // Turn recognized network name into more readable format
-    if(networkName === 'unknown') {
-      if(web3Network.chainId === constants.GAME.HMV_TEST_CHAINID) {
+    if (networkName === 'unknown') {
+      if (web3Network.chainId === constants.GAME.HMV_TEST_CHAINID) {
         networkName = "Homeverse Testnet"
-      } else if(web3Network.chainId === constants.GAME.HMV_MAIN_CHAINID) {
+      } else if (web3Network.chainId === constants.GAME.HMV_MAIN_CHAINID) {
         networkName = "Homeverse Mainnet"
       }
-    } else if(networkName === 'homestead') {
+    } else if (networkName === 'homestead') {
       networkName = "Ethereum Mainnet"
-    } else if(networkName === 'matic') {
+    } else if (networkName === 'matic') {
       networkName = "Polygon Mainnet"
     }
 
-    this.networkText.setText(`${baseString} ${networkName} (${chainId})`)  
+    this.networkText.setText(`${baseString} ${networkName} (${chainId})`)
   }
 
   isValidAddress = (address) => {
@@ -140,8 +149,8 @@ export default class Menu extends Phaser.Scene {
   }
 
   isValidId = (tokenId) => {
-    if(typeof tokenId != "string") { return false }
-    if(tokenId.substring(0, 2) === '0x') { return false }
+    if (typeof tokenId != "string") { return false }
+    if (tokenId.substring(0, 2) === '0x') { return false }
     return !isNaN(tokenId) && !isNaN(parseFloat(tokenId))
   }
 
@@ -152,11 +161,11 @@ export default class Menu extends Phaser.Scene {
   }
 
   setConnectWalletButtonVisibility = (setVisible) => {
-    if(!this.connectWalletButton) { return }
+    if (!this.connectWalletButton) { return }
     this.connectWalletButton.setVisible(setVisible)
 
-    if(!this.disconnectButton) { return }
-    if(setVisible) {
+    if (!this.disconnectButton) { return }
+    if (setVisible) {
       this.disconnectButton.setVisible(false)
     } else if (!setVisible && !!web3Connection.web3Network) {
       // Only show disconnect button if connected and connect button is hidden
