@@ -199,18 +199,18 @@ export default class Runner extends Phaser.Scene {
     }
 
     if (this.playerCharacter && this.playerCharacter.chain) {
-      if(this.obstacleManager){
+      if (this.obstacleManager) {
         this.obstacleManager.activeObstacles.forEach((obstacle_ch, index) => {
           this.physics.add.overlap(this.playerCharacter.chain, obstacle_ch, () => this.obstacleManager.destroyObstacle(index));
         });
       }
-      if(this.enemyManager){
+      if (this.enemyManager) {
         this.enemyManager.activeEnemies.forEach((enemy_ch, index) => {
           this.physics.add.overlap(this.playerCharacter.chain, enemy_ch, () => this.enemyManager.destroyEnemy(index));
         });
       }
     }
-    
+
 
     if (this.enemyManager && this.playerCharacter && this.playerCharacter.block) {
       this.enemyManager.activeEnemies.forEach((enemy_ch, index) => {
@@ -240,9 +240,11 @@ export default class Runner extends Phaser.Scene {
   }
 
   hitObstacle = () => {
+    if (!this.isGameOver) {
+      this.audioRefs.loseSfx.play()
+    }
     this.isGameOver = true
     this.playerCharacter.die()
-    this.audioRefs.loseSfx.play()
 
     if (this.userInterface) {
       this.userInterface.restartButton.setVisible(true)
