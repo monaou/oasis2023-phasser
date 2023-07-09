@@ -3,11 +3,11 @@ import * as constants from "../../constants.js"
 import { web3Connection } from "../../index.js"
 
 export default class EnvironmentManager {
-  constructor(runnerScene, player, cloudSprite) {
+  constructor(runnerScene, player) {
     this.runnerScene = runnerScene
     this.player = player
     this.background
-    this.cloudSprite = cloudSprite
+    this.cloudSprite
 
     // Save state of parallax scrolling images
     this.parallax = {
@@ -81,13 +81,6 @@ export default class EnvironmentManager {
   createCloud = () => {
     let cloudSprite = this.cloudSprite
 
-    // Pick random sprite if randomAll selected
-    if(cloudSprite === "randomAll") {
-      const cloudArts = utils.getSavedArtsForType("clouds")
-      const rnd = Math.floor(Math.random() * cloudArts.length)
-      cloudSprite = cloudArts[rnd].imageLink
-    }
-
     const posX = this.player.x * this.parallax.frontClouds.scrollSpeed +
                  constants.GAME.CANVAS_WIDTH + this.parallax.frontClouds.textureLength
                  
@@ -97,30 +90,17 @@ export default class EnvironmentManager {
     )
   
     let cloud
-    if(cloudSprite === "randomAll") {
-      // Create new cloud and delete last one each time
+    // Reuse clouds if at max, otherwise create new
+    if(this.parallax.frontClouds.activeItems.length >= constants.ENVIRONMENT.PARALLAX_INSTANCE_MAX) {
+      cloud = this.parallax.frontClouds.activeItems[0]
+      cloud.x = posX
+      cloud.y = posY
+      this.parallax.frontClouds.activeItems.push(this.parallax.frontClouds.activeItems.shift())
+    } else {
       const scale = utils.getIdealSpriteScale(this.runnerScene.textures.get(cloudSprite), false)
       cloud = this.runnerScene.add.image(posX, posY, cloudSprite)
       cloud.setScale(scale)
       this.parallax.frontClouds.activeItems.push(cloud)
-      if(this.parallax.frontClouds.activeItems.length >= constants.ENVIRONMENT.PARALLAX_INSTANCE_MAX) {
-        const firstCloud = this.parallax.frontClouds.activeItems[0]
-        firstCloud.destroy()
-        this.parallax.frontClouds.activeItems.shift()
-      }
-    } else {
-      // Reuse clouds if at max, otherwise create new
-      if(this.parallax.frontClouds.activeItems.length >= constants.ENVIRONMENT.PARALLAX_INSTANCE_MAX) {
-        cloud = this.parallax.frontClouds.activeItems[0]
-        cloud.x = posX
-        cloud.y = posY
-        this.parallax.frontClouds.activeItems.push(this.parallax.frontClouds.activeItems.shift())
-      } else {
-        const scale = utils.getIdealSpriteScale(this.runnerScene.textures.get(cloudSprite), false)
-        cloud = this.runnerScene.add.image(posX, posY, cloudSprite)
-        cloud.setScale(scale)
-        this.parallax.frontClouds.activeItems.push(cloud)
-      }  
     }
   
     cloud.alpha = 0.8

@@ -43,7 +43,6 @@ export default class Web3Connection {
       // Update network text on menu scene
       this.game.scene.scenes[0].updateNetworkText(this.web3Network)
       this.game.scene.scenes[0].setConnectWalletButtonVisibility(false)
-      this.game.scene.scenes[0].updatePickers()
     } catch (e) {
       console.log(e)
       console.log("Couldn't initialize Web3")

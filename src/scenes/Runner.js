@@ -15,7 +15,6 @@ import EnemyManager from "../classes/game/EnemyManager.js"
 import UserInterface from "../classes/game/UserInterface.js"
 import PlayerCharacter from "../classes/game/PlayerCharacter.js"
 
-
 // Main game scene
 export default class Runner extends Phaser.Scene {
   constructor() {
@@ -29,10 +28,6 @@ export default class Runner extends Phaser.Scene {
     this.enemyManager = null
     this.userInterface = null
     this.playerCharacter = null
-
-    this.selectedCharSprite = 'pixelDinoGreen'
-    this.selectedObstacleSprite = 'rockTall'
-    this.selectedCloudSprite = 'cloud'
     this.selectedYamlSprite = 1
 
     this.score = 0
@@ -51,31 +46,13 @@ export default class Runner extends Phaser.Scene {
 
   // Process selected sprite data from main menu
   init(data) {
-    if (data.characterSprite) {
-      this.selectedCharSprite = data.characterSprite
-    }
-    if (data.obstacleSprite) {
-      this.selectedObstacleSprite = data.obstacleSprite
-    }
-    if (data.cloudSprite) {
-      this.selectedCloudSprite = data.cloudSprite
-    }
-    // this.selectedYamlSprite = 1
+    // TODO : conncet db
+    this.selectedYamlSprite = 1
   }
 
   // Preload images, audio and other assets
   preload() {
-    switch (this.selectedCharSprite) {
-      case "pixelDinoGreen":
-        this.load.spritesheet('dino', assets.img.pixelDinoGreenImage, { frameWidth: 100, frameHeight: 90 })
-        break
-      case "pixelDinoBlue":
-        this.load.spritesheet('dino', assets.img.pixelDinoBlueImage, { frameWidth: 100, frameHeight: 90 })
-        break
-      case "pixelDinoRed":
-        this.load.spritesheet('dino', assets.img.pixelDinoRedImage, { frameWidth: 100, frameHeight: 90 })
-        break
-    }
+    this.load.spritesheet('dino', assets.img.pixelDinoGreenImage, { frameWidth: 100, frameHeight: 90 })
 
     this.load.image('ground', assets.img.groundImage)
     this.load.image('chain', assets.img.chainImage)
@@ -112,14 +89,14 @@ export default class Runner extends Phaser.Scene {
   // Runs once to initialize the game
   create() {
     // Set player and follow camera
-    this.playerCharacter = new PlayerCharacter(this, this.audioRefs, this.selectedCharSprite)
+    this.playerCharacter = new PlayerCharacter(this, this.audioRefs)
     this.cameras.main.startFollow(this.playerCharacter.sprite)
     this.cameras.main.setLerp(1, 0) // Only follow horizontally
     this.cameras.main.originX = 0.5
 
     // Initialize an instance for each manager class
     // Each of these can be simply commented out to disable a module if it isn't needed
-    this.environmentManager = new EnvironmentManager(this, this.playerCharacter.sprite, this.selectedCloudSprite)
+    this.environmentManager = new EnvironmentManager(this, this.playerCharacter.sprite)
     this.groundManager = new GroundManager(this, this.playerCharacter.sprite)
     this.obstacleManager = new ObstacleManager(this, this.playerCharacter.sprite, this.selectedYamlSprite)
     this.stoneManager = new StoneManager(this, this.playerCharacter.sprite, this.selectedYamlSprite)
@@ -165,7 +142,6 @@ export default class Runner extends Phaser.Scene {
     }
 
     if (this.coinManager) {
-      console.log("init")
       this.coinManager.activeCoins.forEach((coin_ch, index) => {
         this.coinChannel[index] = this.physics.add.overlap(this.playerCharacter.sprite, coin_ch, () => this.hitCoin(index))
       })
@@ -292,7 +268,6 @@ export default class Runner extends Phaser.Scene {
   }
 
   hitCoin = (index) => {
-    console.log("hitCoin")
     this.coin++
     if (this.userInterface) {
       this.userInterface.updateCoinText(this.coin)
@@ -306,11 +281,7 @@ export default class Runner extends Phaser.Scene {
   // Destroy scene and create new one with same options
   restartGame = () => {
     game.scene.remove("runner")
-    game.scene.add("runner", Runner, true, {
-      characterSprite: this.selectedCharSprite,
-      obstacleSprite: this.selectedObstacleSprite,
-      cloudSprite: this.selectedCloudSprite,
-    })
+    game.scene.add("runner", Runner, true)
   }
 
   // Destroy scene and create new one with same options
