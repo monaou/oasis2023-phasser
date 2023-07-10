@@ -1,6 +1,5 @@
 import * as utils from "../../utils.js"
 import * as constants from "../../constants.js"
-import { web3Connection } from "../../index.js"
 import fs from 'fs'
 import yaml from 'js-yaml'
 import enemies_map from "../../yaml/ipfs_data.yaml"

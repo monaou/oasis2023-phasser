@@ -12,11 +12,11 @@
   "dependencies": {
     "@walletconnect/web3-provider": "^1.7.8",
     "ethers": "^5.6.2",
-    "filecoin.js": "^0.0.5-alpha",
-    "ipfs-http-client": "^60.0.1",
     "js-yaml": "^4.1.0",
     "parcel": "^2.5.0",
     "phaser": "^3.55.2",
+    "react": "^16.14.0",
+    "react-router-dom": "^5.3.0",
     "toastify-js": "^1.11.2",
     "web3modal": "^1.9.6",
     "webfontloader": "^1.6.28"

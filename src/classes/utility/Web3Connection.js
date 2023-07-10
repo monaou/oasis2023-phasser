@@ -5,8 +5,8 @@ import Web3Modal from 'web3modal'
 import Toastify from 'toastify-js'
 
 export default class Web3Connection {
-  constructor(game) {
-    this.game = game
+  constructor() {
+    // this.game = game
 
     this.web3Modal
     this.provider
@@ -41,8 +41,8 @@ export default class Web3Connection {
       await this.setEthers()
      
       // Update network text on menu scene
-      this.game.scene.scenes[0].updateNetworkText(this.web3Network)
-      this.game.scene.scenes[0].setConnectWalletButtonVisibility(false)
+      // this.game.scene.scenes[0].updateNetworkText(this.web3Network)
+      // this.game.scene.scenes[0].setConnectWalletButtonVisibility(false)
     } catch (e) {
       console.log(e)
       console.log("Couldn't initialize Web3")

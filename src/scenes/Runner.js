@@ -1,7 +1,6 @@
 import Phaser from 'phaser'
 import * as constants from "../constants.js"
 import * as assets from "../classes/utility/Assets.js"
-import { game, web3Connection } from "../index.js"
 import WebFontFile from "../classes/utility/WebFontFile.js"
 import * as utils from "../utils.js"
 
@@ -71,11 +70,6 @@ export default class Runner extends Phaser.Scene {
     this.load.image('buttonRestartDown', assets.ui.buttonRestartDownImage)
     this.load.image('buttonMenuUp', assets.ui.buttonMenuUpImage)
     this.load.image('buttonMenuDown', assets.ui.buttonMenuDownImage)
-
-    // Load images for all registered nft art in local storage
-    utils.getAllArtLinks(web3Connection.web3Address).forEach(a => {
-      this.load.image(a.imageLink, a.imageLink)
-    })
 
     this.load.audio('jump', assets.audio.jumpAudio)
     this.load.audio('lose', assets.audio.loseAudio)
@@ -156,8 +150,7 @@ export default class Runner extends Phaser.Scene {
       })
     }
 
-    if (web3Connection && this.userInterface) {
-      this.userInterface.updateAddressText(web3Connection.web3Address)
+    if (this.userInterface) {
     }
   }
 

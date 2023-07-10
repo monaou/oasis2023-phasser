@@ -1,6 +1,5 @@
 import * as utils from "../../utils.js"
 import * as constants from "../../constants.js"
-import { web3Connection } from "../../index.js"
 
 export default class EnvironmentManager {
   constructor(runnerScene, player) {

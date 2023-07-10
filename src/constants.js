@@ -68,4 +68,9 @@ const INTERFACE = {
   INACTIVE_ALPHA: 0.5,
 }
 
-export { GAME, PLAYER, ENVIRONMENT, GROUND, OBSTACLES, INTERFACE }
+const contractArtifact = require('../../dino-runner-solidity/artifacts/contracts/DinoRunner.sol/DinoRunner.json');
+
+const IDRegistryABI = contractArtifact.abi;  // Replace with your contract's ABI
+const contractAddress = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';  // Replace with your contract's address
+
+export { GAME, PLAYER, ENVIRONMENT, GROUND, OBSTACLES, INTERFACE, IDRegistryABI, contractAddress}
