@@ -7,8 +7,6 @@ import WebFontFile from "../classes/utility/WebFontFile.js"
 import { ethers } from "ethers"
 import Toastify from 'toastify-js'
 import Web3Connection from "../classes/utility/Web3Connection.js";
-const newWeb3Connection = new Web3Connection();
-    newWeb3Connection.initWeb3();
 
 // Main menu and customization scene
 export default class Menu extends Phaser.Scene {
@@ -24,6 +22,8 @@ export default class Menu extends Phaser.Scene {
     this.customizationMenuItems = []
     this.imageContractAddress = ""
     this.imageTokenId = ""
+    this.newWeb3Connection = new Web3Connection()
+    this.Web3Network
   }
 
   // Preload all images used in the menu
@@ -75,16 +75,20 @@ export default class Menu extends Phaser.Scene {
     this.connectWalletButton = new CustomContainerButton(this, 125, topButtonsHeight, 'buttonConnectWalletUp', 'buttonConnectWalletDown', 1)
     this.add.existing(this.connectWalletButton)
     this.connectWalletButton.setInteractive()
-      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
-        newWeb3Connection.initWeb3()
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, async () => {
+        await this.newWeb3Connection.initWeb3()
+        this.Web3Network = await this.newWeb3Connection.web3Provider.getNetwork()
+        this.updateNetworkText(this.Web3Network)
+        this.setMainMenuActive(true)
         this.selectSFX.play()
       })
 
     this.disconnectButton = new CustomContainerButton(this, 125, topButtonsHeight, 'buttonDisconnectUp', 'buttonDisconnectDown', 1)
     this.add.existing(this.disconnectButton)
     this.disconnectButton.setInteractive()
-      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
-        newWeb3Connection.disconnectWallet()
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, async() => {
+        await this.newWeb3Connection.disconnectWallet()
+        this.setMainMenuActive(true)
         this.selectSFX.play()
       })
     this.disconnectButton.setVisible(false)
@@ -100,16 +104,13 @@ export default class Menu extends Phaser.Scene {
     if (setMainMenuActive) {
       this.mainMenuItems.forEach(m => m.setVisible(true))
       this.customizationMenuItems.forEach(c => c.setVisible(false))
-      if(!this.web3Connection){
-        this.web3Connection = new Web3Connection()
-      }
-      if (!!this.web3Connection.web3Network) {
+
+      if (!!this.newWeb3Connection.web3Network) {
         this.setConnectWalletButtonVisibility(false)
       }
     } else {
       this.mainMenuItems.forEach(m => m.setVisible(false))
       this.customizationMenuItems.forEach(c => c.setVisible(true))
-      this.setApplyButtonVisibility(false)
     }
   }
 
@@ -131,7 +132,6 @@ export default class Menu extends Phaser.Scene {
     } else if (networkName === 'matic') {
       networkName = "Polygon Mainnet"
     }
-
     this.networkText.setText(`${baseString} ${networkName} (${chainId})`)
   }
 
@@ -145,12 +145,6 @@ export default class Menu extends Phaser.Scene {
     return !isNaN(tokenId) && !isNaN(parseFloat(tokenId))
   }
 
-  setApplyButtonVisibility = (setVisible) => {
-    this.applyAsPlayerButton.setVisible(setVisible)
-    this.applyAsObstacleButton.setVisible(setVisible)
-    this.applyAsCloudButton.setVisible(setVisible)
-  }
-
   setConnectWalletButtonVisibility = (setVisible) => {
     if (!this.connectWalletButton) { return }
     this.connectWalletButton.setVisible(setVisible)
@@ -158,7 +152,7 @@ export default class Menu extends Phaser.Scene {
     if (!this.disconnectButton) { return }
     if (setVisible) {
       this.disconnectButton.setVisible(false)
-    } else if (!setVisible && !!this.web3Connection.web3Network) {
+    } else if (!setVisible && !!this.Web3Network) {
       // Only show disconnect button if connected and connect button is hidden
       this.disconnectButton.setVisible(true)
     }

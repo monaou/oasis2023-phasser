@@ -32,8 +32,6 @@ const PhaserIndex = () => {
     const game = new Phaser.Game(config);
 
     // // Initialize web3 connection
-    const newWeb3Connection = new Web3Connection(game);
-    newWeb3Connection.initWeb3();
 
     // // Start game
     // game.scene.start('Menu', { web3Connection: newWeb3Connection });

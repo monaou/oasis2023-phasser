@@ -29,17 +29,23 @@ export default class Web3Connection {
         }
       },
     }
-
     this.web3Modal = new Web3Modal({
       network: "mainnet",
       cacheProvider: true,
-      providerOptions,
-    })
-
+      providerOptions: {
+        walletconnect: {
+          package: WalletConnectProvider,
+          options: {
+            rpc: {
+              1: "https://mainnet.infura.io/v3/YOUR_INFURA_ID"
+            }
+          }
+        }
+      }
+    });
     try {
       this.provider = await this.web3Modal.connect()
       await this.setEthers()
-     
       // Update network text on menu scene
       // this.game.scene.scenes[0].updateNetworkText(this.web3Network)
       // this.game.scene.scenes[0].setConnectWalletButtonVisibility(false)
@@ -57,8 +63,8 @@ export default class Web3Connection {
       }).showToast();
     }
 
-    this.provider.on("chainChanged", this.handleNetworkSwitch)
-    this.provider.on("accountsChanged", this.handleAccountSwitch)
+    // this.provider.on("chainChanged", this.handleNetworkSwitch)
+    // this.provider.on("accountsChanged", this.handleAccountSwitch)
   }
 
   // Pop up window suggesting to the user to switch active network
@@ -138,7 +144,7 @@ export default class Web3Connection {
     await this.setEthers()
 
     // Update network text on menu
-    this.game.scene.scenes[0].updateNetworkText(this.web3Network)
+    // this.game.scene.scenes[0].updateNetworkText(this.web3Network)
   }
 
   // Reset ethers settings and update Address related things
@@ -146,7 +152,7 @@ export default class Web3Connection {
     await this.setEthers()
 
     // Update pickers
-    this.game.scene.scenes[0].updatePickers()
+    // this.game.scene.scenes[0].updatePickers()
   }
 
   // Initialize contract of nft, do an owner check and get image data
