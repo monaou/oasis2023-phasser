@@ -8,10 +8,10 @@ import obstacles_map from "../../yaml/ipfs_data.yaml"
 // const ipfs = ipfsClient('http://localhost:5001') // あなたのIPFS APIのエンドポイントに変更
 
 export default class ObstacleManager {
-  constructor(runnerScene, player, selectedYamlSprite) {
+  constructor(runnerScene, player, stageData) {
     this.runnerScene = runnerScene
     this.player = player
-    this.selectedYamlSprite = selectedYamlSprite
+    this.stageData = stageData
     this.activeObstacles = []
 
     this.initObstacles()
@@ -28,9 +28,9 @@ export default class ObstacleManager {
       // const obstacles_map = yaml.load(yaml_data)
       // 障害物を生成
       let index = 0
-      obstacles_map.forEach((obstacle) => {
-        if (obstacle.obj_type === "obstacle") {
-          this.createObstacle(index, obstacle.x, obstacle.y, obstacle.size_x, obstacle.size_y, obstacle.obj_type)
+      this.stageData[4].forEach((obstacle) => {
+        if (obstacle[4] === "obstacle") {
+          this.createObstacle(index, obstacle[0], obstacle[1], obstacle[2], obstacle[3], obstacle[4])
           index++
         }
       })

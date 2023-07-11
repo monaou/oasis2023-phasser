@@ -134,10 +134,12 @@ function EditPage() {
           <select id="type" value={type} onChange={handleTypeChange}>
             <option value="">--Please choose an option--</option>
             <option value="obstacle">Obstacle</option>
-            <option value="enemy">Enemy</option>
+            <option value="enemy">Enemy_a</option>
+            <option value="enemy_b">Enemy_b</option>
+            <option value="enemy_boss">Enemy_Boss</option>
             <option value="goal">Goal</option>
             <option value="coin">Coin</option>
-            <option value="block">Block</option>
+            <option value="stone">Stone</option>
           </select>
         
         <button onClick={handleAdd}>Add</button>

@@ -8,10 +8,10 @@ import enemies_map from "../../yaml/ipfs_data.yaml"
 // const ipfs = ipfsClient('http://localhost:5001') // あなたのIPFS APIのエンドポイントに変更
 
 export default class EnemyManager {
-  constructor(runnerScene, player, selectedYamlSprite) {
+  constructor(runnerScene, player, stageData) {
     this.runnerScene = runnerScene
     this.player = player
-    this.selectedYamlSprite = selectedYamlSprite
+    this.stageData = stageData
     this.activeEnemies = []
 
     this.initEnemies()
@@ -28,9 +28,9 @@ export default class EnemyManager {
       // const enemies_map = yaml.load(yaml_data)
       // 障害物を生成
       let index = 0
-      enemies_map.forEach((enemy) => {
-        if (enemy.obj_type === "enemy") {
-          this.createEnemy(index, enemy.x, enemy.y, enemy.size_x, enemy.size_y, enemy.obj_type)
+      this.stageData[4].forEach((enemy) => {
+        if (enemy[4] === "enemy") {
+          this.createEnemy(index, enemy[0], enemy[1], enemy[2], enemy[3], enemy[4])
           index++
         }
       })

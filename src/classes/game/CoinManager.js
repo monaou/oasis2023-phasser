@@ -8,10 +8,10 @@ import coins_map from "../../yaml/ipfs_data.yaml"
 // const ipfs = ipfsClient('http://localhost:5001') // あなたのIPFS APIのエンドポイントに変更
 
 export default class CoinManager {
-  constructor(runnerScene, player, selectedYamlSprite) {
+  constructor(runnerScene, player, stageData) {
     this.runnerScene = runnerScene
     this.player = player
-    this.selectedYamlSprite = selectedYamlSprite
+    this.stageData = stageData
     this.activeCoins = []
 
     this.initCoins()
@@ -28,9 +28,9 @@ export default class CoinManager {
       // const coins_map = yaml.load(yaml_data)
       // 障害物を生成
       let index = 0
-      coins_map.forEach((coin) => {
-        if (coin.obj_type === "coin") {
-          this.createCoin(index, coin.x, coin.y, coin.size_x, coin.size_y, coin.obj_type)
+      this.stageData[4].forEach((coin) => {
+        if (coin[4] === "coin") {
+          this.createCoin(index, coin[0], coin[1], coin[2], coin[3], coin[4])
           index++
         }
       })

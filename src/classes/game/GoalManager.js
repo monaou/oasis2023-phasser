@@ -8,10 +8,10 @@ import goals_map from "../../yaml/ipfs_data.yaml"
 // const ipfs = ipfsClient('http://localhost:5001') // あなたのIPFS APIのエンドポイントに変更
 
 export default class GoalManager {
-  constructor(runnerScene, player, selectedYamlSprite) {
+  constructor(runnerScene, player, stageData) {
     this.runnerScene = runnerScene
     this.player = player
-    this.selectedYamlSprite = selectedYamlSprite
+    this.stageData = stageData
     this.activeGoals = []
 
     this.initGoals()
@@ -28,9 +28,9 @@ export default class GoalManager {
       // const goals_map = yaml.load(yaml_data)
       // 障害物を生成
       let index = 0
-      goals_map.forEach((goal) => {
-        if (goal.obj_type === "goal") {
-          this.createGoal(index, goal.x, goal.y, goal.size_x, goal.size_y, goal.obj_type)
+      this.stageData[4].forEach((goal) => {
+        if (goal[4] === "goal") {
+          this.createGoal(index, goal[0], goal[1], goal[2], goal[3], goal[4])
           index++
         }
       })

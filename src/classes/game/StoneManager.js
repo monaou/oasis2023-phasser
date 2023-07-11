@@ -8,10 +8,10 @@ import stones_map from "../../yaml/ipfs_data.yaml"
 // const ipfs = ipfsClient('http://localhost:5001') // あなたのIPFS APIのエンドポイントに変更
 
 export default class StoneManager {
-  constructor(runnerScene, player, selectedYamlSprite) {
+  constructor(runnerScene, player, stageData) {
     this.runnerScene = runnerScene
     this.player = player
-    this.selectedYamlSprite = selectedYamlSprite
+    this.stageData = stageData
     this.activeStones = []
 
     this.initStones()
@@ -28,9 +28,9 @@ export default class StoneManager {
       // const stones_map = yaml.load(yaml_data)
       // 障害物を生成
       let index = 0
-      stones_map.forEach((stone) => {
-        if (stone.obj_type === "stone") {
-          this.createStone(index, stone.x, stone.y, stone.size_x, stone.size_y, stone.obj_type)
+      this.stageData[4].forEach((stone) => {
+        if (stone[4] === "stone") {
+          this.createStone(index, stone[0], stone[1], stone[2], stone[3], stone[4])
           index++
         }
       })

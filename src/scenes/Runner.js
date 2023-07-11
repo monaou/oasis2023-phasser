@@ -27,7 +27,7 @@ export default class Runner extends Phaser.Scene {
     this.enemyManager = null
     this.userInterface = null
     this.playerCharacter = null
-    this.selectedYamlSprite = 1
+    this.stageData
 
     this.score = 0
     this.coin = 0
@@ -46,7 +46,9 @@ export default class Runner extends Phaser.Scene {
   // Process selected sprite data from main menu
   init(data) {
     // TODO : conncet db
-    this.selectedYamlSprite = 1
+    if(data.stage_data){
+      this.stageData = data.stage_data
+    }
   }
 
   // Preload images, audio and other assets
@@ -92,11 +94,11 @@ export default class Runner extends Phaser.Scene {
     // Each of these can be simply commented out to disable a module if it isn't needed
     this.environmentManager = new EnvironmentManager(this, this.playerCharacter.sprite)
     this.groundManager = new GroundManager(this, this.playerCharacter.sprite)
-    this.obstacleManager = new ObstacleManager(this, this.playerCharacter.sprite, this.selectedYamlSprite)
-    this.stoneManager = new StoneManager(this, this.playerCharacter.sprite, this.selectedYamlSprite)
-    this.goalManager = new GoalManager(this, this.playerCharacter.sprite, this.selectedYamlSprite)
-    this.coinManager = new CoinManager(this, this.playerCharacter.sprite, this.selectedYamlSprite)
-    this.enemyManager = new EnemyManager(this, this.playerCharacter.sprite, this.selectedYamlSprite)
+    this.obstacleManager = new ObstacleManager(this, this.playerCharacter.sprite, this.stageData)
+    this.stoneManager = new StoneManager(this, this.playerCharacter.sprite, this.stageData)
+    this.goalManager = new GoalManager(this, this.playerCharacter.sprite, this.stageData)
+    this.coinManager = new CoinManager(this, this.playerCharacter.sprite, this.stageData)
+    this.enemyManager = new EnemyManager(this, this.playerCharacter.sprite, this.stageData)
     this.userInterface = new UserInterface(this, this.restartGame, this.returnToMenu, this.reachGoal, this.audioRefs)
 
     // Set up jump input for keyboard and screen tap
@@ -275,8 +277,8 @@ export default class Runner extends Phaser.Scene {
 
   // Destroy scene and create new one with same options
   restartGame = () => {
-    game.scene.remove("runner")
-    game.scene.add("runner", Runner, true)
+    this.scene.remove("runner")
+    this.scene.start("runner", {stage_data: this.stageData})
   }
 
   // Destroy scene and create new one with same options
