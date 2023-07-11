@@ -1,0 +1,3 @@
+[submodule "oasis2023-solidity"]
+	path = oasis2023-solidity
+	url = https://github.com/monaou/oasis2023-solidity
