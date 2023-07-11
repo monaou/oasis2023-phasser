@@ -11,6 +11,7 @@ import StoneManager from "../classes/game/StoneManager.js"
 import GoalManager from "../classes/game/GoalManager.js"
 import CoinManager from "../classes/game/CoinManager.js"
 import EnemyManager from "../classes/game/EnemyManager.js"
+import EnemyBossManager from "../classes/game/EnemyBossManager.js"
 import UserInterface from "../classes/game/UserInterface.js"
 import PlayerCharacter from "../classes/game/PlayerCharacter.js"
 
@@ -38,6 +39,7 @@ export default class Runner extends Phaser.Scene {
     this.objectChannel = []
     this.coinChannel = []
     this.enemyChannel = []
+    this.enemyBossChannel = []
 
     this.isGameOver = false
     this.isGoal = false
@@ -99,6 +101,7 @@ export default class Runner extends Phaser.Scene {
     this.goalManager = new GoalManager(this, this.playerCharacter.sprite, this.stageData)
     this.coinManager = new CoinManager(this, this.playerCharacter.sprite, this.stageData)
     this.enemyManager = new EnemyManager(this, this.playerCharacter.sprite, this.stageData)
+    this.enemyBossManager = new EnemyBossManager(this, this.playerCharacter.sprite, this.stageData)
     this.userInterface = new UserInterface(this, this.restartGame, this.returnToMenu, this.reachGoal, this.audioRefs)
 
     // Set up jump input for keyboard and screen tap
@@ -146,6 +149,15 @@ export default class Runner extends Phaser.Scene {
     if (this.enemyManager) {
       this.enemyManager.activeEnemies.forEach((enemy_ch, index) => {
         this.enemyChannel[index] = this.physics.add.overlap(this.playerCharacter.sprite, enemy_ch, this.hitObstacle)
+        if (this.groundManager) {
+          this.physics.add.collider(enemy_ch, this.groundManager.platforms)
+        }
+      })
+    }
+
+    if (this.enemyBossManager) {
+      this.enemyBossManager.activeEnemies.forEach((enemy_ch, index) => {
+        this.enemyBossChannel[index] = this.physics.add.overlap(this.playerCharacter.sprite, enemy_ch, this.hitObstacle)
         if (this.groundManager) {
           this.physics.add.collider(enemy_ch, this.groundManager.platforms)
         }

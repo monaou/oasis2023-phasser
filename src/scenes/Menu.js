@@ -113,11 +113,13 @@ export default class Menu extends Phaser.Scene {
     this.add.existing(leftButtonCharPicker)
     leftButtonCharPicker.setInteractive()
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
-        this.showStageIndex--
-        if (this.showStageIndex < 0) {
-          this.showStageIndex = 0;
+        if (this.accountStages){
+          this.showStageIndex--
+          if (this.showStageIndex < 0) {
+            this.showStageIndex = 0;
+          }
+          this.updateStageText()
         }
-        this.updateStageText()
         this.switchSFX.play()
       })
 
@@ -125,13 +127,16 @@ export default class Menu extends Phaser.Scene {
     this.add.existing(rightButtonCharPicker)
     rightButtonCharPicker.setInteractive()
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
-        this.showStageIndex++
-        if (this.showStageIndex >= this.accountStages.length) {
-          this.showStageIndex = this.accountStages.length - 1;
+        if (this.accountStages){
+          this.showStageIndex++
+          if (this.showStageIndex >= this.accountStages.length) {
+            this.showStageIndex = this.accountStages.length - 1;
+          }
+          this.updateStageText()
         }
-        this.updateStageText()
         this.switchSFX.play()
       })
+
     const startButton = new CustomContainerButton(this, constants.GAME.CANVAS_WIDTH / 2, constants.GAME.CANVAS_HEIGHT / 2 + 225, 'buttonPlayUp', 'buttonPlayDown', 1)
     this.add.existing(startButton)
     startButton.setInteractive()
