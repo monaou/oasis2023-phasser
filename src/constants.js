@@ -68,8 +68,8 @@ const INTERFACE = {
   INACTIVE_ALPHA: 0.5,
 }
 
-const contractArtifact = require('../dino-runner-solidity/artifacts/contracts/StageContract.sol/StageContract.json');
-const contractAddressJson = require('../dino-runner-solidity//dinoRunnerAddress.json')
+const contractArtifact = require('../oasis2023-solidity/artifacts/contracts/StageContract.sol/StageContract.json');
+const contractAddressJson = require('../oasis2023-solidity//dinoRunnerAddress.json')
 
 const IDRegistryABI = contractArtifact.abi;  // Replace with your contract's ABI
 const contractAddress = contractAddressJson.dinoRunnerAddress;  // Replace with your contract's address
