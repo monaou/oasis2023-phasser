@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import Web3Modal from 'web3modal';
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import {IDRegistryABI, contractAddress} from './constants';
 
 function EditPage() {
   const [name, setName] = useState('');
@@ -15,6 +16,8 @@ function EditPage() {
   const [data, setData] = useState([]);
   const [provider, setProvider] = useState(null);
   const [account, setAccount] = useState('');
+  const [stages, setStages] = useState([]);
+  const [stage_names, setStageNames] = useState([]);
 
   const handleAdd = () => {
     setData(prevData => [...prevData, { x, y, size_x, size_y, type }]);
@@ -25,11 +28,34 @@ function EditPage() {
     setType('');
   };
 
-  const handleSave = () => {
-    // TODO: Add your logic to call the contract function with name and data as arguments
-    console.log('Save', { name, data });
+  const handleSaveAllData = async () => {
+    if (!provider) {
+      console.log("No provider is set");
+      return;
+    }
+    const signer = await provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, IDRegistryABI, signer);
+    const _stageID = Math.floor(Math.random() * 1000000);
+  
+    // Convert the JSON string from textarea to an array of objects
+    const dataStr = JSON.stringify(data);
+    const extraDataArr = JSON.parse(dataStr).map(item => [
+      Number(item.x),
+      Number(item.y),
+      Number(item.size_x),
+      Number(item.size_y),
+      item.type
+    ]);
+  
+    try {
+      const tx = await contract.setAllData(_stageID, account, name, Number(entry), Number(incentive), extraDataArr);
+      await tx.wait();
+      console.log('Data has been saved successfully', { name, data });
+    } catch (err) {
+      console.error("An error occurred while saving the data", err);
+    }
   };
-
+  
   const web3Modal = new Web3Modal({
     network: "mainnet",
     cacheProvider: true,
@@ -60,9 +86,31 @@ function EditPage() {
   // Fetch the wallet address once the provider is available
   useEffect(() => {
     if (provider) {
-      provider.listAccounts().then(setAccount);
+        provider.listAccounts().then(accounts => setAccount(accounts[0]));
     }
-  }, [provider]);
+}, [provider]);
+
+  const showStages = async () => {
+    if (!provider) {
+      console.log("No provider is set");
+      return;
+    }
+    const signer = await provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, IDRegistryABI, signer);
+    console.log(contract)
+    try {
+      const accountStages = await contract.getAccountStages(account);
+      const accountNames = await contract.getAccountNames(account);
+      
+      console.log('Account stages:', accountStages);
+      console.log('Account names:', accountNames);
+      setStages(accountStages);
+      setStageNames(accountNames);
+    } catch (err) {
+      console.error("An error occurred while fetching stages", err);
+    }
+};
+
 
   // Connect to the wallet when the Connect button is clicked
   const handleConnectWallet = () => {
@@ -110,9 +158,21 @@ function EditPage() {
           <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Name" /><br />
           <input type="text" value={entry} onChange={e => setEntry(e.target.value)} placeholder="Entry" /><br />
           <input type="text" value={incentive} onChange={e => setIncentive(e.target.value)} placeholder="Incentive" /><br />
-          <button onClick={handleSave} disabled={!account}>
+          <button onClick={handleSaveAllData} disabled={!account}>
             Save
           </button>
+          <button onClick={showStages} disabled={!account}>
+            Show Stages
+          </button>
+              {/* Display the stages */}
+          <div>
+          <h2>Stages:</h2>
+            {stages.map((stageId, index) => (
+              <p key={stageId.toString()}>
+                Stage ID: {stageId.toString()}, Stage Name: {stage_names[index]}
+              </p>
+            ))}
+          </div>
         </div>
       </div>
 
