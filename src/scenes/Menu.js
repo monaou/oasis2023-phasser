@@ -45,6 +45,8 @@ export default class Menu extends Phaser.Scene {
 
     this.load.image('buttonPlayUp', assets.ui.buttonPlayUpImage)
     this.load.image('buttonPlayDown', assets.ui.buttonPlayDownImage)
+    this.load.image('buttonShowUp', assets.ui.buttonShowUpImage)
+    this.load.image('buttonShowDown', assets.ui.buttonShowDownImage)
 
     this.load.image('buttonConnectWalletUp', assets.ui.buttonConnectWalletUpImage)
     this.load.image('buttonConnectWalletDown', assets.ui.buttonConnectWalletDownImage)
@@ -83,7 +85,8 @@ export default class Menu extends Phaser.Scene {
     this.showNameText.setScrollFactor(0)
     this.showNameText.setDepth(constants.INTERFACE.HUD_RENDER_DEPTH)
 
-    const showButton = new CustomContainerButton(this, constants.GAME.CANVAS_WIDTH / 2, constants.GAME.CANVAS_HEIGHT / 2 , 'buttonPlayUp', 'buttonPlayDown', 1)
+    const showButton = new CustomContainerButton(this, constants.GAME.CANVAS_WIDTH / 2, constants.GAME.CANVAS_HEIGHT / 2 , 'buttonShowUp', 'buttonShowDown', 1)
+    showButton.setScale(0.2)
     this.add.existing(showButton)
     showButton.setInteractive()
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, async() => {

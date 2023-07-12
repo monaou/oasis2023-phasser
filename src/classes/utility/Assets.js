@@ -10,10 +10,21 @@ import backLayerImage from '../../assets/images/environment/backLayer.png'
 import cloudImage from '../../assets/images/environment/cloud.png'
 import randomAll from '../../assets/images/randomAll.png'
 
+import characterImage from '../../assets/images/other/character.png'
+import coinImage from '../../assets/images/other/coin.png'
+import enemyImage from '../../assets/images/other/enemy.png'
+import enemyBossImage from '../../assets/images/other/enemy_boss.png'
+import fireImage from '../../assets/images/other/fire.png'
+import goalImage from '../../assets/images/other/goal.png'
+import stoneImage from '../../assets/images/other/stone.png'
+import obstacleImage from '../../assets/images/other/obstacle.png'
+
 import pixelDinoGreenImage from "../../assets/images/dinos/pixelDinoGreen.png"
 import pixelDinoBlueImage from "../../assets/images/dinos/pixelDinoBlue.png"
 import pixelDinoRedImage from "../../assets/images/dinos/pixelDinoRed.png"
 
+import buttonShowUpImage from "../../assets/images/buttons/show.png"
+import buttonShowDownImage from "../../assets/images/buttons/ok.png"
 import buttonPlayUpImage from "../../assets/images/buttons/btn_play_up.png"
 import buttonPlayDownImage from "../../assets/images/buttons/btn_play_down.png"
 import buttonCustomizeUpImage from "../../assets/images/buttons/btn_customize_up.png"
@@ -74,9 +85,19 @@ const img = {
   pixelDinoGreenImage,
   pixelDinoBlueImage,
   pixelDinoRedImage,
+  characterImage,
+  coinImage,
+  enemyImage,
+  enemyBossImage,
+  fireImage,
+  goalImage,
+  stoneImage,
+  obstacleImage,
 }
 
 const ui = {
+  buttonShowUpImage,
+  buttonShowDownImage,
   buttonPlayUpImage,
   buttonPlayDownImage,
   buttonCustomizeUpImage,

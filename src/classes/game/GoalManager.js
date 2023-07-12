@@ -41,7 +41,7 @@ export default class GoalManager {
 
   // Create new goal at passed x position
   createGoal = (id, posX, posY, sizeX, sizeY, obj_type) => {
-    let goalType = obj_type === "goal" ? "rockTall" : ""//obj_type
+    let goalType = obj_type
 
     // Need this to move collision to ground level
     const texture = this.runnerScene.textures.get(goalType)
@@ -51,7 +51,7 @@ export default class GoalManager {
     // Move spawn trigger to next position
     const goal = this.runnerScene.physics.add.sprite(
       Number(posX) + constants.GAME.START_POS,
-      Number(posY) + constants.GAME.START_HEIGHT + offset / 2,
+      Number(posY) + constants.GAME.START_HEIGHT,
       goalType
     )
     // Adjust size, scale and offsets depending on goal type

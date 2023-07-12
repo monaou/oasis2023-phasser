@@ -68,10 +68,20 @@ const INTERFACE = {
   INACTIVE_ALPHA: 0.5,
 }
 
+const PROJECTILE = {
+  SPAWN_TIME: 150,
+  SPEED: 100,
+}
+
+const ENEMY = {
+  BOSS_SPEED: 50,
+  SPEED: 10,
+}
+
 const contractArtifact = require('../oasis2023-solidity/artifacts/contracts/StageContract.sol/StageContract.json');
 const contractAddressJson = require('../oasis2023-solidity//dinoRunnerAddress.json')
 
 const IDRegistryABI = contractArtifact.abi;  // Replace with your contract's ABI
 const contractAddress = contractAddressJson.dinoRunnerAddress;  // Replace with your contract's address
 
-export { GAME, PLAYER, ENVIRONMENT, GROUND, OBSTACLES, INTERFACE, IDRegistryABI, contractAddress}
+export { GAME, PLAYER, ENVIRONMENT, GROUND, OBSTACLES, INTERFACE, PROJECTILE, ENEMY, IDRegistryABI, contractAddress}

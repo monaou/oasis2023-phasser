@@ -41,7 +41,7 @@ export default class CoinManager {
 
   // Create new coin at passed x position
   createCoin = (id, posX, posY, sizeX, sizeY, obj_type) => {
-    let coinType = obj_type === "coin" ? "rockTall" : ""//obj_type
+    let coinType = obj_type//obj_type
 
     // Need this to move collision to ground level
     const texture = this.runnerScene.textures.get(coinType)
@@ -51,7 +51,7 @@ export default class CoinManager {
     // Move spawn trigger to next position
     const coin = this.runnerScene.physics.add.sprite(
       Number(posX) + constants.GAME.START_POS,
-      Number(posY) + constants.GAME.START_HEIGHT + offset / 2,
+      Number(posY) + constants.GAME.START_HEIGHT,
       coinType
     )
     // Adjust size, scale and offsets depending on coin type

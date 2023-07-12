@@ -29,6 +29,7 @@ export default class ObstacleManager {
       // 障害物を生成
       let index = 0
       this.stageData[4].forEach((obstacle) => {
+        console.log(obstacle)
         if (obstacle[4] === "obstacle") {
           this.createObstacle(index, obstacle[0], obstacle[1], obstacle[2], obstacle[3], obstacle[4])
           index++
@@ -41,7 +42,7 @@ export default class ObstacleManager {
 
   // Create new obstacle at passed x position
   createObstacle = (id, posX, posY, sizeX, sizeY, obj_type) => {
-    let obstacleType = obj_type === "obstacle" ? "rockTall" : ""//obj_type
+    let obstacleType = "rockTall"
 
     // Need this to move collision to ground level
     const texture = this.runnerScene.textures.get(obstacleType)
@@ -51,7 +52,7 @@ export default class ObstacleManager {
     // Move spawn trigger to next position
     const obstacle = this.runnerScene.physics.add.sprite(
       Number(posX) + constants.GAME.START_POS,
-      Number(posY) + constants.GAME.START_HEIGHT + offset / 2,
+      Number(posY) + constants.GAME.START_HEIGHT + offset,
       obstacleType
     )
     // Adjust size, scale and offsets depending on obstacle type

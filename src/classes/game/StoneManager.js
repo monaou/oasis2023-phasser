@@ -41,7 +41,7 @@ export default class StoneManager {
 
   // Create new stone at passed x position
   createStone = (id, posX, posY, sizeX, sizeY, obj_type) => {
-    let stoneType = obj_type === "stone" ? "rockTall" : ""//obj_type
+    let stoneType = obj_type
 
     // Need this to move collision to ground level
     const texture = this.runnerScene.textures.get(stoneType)
@@ -51,7 +51,7 @@ export default class StoneManager {
     // Move spawn trigger to next position
     const stone = this.runnerScene.physics.add.sprite(
       Number(posX) + constants.GAME.START_POS,
-      Number(posY) + constants.GAME.START_HEIGHT + offset / 2,
+      Number(posY) + constants.GAME.START_HEIGHT,
       stoneType
     )
     // Adjust size, scale and offsets depending on stone type

@@ -40,6 +40,7 @@ export default class Runner extends Phaser.Scene {
     this.coinChannel = []
     this.enemyChannel = []
     this.enemyBossChannel = []
+    this.enemyBossChannelProj = []
 
     this.isGameOver = false
     this.isGoal = false
@@ -60,6 +61,16 @@ export default class Runner extends Phaser.Scene {
     this.load.image('ground', assets.img.groundImage)
     this.load.image('chain', assets.img.chainImage)
     this.load.image('block', assets.img.blockImage)
+
+    this.load.image('character', assets.img.characterImage)
+    this.load.image('coin', assets.img.coinImage)
+    this.load.image('enemy_boss', assets.img.enemyBossImage)
+    this.load.image('enemy', assets.img.enemyImage)
+    this.load.image('fire', assets.img.fireImage)
+    this.load.image('goal', assets.img.goalImage)
+    this.load.image('stone', assets.img.stoneImage)
+    this.load.image('obstacle', assets.img.obstacleImage)
+
 
     this.load.image('rockTall', assets.img.rockTallImage)
     this.load.image('rockDuo', assets.img.rockDuoImage)
@@ -170,6 +181,9 @@ export default class Runner extends Phaser.Scene {
 
   // Called on each frame to check for inputs, update score and call update on all managers
   update() {
+    if (this.isGoal) {
+      this.userInterface.updateResultText()
+    }
     if (this.isGameOver || this.isGoal) { return }
     this.updateScore()
 
@@ -216,12 +230,27 @@ export default class Runner extends Phaser.Scene {
           this.physics.add.overlap(this.playerCharacter.chain, enemy_ch, () => this.enemyManager.destroyEnemy(index));
         });
       }
+      if (this.enemyBossManager) {
+        this.enemyBossManager.activeEnemies.forEach((enemy_ch, index) => {
+          this.physics.add.overlap(this.playerCharacter.chain, enemy_ch, () => this.enemyBossManager.destroyEnemy(index));
+        });
+      }
     }
-
 
     if (this.enemyManager && this.playerCharacter && this.playerCharacter.block) {
       this.enemyManager.activeEnemies.forEach((enemy_ch, index) => {
         this.enemyChannel[index] = this.physics.add.collider(this.playerCharacter.block, enemy_ch);
+      });
+    }
+
+    if (this.enemyBossManager && this.playerCharacter && this.playerCharacter.block) {
+      this.enemyBossManager.activeEnemies.forEach((enemy_ch, index) => {
+        this.enemyBossChannel[index] = this.physics.add.collider(this.playerCharacter.block, enemy_ch);
+      });
+
+      this.enemyBossManager.projectiles.forEach((proj, index) => {
+        this.enemyBossChannelProj[index] = this.physics.add.collider(this.playerCharacter.block, proj);
+        this.physics.add.overlap(this.playerCharacter.sprite, proj, this.hitObstacle);
       });
     }
 
@@ -235,6 +264,10 @@ export default class Runner extends Phaser.Scene {
 
     if (this.enemyManager) {
       this.enemyManager.update()
+    }
+
+    if (this.enemyBossManager) {
+      this.enemyBossManager.update()
     }
   }
 
@@ -254,7 +287,7 @@ export default class Runner extends Phaser.Scene {
     this.playerCharacter.die()
 
     if (this.userInterface) {
-      this.userInterface.restartButton.setVisible(true)
+      // this.userInterface.restartButton.setVisible(true)
       this.userInterface.menuButton.setVisible(true)
     } else {
       // Automatically return to menu if interface doesn't exist
@@ -268,7 +301,7 @@ export default class Runner extends Phaser.Scene {
     // this.audioRefs.loseSfx.play()
 
     if (this.userInterface) {
-      this.userInterface.resultButton.setVisible(true)
+      // this.userInterface.resultButton.setVisible(true)
       this.userInterface.menuButton.setVisible(true)
     } else {
       // Automatically return to menu if interface doesn't exist

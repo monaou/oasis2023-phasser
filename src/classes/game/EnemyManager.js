@@ -41,7 +41,7 @@ export default class EnemyManager {
 
   // Create new enemy at passed x position
   createEnemy = (id, posX, posY, sizeX, sizeY, obj_type) => {
-    let enemyType = "rockTall"//= obj_type === "enemy" //obj_type
+    let enemyType = obj_type
 
     // Need this to move collision to ground level
     const texture = this.runnerScene.textures.get(enemyType)
@@ -51,7 +51,7 @@ export default class EnemyManager {
     // Move spawn trigger to next position
     const enemy = this.runnerScene.physics.add.sprite(
       Number(posX) + constants.GAME.START_POS,
-      Number(posY) + constants.GAME.START_HEIGHT + offset / 2,
+      Number(posY) + constants.GAME.START_HEIGHT,
       enemyType
     )
     // Adjust size, scale and offsets depending on enemy type
