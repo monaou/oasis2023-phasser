@@ -30,6 +30,8 @@ export default class Menu extends Phaser.Scene {
 
     this.accountStages
     this.accountNames
+    this.accountAddress
+    this.account
     this.showStageIndex
     this.showStageText
     this.showNameText
@@ -98,16 +100,20 @@ export default class Menu extends Phaser.Scene {
         const contract = new ethers.Contract(contractAddress, IDRegistryABI, signer);
         let account;
         await this.newWeb3Connection.web3Provider.listAccounts().then(accounts => {
-          account = accounts[0];
+          this.account = accounts[0];
         });
         try {
-          this.accountStages = await contract.getAccountStages(account);
-          this.accountNames = await contract.getAccountNames(account);
-          this.showStageIndex = 0
+          this.accountStages = await contract.getStageIds();
+          this.accountNames = await contract.getStageNames();
+          this.accountAddress = await contract.getStageAddress();
+          
         } catch (err) {
           console.error("An error occurred while fetching stages", err);
         }
-        this.updateStageText()
+        if (this.accountStages){
+          this.showStageIndex = 0
+          this.updateStageText()
+        }
         this.selectSFX.play()
       })
 

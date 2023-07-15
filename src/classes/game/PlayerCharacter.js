@@ -155,7 +155,7 @@ export default class PlayerCharacter {
         blockPositionX,
         this.sprite.y,
         'block'
-      ).setScale(this.sprite.scaleX / 7, this.sprite.scaleY / 7);
+      ).setScale(this.sprite.scaleX / 20, this.sprite.scaleY / 7);
       block.body.setAllowGravity(false);
       block.body.setImmovable(true);;
       this.block = block;
