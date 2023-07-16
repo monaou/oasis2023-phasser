@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import Web3Modal from 'web3modal';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import {IDRegistryABI, contractAddress} from './constants';
+import { JsonRpcProvider, devnetConnection } from '@mysten/sui.js';
 
 function EditPage() {
   const [name, setName] = useState('');
@@ -33,6 +34,9 @@ function EditPage() {
       console.log("No provider is set");
       return;
     }
+    // connect to Devnet
+    const provider_test = new JsonRpcProvider(devnetConnection);
+    console.log(provider_test)
     const signer = await provider.getSigner();
     const contract = new ethers.Contract(contractAddress, IDRegistryABI, signer);
     const _stageID = Math.floor(Math.random() * 1000000);

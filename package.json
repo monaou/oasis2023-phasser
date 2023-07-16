@@ -10,6 +10,7 @@
   "author": "",
   "license": "MIT License",
   "dependencies": {
+    "@mysten/sui.js": "^0.37.1",
     "@walletconnect/web3-provider": "^1.7.8",
     "ethers": "^5.6.2",
     "js-yaml": "^4.1.0",
