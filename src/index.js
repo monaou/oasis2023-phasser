@@ -6,6 +6,7 @@ import './styles.css';
 import App from './App';
 import PhaserGame from './phaser_index';
 import Edit from './edit';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 ReactDOM.render(
   <React.StrictMode>
