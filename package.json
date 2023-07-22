@@ -4,8 +4,8 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx hardhat run --network hmvtest scripts/deploy.js",
-    "before": "npm install -g npm@latest && npm cache clean --force && cd oasis2023-solidity && npm install --no-audit",
+    "dev": "parcel src/index.html --no-cache",
+    "before": "cd oasis2023-solidity && npm install --no-audit && ./node_modules/.bin/hardhat run --network hmvtest scripts/deploy.js && cd .. && npm install --no-audit",
     "build": "parcel build src/index.html"
   },
   "author": "",
