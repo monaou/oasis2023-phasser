@@ -9,7 +9,7 @@ import Toastify from 'toastify-js'
 import Web3Connection from "../classes/utility/Web3Connection.js";
 import Web3Modal from 'web3modal';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import {IDRegistryABI, contractAddress} from '../constants.js';
+import { IDRegistryABI, contractAddress } from '../constants.js';
 
 // Main menu and customization scene
 export default class Menu extends Phaser.Scene {
@@ -87,11 +87,11 @@ export default class Menu extends Phaser.Scene {
     this.showNameText.setScrollFactor(0)
     this.showNameText.setDepth(constants.INTERFACE.HUD_RENDER_DEPTH)
 
-    const showButton = new CustomContainerButton(this, constants.GAME.CANVAS_WIDTH / 2, constants.GAME.CANVAS_HEIGHT / 2 , 'buttonShowUp', 'buttonShowDown', 1)
+    const showButton = new CustomContainerButton(this, constants.GAME.CANVAS_WIDTH / 2, constants.GAME.CANVAS_HEIGHT / 2, 'buttonShowUp', 'buttonShowDown', 1)
     showButton.setScale(0.2)
     this.add.existing(showButton)
     showButton.setInteractive()
-      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, async() => {
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, async () => {
         if (!this.newWeb3Connection.web3Provider) {
           console.log("No provider is set");
           return;
@@ -102,15 +102,20 @@ export default class Menu extends Phaser.Scene {
         await this.newWeb3Connection.web3Provider.listAccounts().then(accounts => {
           this.account = accounts[0];
         });
+        console.log(contract)
+        console.log(this.account)
+
         try {
           this.accountStages = await contract.getStageIds();
+          console.log(this.accountStages)
           this.accountNames = await contract.getStageNames();
+          console.log(this.accountNames)
           this.accountAddress = await contract.getStageAddress();
-          
+
         } catch (err) {
           console.error("An error occurred while fetching stages", err);
         }
-        if (this.accountStages){
+        if (this.accountStages) {
           this.showStageIndex = 0
           this.updateStageText()
         }
@@ -122,7 +127,7 @@ export default class Menu extends Phaser.Scene {
     this.add.existing(leftButtonCharPicker)
     leftButtonCharPicker.setInteractive()
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
-        if (this.accountStages){
+        if (this.accountStages) {
           this.showStageIndex--
           if (this.showStageIndex < 0) {
             this.showStageIndex = 0;
@@ -136,7 +141,7 @@ export default class Menu extends Phaser.Scene {
     this.add.existing(rightButtonCharPicker)
     rightButtonCharPicker.setInteractive()
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
-        if (this.accountStages){
+        if (this.accountStages) {
           this.showStageIndex++
           if (this.showStageIndex >= this.accountStages.length) {
             this.showStageIndex = this.accountStages.length - 1;
@@ -159,11 +164,11 @@ export default class Menu extends Phaser.Scene {
 
         try {
           const stage_data = await contract.get(this.accountStages[this.showStageIndex].toString())
-          this.scene.start('runner', {stage_data: stage_data})
+          this.scene.start('runner', { stage_data: stage_data })
         } catch (err) {
           console.error("An error occurred while fetching stages", err);
         }
-        
+
         this.selectSFX.play()
       })
 
@@ -182,7 +187,7 @@ export default class Menu extends Phaser.Scene {
     this.disconnectButton = new CustomContainerButton(this, 125, topButtonsHeight, 'buttonDisconnectUp', 'buttonDisconnectDown', 1)
     this.add.existing(this.disconnectButton)
     this.disconnectButton.setInteractive()
-      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, async() => {
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, async () => {
         await this.newWeb3Connection.disconnectWallet()
         this.setMainMenuActive(true)
         this.selectSFX.play()
