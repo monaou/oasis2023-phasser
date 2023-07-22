@@ -4,8 +4,8 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "parcel src/index.html --no-cache",
-    "before": "npm install --no-audit && cd oasis2023-solidity && npm install --no-audit && npx hardhat run --network hmvtest scripts/deploy.js && cd ..",
+    "dev": " npx hardhat run --network hmvtest scripts/deploy.js && cd .. && parcel src/index.html --no-cache",
+    "before": "npm install --no-audit && cd oasis2023-solidity && npm install --no-audit",
     "build": "parcel build src/index.html"
   },
   "author": "",
