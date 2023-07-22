@@ -17,7 +17,7 @@ export default class Web3Connection {
   }
 
   // Init web3 modal
-  initWeb3 = async() => {
+  initWeb3 = async () => {
     const providerOptions = {
       walletconnect: {
         package: WalletConnectProvider,
@@ -69,25 +69,25 @@ export default class Web3Connection {
 
   // Pop up window suggesting to the user to switch active network
   // Network can be "homeverse", "ethereum" or "polygon"
-  suggestNetworkSwitch = async(network) => {
-    if(!window || !window.ethereum) { return }
+  suggestNetworkSwitch = async (network) => {
+    if (!window || !window.ethereum) { return }
 
-    try{
+    try {
       // For eth mainnet we use "wallet_switchEthereumChain" instead of "wallet_addEthereumChain"
-      switch(network) {
+      switch (network) {
         case "homeverse":
+          let chainId = parseInt("20197").toString(16); // Convert to hexadecimal
           window.ethereum.request({
             method: "wallet_addEthereumChain",
             params: [{
-                chainId: "0x4A43",
-                rpcUrls: ["https://rpc.mainnet.oasys.homeverse.games/"],
-                chainName: "Homeverse",
-                nativeCurrency: {
-                    name: "OAS",
-                    symbol: "OAS",
-                    decimals: 18
-                },
-                blockExplorerUrls: ["https://explorer.oasys.homeverse.games/"]
+              chainId: "0x" + chainId,
+              rpcUrls: ["https://rpc.sandverse.oasys.games"],
+              chainName: "Sandverse",
+              nativeCurrency: {
+                name: "OAS",
+                symbol: "OAS",
+                decimals: 18
+              },
             }]
           })
           break
@@ -107,15 +107,15 @@ export default class Web3Connection {
               rpcUrls: ["https://polygon-rpc.com"],
               chainName: "POLYGON",
               nativeCurrency: {
-                  name: "Matic",
-                  symbol: "MATIC",
-                  decimals: 18
+                name: "Matic",
+                symbol: "MATIC",
+                decimals: 18
               },
               blockExplorerUrls: ["https://polygonscan.com/"]
             }]
           })
-          break 
-      }  
+          break
+      }
     } catch (e) {
       Toastify({
         text: "Could not switch network. You might already be connected to this network or your browser only support manual network switching.",
@@ -132,7 +132,7 @@ export default class Web3Connection {
   }
 
   // Initialize web3 settings through ethers
-  setEthers = async() => {
+  setEthers = async () => {
     this.web3Provider = new ethers.providers.Web3Provider(this.provider)
     this.web3Signer = this.web3Provider.getSigner()
     this.web3Address = await this.web3Signer.getAddress()
@@ -140,7 +140,7 @@ export default class Web3Connection {
   }
 
   // Reset ethers settings and show new network in ui
-  handleNetworkSwitch = async() => {
+  handleNetworkSwitch = async () => {
     await this.setEthers()
 
     // Update network text on menu
@@ -148,7 +148,7 @@ export default class Web3Connection {
   }
 
   // Reset ethers settings and update Address related things
-  handleAccountSwitch = async() => {
+  handleAccountSwitch = async () => {
     await this.setEthers()
 
     // Update pickers
@@ -156,10 +156,10 @@ export default class Web3Connection {
   }
 
   // Initialize contract of nft, do an owner check and get image data
-  fetchTokenImage = async(address, tokenId) => {
+  fetchTokenImage = async (address, tokenId) => {
     try {
       this.nftContract = new ethers.Contract(address, erc721Abi, this.web3Provider)
-    } catch(e) {
+    } catch (e) {
       console.log(e)
       console.log("Couldn't initialize Web3")
       Toastify({
@@ -178,7 +178,7 @@ export default class Web3Connection {
     let nftOwnerAddress
     try {
       nftOwnerAddress = await this.nftContract.ownerOf(ethers.BigNumber.from(tokenId))
-    } catch(e) {
+    } catch (e) {
       Toastify({
         text: "Couldn't get token owner! Are you sure you are connected to the correct network and the token is a valid NFT?",
         duration: 5000,
@@ -195,7 +195,7 @@ export default class Web3Connection {
     // Have user sign a message to verify they own the nft
     const message = 'Verify NFT Ownership to fetch image'
     let sig
-    try{
+    try {
       sig = await this.web3Signer.signMessage(message)
 
       // Show loading toast
@@ -207,8 +207,8 @@ export default class Web3Connection {
         style: {
           background: "linear-gradient(to right, #05ff00, #097949)",
         },
-    }).showToast()
-    } catch(e) {
+      }).showToast()
+    } catch (e) {
       Toastify({
         text: "User denied message signature",
         duration: 3000,
@@ -222,7 +222,7 @@ export default class Web3Connection {
       throw 'User denied message signature'
     }
 
-    if(nftOwnerAddress !== ethers.utils.verifyMessage(message, sig)) {
+    if (nftOwnerAddress !== ethers.utils.verifyMessage(message, sig)) {
       Toastify({
         text: "You are not the owner of this NFT. Please select an NFT you own in this wallet.",
         duration: 3000,
@@ -239,7 +239,7 @@ export default class Web3Connection {
     let tokenUri
     try {
       tokenUri = await this.nftContract.tokenURI(ethers.BigNumber.from(tokenId))
-    } catch(e) {
+    } catch (e) {
       console.log(e)
       Toastify({
         text: "Couldn't get tokenURI! Are you sure you are connected to the correct network and the token is a valid NFT?",
@@ -256,7 +256,7 @@ export default class Web3Connection {
     let response
     try {
       response = await fetch(tokenUri)
-    } catch(e) {
+    } catch (e) {
       console.log(e)
       Toastify({
         text: "Couldn't fetch token metadata.",

@@ -57,6 +57,28 @@ function EditPage() {
     }
   };
 
+  const switchToSandverse = async () => {
+    if (!window.ethereum) {
+      console.log("No Ethereum provider was found");
+      return;
+    }
+    let chainId = parseInt("20197").toString(16); // Convert to hexadecimal
+    window.ethereum.request({
+      method: 'wallet_addEthereumChain',
+      params: [{
+        chainId: "0x" + chainId,
+        chainName: 'Sandverse',
+        nativeCurrency: {
+          name: 'OAS',
+          symbol: 'OAS',
+          decimals: 18,
+        },
+        rpcUrls: ['https://rpc.sandverse.oasys.games'],
+      }],
+    }).then(() => console.log('Switched to Sandverse'))
+      .catch((error) => console.error(error));
+  };
+
   const web3Modal = new Web3Modal({
     network: "mainnet",
     cacheProvider: true,
@@ -130,6 +152,9 @@ function EditPage() {
               <>
                 <Button variant="danger" onClick={disconnectWallet}>
                   Disconnect Wallet
+                </Button>
+                <Button variant="warning" onClick={switchToSandverse}>
+                  Switch to Sandverse
                 </Button>
                 <p>Connected to: {account}</p>
               </>

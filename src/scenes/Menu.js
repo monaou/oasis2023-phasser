@@ -178,6 +178,7 @@ export default class Menu extends Phaser.Scene {
     this.connectWalletButton.setInteractive()
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, async () => {
         await this.newWeb3Connection.initWeb3()
+        await this.newWeb3Connection.suggestNetworkSwitch("homeverse");
         this.Web3Network = await this.newWeb3Connection.web3Provider.getNetwork()
         this.updateNetworkText(this.Web3Network)
         this.setMainMenuActive(true)
