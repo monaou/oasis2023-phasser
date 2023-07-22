@@ -4,9 +4,8 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prebuild": "git submodule update --init --recursive && cd oasis2023-solidity/ && npm install && npx hardhat run --network hmvtest scripts/deploy.js && cd ..",
     "dev": "parcel src/index.html --no-cache",
-    "build": "parcel build src/index.html"
+    "build": "git submodule update --init --recursive && cd oasis2023-solidity/ && npm install && npx hardhat run --network hmvtest scripts/deploy.js && cd .. && parcel build src/index.html"
   },
   "author": "",
   "license": "MIT License",
