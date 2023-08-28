@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ethers } from 'ethers';
 import EditPage from './components/edit'
 import PhaserIndex from './components/phaser_index'
+import CreateStage from './components/CreateStage'
 import Home from './components/Home'
 
 import { connectMetaMask, disconnectMetaMask } from "./components/wallet";
@@ -69,7 +70,7 @@ function App() {
           <Link className="nav-button" to="/">Home</Link>
           <Link className="nav-button" to="/play">Play</Link>
           <Link className="nav-button" to="/stage-reward">Play Rewards</Link>
-          <Link className="nav-button" to="/create">Create</Link>
+          <Link className="nav-button" to="/create-stage">Create Stage</Link>
           <Link className="nav-button" to="/creater-reward">Creater Rewards</Link>
         </nav>
         {/* address={address} provider={provider} */}
@@ -80,8 +81,8 @@ function App() {
           <Route path="/play">
             <PhaserIndex />
           </Route>
-          <Route path="/create">
-            <EditPage />
+          <Route path="/create-stage">
+            <CreateStage />
           </Route>
         </Switch>
       </div>
