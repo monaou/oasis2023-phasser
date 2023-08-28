@@ -34,26 +34,9 @@ select {
   padding: 5px;
 }
 
-button {
-  background: #f0e68c;
-  border: 1px solid #333;
-  color: #333;
-  cursor: pointer;
-  padding: 5px;
-  margin: 5px 0;
-}
-
-button:disabled {
-  color: #bbb;
-}
-
-button:active {
-  background: #333;
-  color: #f0e68c;
-}
 
 h1,
 h2 {
   text-align: center;
-  color: #f0e68c;
+  color: #131210;
 }

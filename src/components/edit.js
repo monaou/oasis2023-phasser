@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import Web3Modal from 'web3modal';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { IDRegistryABI, contractAddress } from './constants';
+import { IDRegistryABI, contractAddress } from '../constants';
 import { Button, Form, Container, Row, Col, Card, ListGroup, InputGroup, FormControl, FormLabel } from 'react-bootstrap';
 
 function EditPage() {

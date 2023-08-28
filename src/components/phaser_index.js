@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import Phaser from 'phaser';
-import Menu from "./scenes/Menu.js";
-import Runner from "./scenes/Runner.js";
-import Web3Connection from "./classes/utility/Web3Connection.js";
-import * as constants from "./constants.js";
+import Menu from "../scenes/Menu.js";
+import Runner from "../scenes/Runner.js";
+import Web3Connection from "../classes/utility/Web3Connection.js";
+import * as constants from "../constants.js";
 
 const PhaserIndex = () => {
   useEffect(() => {
@@ -38,7 +38,7 @@ const PhaserIndex = () => {
   }, []);
 
   return (
-      <div id="phaser-game"></div>
+    <div id="phaser-game"></div>
   );
 };
 
