@@ -22,7 +22,7 @@ function Home() {
 
                 <div className="feature-card">
                     <Link to="/labeling-reward" className="feature-title-link">
-                        <h2>Play Rewards</h2>
+                        <h2>Player Rewards</h2>
                     </Link>
                     <p></p>
                 </div>
