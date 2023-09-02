@@ -15,10 +15,9 @@ function CreaterReward({ address, provider }) {
                     <thead>
                         <tr>
                             <th>name</th>
-                            <th>description</th>
-                            <th>reward</th>
-                            <th>created_time</th>
-                            <th>end_time</th>
+                            <th>owner</th>
+                            <th>entryFee</th>
+                            <th>incentive</th>
                             <th>link</th>
                         </tr>
                     </thead>
@@ -26,10 +25,9 @@ function CreaterReward({ address, provider }) {
                         {tasks.map(task => (
                             <tr key={task.id}>
                                 <td>{task.name}</td>
-                                <td>{task.description}</td>
-                                <td>{task.reward}</td>
-                                <td>{task.created_time}</td>
-                                <td>{task.end_time}</td>
+                                <td>{task.owner}</td>
+                                <td>{task.entryFee}</td>
+                                <td>{task.incentive}</td>
                                 <td>
                                     <ClaimStageReward tokeId={task.id} />
                                 </td>

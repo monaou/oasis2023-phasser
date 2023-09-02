@@ -38,7 +38,6 @@ contract RewardPool {
         ExtraDataLib.ExtraData[] memory _extraDataArr
     ) external {
         uint256 tokenId = stageContract.mintStage(
-            admin,
             msg.sender,
             _name,
             _entryFee,

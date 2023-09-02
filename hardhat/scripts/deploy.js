@@ -9,7 +9,7 @@ async function main() {
 
   const RewardPool = await hre.ethers.getContractFactory("RewardPool");
   const adminAddress = process.env.OWNER_ADDRESS;
-  const usdcAddress = "0x346396166D64feeFB2FE5C2442427b546F431b91";  // <-- OAS sandverse
+  const usdcAddress = "0xB0514D3292720365d178af5b46952b04cFF06345";  // <-- OAS sandverse
 
   const rewardPoolInstance = await RewardPool.deploy(nftInstance.address, adminAddress, usdcAddress);
   await rewardPoolInstance.deployed();

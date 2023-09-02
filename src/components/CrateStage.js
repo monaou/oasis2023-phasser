@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import { rewardContract } from '../shared_json/RewardPool.json';
+import rewardContract from '../shared_json/RewardPool.json';
+import { ERC20_ABI } from '../shared_json/Erc20_abi';
+import currency from '../shared_json/currency.json';
 import { Button, Form, Container, Row, Col, Card, FormControl, FormLabel } from 'react-bootstrap';
+
+const OAS_ADDRESS = currency.sandverse
 
 function CrateStage({ address, provider }) {
   const [name, setName] = useState('');
@@ -35,8 +39,18 @@ function CrateStage({ address, provider }) {
       item.type
     ]);
 
+    const incentiveValue = (Number(incentive) * 1000000).toString();
+    const oasContract = new ethers.Contract(OAS_ADDRESS, ERC20_ABI, signer);  // NOTE: ERC20トークンのABIにはapproveメソッドが含まれている必要があります
     try {
-      const tx = await contract.setAllData(name, Number(entry), Number(incentive), extraDataArr);
+      const tx = await oasContract.approve(rewardContract.address, ethers.utils.parseUnits(incentiveValue, 6));  // USDCは小数点以下6桁なので、6を指定
+      await tx.wait();
+      console.log("Allowance set successfully");
+    } catch (err) {
+      console.error("An error occurred while setting the allowance", err);
+    }
+
+    try {
+      const tx = await contract.stakeReward(name, Number(entry * 1000000), Number(incentive * 1000000), extraDataArr);
       await tx.wait();
       console.log('Data has been saved successfully', { name, data });
     } catch (err) {
@@ -111,22 +125,19 @@ function CrateStage({ address, provider }) {
           </Row>
 
         </Form>
-        <Button onClick={handleSaveAllData} disabled={!account}>
+        <Button onClick={handleSaveAllData} disabled={!address}>
           Save
         </Button>
         <Col sm={6}>
           <Card style={{ width: '18rem' }}>
             <Card.Body>
-              <Card.Text>
-                <pre>{JSON.stringify(data, null, 2)}</pre>
-              </Card.Text>
+              <pre>{JSON.stringify(data, null, 2)}</pre>
             </Card.Body>
           </Card>
         </Col>
       </Row>
     </Container >
   );
-
 }
 
 export default CrateStage;

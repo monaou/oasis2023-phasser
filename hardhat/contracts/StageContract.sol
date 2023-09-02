@@ -8,7 +8,6 @@ contract StageContract is ERC721Enumerable {
     using ExtraDataLib for ExtraDataLib.ExtraData;
 
     struct Data {
-        address addr;
         string name;
         uint entryFee;
         uint incentive;
@@ -21,7 +20,6 @@ contract StageContract is ERC721Enumerable {
     constructor() ERC721("DinoMarkerStage", "DMS") {}
 
     function mintStage(
-        address to,
         address _addr,
         string memory _name,
         uint _entryFee,
@@ -29,10 +27,9 @@ contract StageContract is ERC721Enumerable {
         ExtraDataLib.ExtraData[] memory _extraDataArr
     ) public returns (uint) {
         _currentTokenId++;
-        _mint(to, _currentTokenId);
+        _mint(_addr, _currentTokenId);
 
         Data storage data = dataMap[_currentTokenId];
-        data.addr = _addr;
         data.name = _name;
         data.entryFee = _entryFee;
         data.incentive = _incentive;
@@ -83,7 +80,7 @@ contract StageContract is ERC721Enumerable {
     {
         Data storage data = dataMap[_stageID];
         return (
-            data.addr,
+            ownerOf(_stageID),
             data.name,
             data.entryFee,
             data.incentive,

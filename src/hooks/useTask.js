@@ -52,26 +52,14 @@ export const useTasks = (address, mode_arg) => {
                 const fetchedNFTs = [];
                 for (let tokenId of tokenIds) {
                     const tokenURI = await contract.getStageDetails(tokenId);
-                    // tokenURIからBase64エンコードされたJSONを取得してデコード
-                    const jsonBase64 = tokenURI.split(",")[1];
-                    const jsonString = atob(jsonBase64);
-                    const tokenData = JSON.parse(jsonString);
-
-                    const classArray = tokenData.class.split(","); // classStringを配列に変換
 
                     fetchedNFTs.push({
                         id: tokenId.toNumber(),
-                        name: tokenData.name,
-                        description: tokenData.description,
-                        image: tokenData.image, // 画像のURIも追加
-                        reward: tokenData.reward,
-                        owner: tokenData.owner,
-                        created_time: tokenData.created_time,
-                        end_time: tokenData.end_time,
-                        class: classArray, // 変換されたclassの配列
-                        ownerAddress: tokenData.owner, // ownerAddressの情報を追加
-                        label: tokenData.label, // labelの情報を追加
-                        votingEnded: tokenData.votingEnded === "true" // votingEndedの情報を追加。boolean型に変換
+                        owner: tokenURI[0],
+                        name: tokenURI[1],
+                        entryFee: (tokenURI[2] / 1000000).toString(), // 画像のURIも追加
+                        incentive: (tokenURI[3] / 1000000).toString(),
+                        extraDataArr: tokenURI[4],
                     });
                 }
 

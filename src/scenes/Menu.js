@@ -1,15 +1,11 @@
 import Phaser from 'phaser'
 import * as constants from "../constants.js"
 import CustomContainerButton from "../classes/interfaceElements/CustomContainerButton.js"
-import Picker from "../classes/interfaceElements/Picker.js"
 import * as assets from "../classes/utility/Assets.js"
 import WebFontFile from "../classes/utility/WebFontFile.js"
 import { ethers } from "ethers"
-import Toastify from 'toastify-js'
 import Web3Connection from "../classes/utility/Web3Connection.js";
-import Web3Modal from 'web3modal';
-import WalletConnectProvider from '@walletconnect/web3-provider';
-import { IDRegistryABI, contractAddress } from '../constants.js';
+import rewardPool from '../shared_json/RewardPool.json';
 
 // Main menu and customization scene
 export default class Menu extends Phaser.Scene {
@@ -160,7 +156,7 @@ export default class Menu extends Phaser.Scene {
           return;
         }
         const signer = await this.newWeb3Connection.web3Provider.getSigner();
-        const contract = new ethers.Contract(contractAddress, IDRegistryABI, signer);
+        const contract = new ethers.Contract(rewardPool.address, rewardPool.abi, signer);
 
         try {
           const stage_data = await contract.get(this.accountStages[this.showStageIndex].toString())

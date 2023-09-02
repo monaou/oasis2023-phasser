@@ -7,7 +7,7 @@ import Runner from "../scenes/Runner.js";
 import Web3Connection from "../classes/utility/Web3Connection.js";
 import * as constants from "../constants.js";
 
-const PhaserIndex = () => {
+const PlayerScene = ({ tokenId }) => {
   useEffect(() => {
     var config = {
       type: Phaser.AUTO,
@@ -42,4 +42,4 @@ const PhaserIndex = () => {
   );
 };
 
-export default PhaserIndex;
+export default PlayerScene;

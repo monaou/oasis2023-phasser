@@ -1,10 +1,10 @@
 import React from 'react';
-import ClaimReward from '../hooks/ClaimClearReward';
+import PlayerScene from '../components/PlayerScene';
 import { useTasks } from "../hooks/useTask";
 import { mode } from "./../constants/modeConstants";
 
 function StageSelect({ address, provider }) {
-  const [tasks, loading] = useTasks(address, mode.REWARD);
+  const [tasks, loading] = useTasks(address, mode.ALL);
 
   return (
     <div className="nft-list">
@@ -15,11 +15,9 @@ function StageSelect({ address, provider }) {
           <thead>
             <tr>
               <th>name</th>
-              <th>description</th>
-              <th>reward</th>
               <th>owner</th>
-              <th>created_time</th>
-              <th>end_time</th>
+              <th>entryFee</th>
+              <th>incentive</th>
               <th>link</th>
             </tr>
           </thead>
@@ -27,13 +25,11 @@ function StageSelect({ address, provider }) {
             {tasks.map(task => (
               <tr key={task.id}>
                 <td>{task.name}</td>
-                <td>{task.description}</td>
-                <td>{task.reward}</td>
                 <td>{task.owner}</td>
-                <td>{task.created_time}</td>
-                <td>{task.end_time}</td>
+                <td>{task.entryFee}</td>
+                <td>{task.incentive}</td>
                 <td>
-                  <ClaimReward task={task} />
+                  <PlayerScene tokenId={task.id} />
                 </td>
               </tr>
             ))}
