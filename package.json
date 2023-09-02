@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "parcel src/index.html --no-cache",
-    "before": "cd oasis2023-solidity && npm install --no-audit && ./node_modules/.bin/hardhat run --network hmvtest scripts/deploy.js && cd .. && npm install --no-audit",
+    "before": "npm install",
     "build": "parcel build src/index.html"
   },
   "author": "",
