@@ -28,10 +28,10 @@ export default class ObstacleManager {
       // const obstacles_map = yaml.load(yaml_data)
       // 障害物を生成
       let index = 0
-      this.stageData[4].forEach((obstacle) => {
+      this.stageData.forEach((obstacle) => {
         console.log(obstacle)
-        if (obstacle[4] === "obstacle") {
-          this.createObstacle(index, obstacle[0], obstacle[1], obstacle[2], obstacle[3], obstacle[4])
+        if (obstacle[2] === "obstacle") {
+          this.createObstacle(index, obstacle[0], obstacle[1], 80, 80, obstacle[2])
           index++
         }
       })

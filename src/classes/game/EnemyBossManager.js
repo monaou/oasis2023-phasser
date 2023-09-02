@@ -30,9 +30,9 @@ export default class EnemyBossManager {
       // const enemies_map = yaml.load(yaml_data)
       // 障害物を生成
       let index = 0
-      this.stageData[4].forEach((enemy) => {
-        if (enemy[4] === "enemy_boss") {
-          this.createEnemy(index, enemy[0], enemy[1], enemy[2], enemy[3], enemy[4])
+      this.stageData.forEach((enemy) => {
+        if (enemy[2] === "enemy_boss") {
+          this.createEnemy(index, enemy[0], enemy[1], 80, 80, enemy[2])
           index++
         }
       })
@@ -44,12 +44,12 @@ export default class EnemyBossManager {
   // Create new enemy at passed x position
   createEnemy = (id, posX, posY, sizeX, sizeY, obj_type) => {
     let enemyType = obj_type
-  
+
     // Need this to move collision to ground level
     const texture = this.runnerScene.textures.get(enemyType)
     const scale = utils.getIdealSpriteScale(texture, true)
     const offset = texture.getSourceImage().height
-  
+
     // Move spawn trigger to next position
     const enemy = this.runnerScene.physics.add.sprite(
       Number(posX) + constants.GAME.START_POS,
@@ -69,13 +69,13 @@ export default class EnemyBossManager {
     enemy.setBounce(1, 1)
 
     this.activeEnemies[id] = enemy
-  
+
     this.activeEnemies[id] = enemy
   }
   // Spawn random projectiles from enemy boss towards player
   spawnProjectiles = () => {
     this.activeEnemies.forEach((enemy, index) => {
-      if(enemy) {
+      if (enemy) {
         let projectile = this.runnerScene.physics.add.sprite(
           enemy.x,
           enemy.y,
@@ -83,19 +83,19 @@ export default class EnemyBossManager {
         )
         projectile.body.setAllowGravity(false);
         projectile.setDisplaySize(30, 30, 0, 0)
-  
+
         // Calculate direction towards player
         let directionX = this.player.x - enemy.x
         let directionY = this.player.y - enemy.y
-  
+
         // Normalize the direction vector (convert it to a vector of length 1)
         let directionLength = Math.sqrt(directionX * directionX + directionY * directionY)
         directionX /= directionLength
         directionY /= directionLength
-  
+
         // Set velocity towards player
         projectile.setVelocity(directionX * constants.PROJECTILE.SPEED, directionY * constants.PROJECTILE.SPEED)
-  
+
         // Add to projectiles array
         this.projectiles.push(projectile)
       }
@@ -107,7 +107,7 @@ export default class EnemyBossManager {
     this.activeEnemies[id].destroy()
     this.activeEnemies.splice(id, 1); // Remove enemy from the activeEnemies array
   }
-  
+
   // Check for player position on update to determine if new enemy should spawn
   update() {
     this.activeEnemies.forEach((enemy) => {

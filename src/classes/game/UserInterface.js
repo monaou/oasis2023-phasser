@@ -36,7 +36,6 @@ export default class UserInterface {
 
   restartClick = () => {
     this.audioRefs.selectSfx.play()
-    this.restartGame()
   }
 
   menuClick = () => {
@@ -44,7 +43,7 @@ export default class UserInterface {
   }
 
   createMenuButtons = () => {
-    // this.createResultButton()
+    this.createResultButton()
     // this.createRestartButton()
     this.createBackToMenuButton()
   }
@@ -66,22 +65,22 @@ export default class UserInterface {
   //     .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, this.restartClick)
   // }
 
-  // createResultButton = () => {
-  //   this.resultButton = new CustomFixedButton(
-  //     this.runnerScene, constants.GAME.CANVAS_WIDTH / 2,
-  //     constants.GAME.CANVAS_HEIGHT / 2 + 100,
-  //     'buttonRestartUp', 'buttonRestartDown',
-  //     1
-  //   )
-  //   this.runnerScene.add.existing(this.resultButton)
-  //   this.resultButton.setVisible(false)
+  createResultButton = () => {
+    this.resultButton = new CustomFixedButton(
+      this.runnerScene, constants.GAME.CANVAS_WIDTH / 2,
+      constants.GAME.CANVAS_HEIGHT / 2 + 100,
+      'buttonRestartUp', 'buttonRestartDown',
+      1
+    )
+    this.runnerScene.add.existing(this.resultButton)
+    this.resultButton.setVisible(false)
 
-  //   // Set button interactive for desktop and mobile
-  //   this.resultButton.overImage.setInteractive()
-  //     .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, this.restartClick)
-  //   this.resultButton.upImage.setInteractive()
-  //     .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, this.restartClick)
-  // }
+    // Set button interactive for desktop and mobile
+    this.resultButton.overImage.setInteractive()
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, this.restartGame)
+    this.resultButton.upImage.setInteractive()
+      .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, this.restartGame)
+  }
 
   createBackToMenuButton = () => {
     this.menuButton = new CustomFixedButton(

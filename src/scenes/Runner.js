@@ -1,8 +1,8 @@
 import Phaser from 'phaser'
 import * as constants from "../constants.js"
 import * as assets from "../classes/utility/Assets.js"
-import WebFontFile from "../classes/utility/WebFontFile.js"
-import * as utils from "../utils.js"
+import { ethers } from "ethers"
+import rewardPool from '../shared_json/RewardPool.json';
 
 import EnvironmentManager from "../classes/game/EnvironmentManager.js"
 import GroundManager from "../classes/game/GroundManager.js"
@@ -29,6 +29,7 @@ export default class Runner extends Phaser.Scene {
     this.userInterface = null
     this.playerCharacter = null
     this.stageData
+    this.tokenId
 
     this.score = 0
     this.coin = 0
@@ -49,8 +50,11 @@ export default class Runner extends Phaser.Scene {
   // Process selected sprite data from main menu
   init(data) {
     // TODO : conncet db
-    if(data.stage_data){
+    if (data.stage_data) {
       this.stageData = data.stage_data
+    }
+    if (data.tokenId) {
+      this.tokenId = data.tokenId
     }
   }
 
@@ -91,8 +95,6 @@ export default class Runner extends Phaser.Scene {
     this.load.audio('win', assets.audio.winAudio)
     this.load.audio('select', assets.audio.selectAudio)
     this.load.audio('walk', assets.audio.walkAudio)
-
-    this.load.addFile(new WebFontFile(this.load, 'Press Start 2P'))
   }
 
   // Runs once to initialize the game
@@ -301,7 +303,7 @@ export default class Runner extends Phaser.Scene {
     // this.audioRefs.loseSfx.play()
 
     if (this.userInterface) {
-      // this.userInterface.resultButton.setVisible(true)
+      this.userInterface.resultButton.setVisible(true)
       this.userInterface.menuButton.setVisible(true)
     } else {
       // Automatically return to menu if interface doesn't exist
@@ -321,9 +323,24 @@ export default class Runner extends Phaser.Scene {
   }
 
   // Destroy scene and create new one with same options
-  restartGame = () => {
+  restartGame = async () => {
     this.scene.remove("runner")
-    this.scene.start("runner", {stage_data: this.stageData})
+
+    const { ethereum } = window;
+    if (!ethereum) {
+      console.error("No web3 provider detected");
+    }
+
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+
+    const pay_contract = new ethers.Contract(rewardPool.address, rewardPool.abi, signer);
+    try {
+      const tx = await pay_contract.setStageClear(this.tokenId);
+      console.log("Clear Stage flag set successfully", tx);
+    } catch (err) {
+      console.error("Clear Stage glag set not successfully", err);
+    }
   }
 
   // Destroy scene and create new one with same options

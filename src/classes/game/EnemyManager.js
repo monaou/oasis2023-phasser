@@ -28,9 +28,9 @@ export default class EnemyManager {
       // const enemies_map = yaml.load(yaml_data)
       // 障害物を生成
       let index = 0
-      this.stageData[4].forEach((enemy) => {
-        if (enemy[4] === "enemy") {
-          this.createEnemy(index, enemy[0], enemy[1], enemy[2], enemy[3], enemy[4])
+      this.stageData.forEach((enemy) => {
+        if (enemy[2] === "enemy") {
+          this.createEnemy(index, enemy[0], enemy[1], 80, 80, enemy[2])
           index++
         }
       })
