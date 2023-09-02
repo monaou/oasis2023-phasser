@@ -8,8 +8,10 @@ function Home() {
         <div className="home-container">
             <h1>Welcome to dino marker</h1>
             <div className="info-card">
-                <p>Supported Chain: <a href="https://faucet.polygon.technology/" target="_blank" rel="noopener noreferrer">MCH Chain</a></p>
-                <p>Payments: <a href="https://usdcfaucet.com/" target="_blank" rel="noopener noreferrer">MCH</a></p>
+                <p>Supported Chain: <a href="https://scan.sandverse.oasys.games/" target="_blank" rel="noopener noreferrer">Sand Verse(chainId : 20197)</a></p>
+                <p>Payments: <a href="https://docs.oasys.games/docs/verse-developer/handle-token/1-1-vft#deploy-the-smart-contract-using-remix-ide" target="_blank" rel="noopener noreferrer">
+                    MTK(addres : 0xB0514D3292720365d178af5b46952b04cFF06345)</a>
+                </p>
             </div>
 
             <div className="updates-section">

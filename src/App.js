@@ -62,7 +62,10 @@ function App() {
                 <span>Chain: {chainId}</span>
                 <button onClick={handleDisconnectWallet}>Disconnect</button>
               </>
-              : <button onClick={handleConnectWallet}>Connect Wallet</button>
+              : <>
+                <span>Please Connect Wallet</span>
+                <button onClick={handleConnectWallet}>Connect Wallet</button>
+              </>
             }
           </div>
         </header>
