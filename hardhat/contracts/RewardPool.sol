@@ -15,6 +15,8 @@ contract RewardPool {
     address public admin;
     uint256 public feePercentage = 5;
 
+    event StakeEntreeFeeEvent(ExtraDataLib.ExtraData[] extraDataArr);
+
     constructor(
         address _nftContractAddress,
         address _adminAddress,
@@ -95,6 +97,8 @@ contract RewardPool {
 
         ditributeStageRewards[addr] += createrAmount;
         pendingRewards[tokenId] += stageAmount;
+
+        emit StakeEntreeFeeEvent(extraDataArr);
     }
 
     function setStageClear(uint256 tokenId) external {

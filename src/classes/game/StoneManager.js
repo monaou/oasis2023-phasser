@@ -28,9 +28,9 @@ export default class StoneManager {
       // const stones_map = yaml.load(yaml_data)
       // 障害物を生成
       let index = 0
-      this.stageData[4].forEach((stone) => {
-        if (stone[4] === "stone") {
-          this.createStone(index, stone[0], stone[1], stone[2], stone[3], stone[4])
+      this.stageData.forEach((stone) => {
+        if (stone[2] === "stone") {
+          this.createStone(index, stone[0], stone[1], 80, 80, stone[2])
           index++
         }
       })

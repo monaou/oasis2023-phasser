@@ -2,7 +2,7 @@ import React from "react";
 import RewardPool from '../shared_json/RewardPool.json';
 import { ethers } from 'ethers';
 
-function ClaimClearReward({ task }) {
+function ClaimClearReward() {
 
     const handleClaimReward = async () => {
         const { ethereum } = window;
@@ -17,7 +17,7 @@ function ClaimClearReward({ task }) {
         const contract = new ethers.Contract(RewardPool.address, RewardPool.abi, signer);
 
         try {
-            const tx = await contract.claimReward(task.id);
+            const tx = await contract.claimClearReward();
             await tx.wait();
             console.log('Claim successfully for the class', { tx });
         } catch (err) {

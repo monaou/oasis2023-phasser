@@ -5,8 +5,6 @@ import { ERC20_ABI } from '../shared_json/Erc20_abi';
 import currency from '../shared_json/currency.json';
 import { Button, Form, Container, Row, Col, Card, FormControl, FormLabel } from 'react-bootstrap';
 
-const OAS_ADDRESS = currency.sandverse
-
 function CrateStage({ address, provider }) {
   const [name, setName] = useState('');
   const [entry, setEntry] = useState('');
@@ -40,7 +38,7 @@ function CrateStage({ address, provider }) {
     ]);
 
     const incentiveValue = (Number(incentive) * 1000000).toString();
-    const oasContract = new ethers.Contract(OAS_ADDRESS, ERC20_ABI, signer);  // NOTE: ERC20トークンのABIにはapproveメソッドが含まれている必要があります
+    const oasContract = new ethers.Contract(currency.sandverse, ERC20_ABI, signer);  // NOTE: ERC20トークンのABIにはapproveメソッドが含まれている必要があります
     try {
       const tx = await oasContract.approve(rewardContract.address, ethers.utils.parseUnits(incentiveValue, 6));  // USDCは小数点以下6桁なので、6を指定
       await tx.wait();
