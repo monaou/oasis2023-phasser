@@ -11,15 +11,55 @@ h1 {
     color: #333;
 }
 
+/* Home.css */
+/* Home.css */
+
 .feature-card {
-    width: 80%;
-    margin: 20px 0;
     padding: 20px;
     border-radius: 8px;
+    margin: 10px;
+    width: 300px;
+    /* こちらでカードの幅を固定 */
+    height: 150px;
+    /* こちらでカードの高さを固定 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* 影を追加してカードに深みをもたせます */
+    transition: 0.3s;
     display: flex;
     flex-direction: column;
     align-items: center;
+    /* カード内の内容を中央揃え */
+    justify-content: space-between;
+    /* カード内の空間を均等に分散 */
+}
+
+.feature-title-link {
+    text-decoration: none;
+    /* リンクの下線を削除 */
+    color: inherit;
+    /* リンクの色をカードの色と同じに */
+}
+
+
+.feature-card:hover {
+    transform: scale(1.05);
+}
+
+/* カードに異なる色を設定 */
+.feature-card:nth-child(1) {
+    background-color: #f5a623;
+}
+
+.feature-card:nth-child(2) {
+    background-color: #50e3c2;
+}
+
+.feature-card:nth-child(3) {
+    background-color: #4a90e2;
+}
+
+.feature-card:nth-child(4) {
+    background-color: #b8e986;
 }
 
 .feature-card h2 {
