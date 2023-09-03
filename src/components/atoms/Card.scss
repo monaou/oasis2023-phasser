@@ -1,0 +1,41 @@
+/* Cardコンポーネント用のCSS */
+.card {
+    width: 300px;
+    /* カードの幅 */
+    border: 1px solid #ddd;
+    /* カードの境界線 */
+    border-radius: 5px;
+    /* カードの角の丸み */
+    margin: 10px;
+    /* カード間の余白 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* カードの影 */
+
+
+    /* カードの内部要素に対するスタイル */
+    img {
+        width: 100%;
+        /* 画像をカードの幅に合わせる */
+        border-top-left-radius: 5px;
+        /* 画像の左上の角の丸み */
+        border-top-right-radius: 5px;
+        /* 画像の右上の角の丸み */
+    }
+
+    .card-content {
+        padding: 10px;
+        /* カードのコンテンツ内の余白 */
+    }
+
+    h2 {
+        font-size: 1.5rem;
+        /* カードタイトルのフォントサイズ */
+        margin-bottom: 10px;
+        /* タイトル下の余白 */
+    }
+
+    p {
+        font-size: 1rem;
+        /* カード説明のフォントサイズ */
+    }
+}
