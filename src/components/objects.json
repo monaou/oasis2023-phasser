@@ -1,0 +1,65 @@
+[
+    {
+        "objectID": "0",
+        "objectName": "0",
+        "objectCell": "T",
+        "objectType": "Test",
+        "objectImagePath": "../assets/images/test.png",
+        "xCellSize": 1,
+        "yCellSize": 1
+    },
+    {
+        "objectID": "1",
+        "objectName": "rockDuo",
+        "objectCell": "■",
+        "objectType": "StageObject",
+        "objectImagePath": "../assets/images/obstacles/rockDuo.png",
+        "xCellSize": 1,
+        "yCellSize": 1
+    },
+    {
+        "objectID": "2",
+        "objectName": "rockTall",
+        "objectCell": "□",
+        "objectType": "StageObject",
+        "objectImagePath": "../assets/images/obstacles/rockTall.png",
+        "xCellSize": 1,
+        "yCellSize": 1
+    },
+    {
+        "objectID": "3",
+        "objectName": "Coin",
+        "objectCell": "0",
+        "objectType": "Item",
+        "objectImagePath": "../assets/images/other/enemy_boss.png",
+        "xCellSize": 1,
+        "yCellSize": 1
+    },
+    {
+        "objectID": "4",
+        "objectName": "enemy",
+        "objectCell": "▲",
+        "objectType": "Enemy",
+        "objectImagePath": "../assets/images/other/enemy.png",
+        "xCellSize": 1,
+        "yCellSize": 1
+    },
+    {
+        "objectID": "5",
+        "objectName": "enemyBoss",
+        "objectCell": "△",
+        "objectType": "Enemy",
+        "objectImagePath": "../assets/images/other/enemy_boss.png",
+        "xCellSize": 1,
+        "yCellSize": 1
+    },
+    {
+        "objectID": "6",
+        "objectName": "ゴール",
+        "objectCell": "🚩",
+        "objectType": "Other",
+        "objectImagePath": "../assets/images/other/goal.png",
+        "xCellSize": 1,
+        "yCellSize": 1
+    }
+]

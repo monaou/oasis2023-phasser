@@ -1,0 +1,16 @@
+.stage-settings-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.setting-row {
+    display: flex;
+    align-items: center;
+}
+
+.setting-label,
+.setting-input,
+.setting-select {
+    margin-right: 8px;
+}

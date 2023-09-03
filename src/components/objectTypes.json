@@ -1,0 +1,22 @@
+[
+    {
+        "objectType": "Test",
+        "displayName": "Test Object"
+    },
+    {
+        "objectType": "StageObject",
+        "displayName": "Stage Object"
+    },
+    {
+        "objectType": "Item",
+        "displayName": "Item"
+    },
+    {
+        "objectType": "Enemy",
+        "displayName": "Enemy"
+    },
+    {
+        "objectType": "Other",
+        "displayName": "Other"
+    }
+]

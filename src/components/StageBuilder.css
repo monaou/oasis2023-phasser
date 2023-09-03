@@ -1,0 +1,35 @@
+.stage-builder-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.controls {
+    margin-bottom: 10px;
+}
+
+.stage-field {
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    overflow-x: scroll;
+    max-height: 1280px;
+    max-width: 2560px;
+}
+
+.stage-row {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.stage-cell {
+    width: 20px;
+    height: 20px;
+    border: 1px solid black;
+    cursor: pointer;
+    background-color: white;
+    flex-shrink: 0;
+}
+
+.stage-cell.selected {
+    border: 2px solid yellow;
+}
