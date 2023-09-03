@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { ethers } from 'ethers';
-import EditPage from './components/edit'
-import PhaserIndex from './components/phaser_index'
-import CreateStage from './components/CreateStage'
+import StageSelect from './components/StageSelect'
+import PlayerRewad from './components/PlayerRewad'
+import CrateStage from './components/CrateStage'
+import CreaterReward from './components/CreaterReward'
 import Home from './components/Home'
 
 import { connectMetaMask, disconnectMetaMask } from "./components/wallet";
@@ -25,8 +26,8 @@ function App() {
         setAddress(connectedAddress.address);
         setChainId(connectedAddress.chainId);
 
-        if (connectedAddress.chainId !== 80001) {
-          setWarning("Warning: Please switch to Matic Mumbai (Chain ID: 80001).");
+        if (connectedAddress.chainId !== 20197) {
+          setWarning("Warning: Please switch to Sand Verse (Chain ID: 20197).");
         } else {
           setWarning(null);
         }
@@ -61,7 +62,10 @@ function App() {
                 <span>Chain: {chainId}</span>
                 <button onClick={handleDisconnectWallet}>Disconnect</button>
               </>
-              : <button onClick={handleConnectWallet}>Connect Wallet</button>
+              : <>
+                <span>Please Connect Wallet</span>
+                <button onClick={handleConnectWallet}>Connect Wallet</button>
+              </>
             }
           </div>
         </header>
@@ -69,21 +73,17 @@ function App() {
         <nav className="navbar">
           <Link className="nav-button" to="/">Home</Link>
           <Link className="nav-button" to="/play">Play</Link>
-          <Link className="nav-button" to="/stage-reward">Play Rewards</Link>
-          <Link className="nav-button" to="/create-stage">Create Stage</Link>
+          <Link className="nav-button" to="/player-reward">Player Rewards</Link>
+          <Link className="nav-button" to="/create">Create</Link>
           <Link className="nav-button" to="/creater-reward">Creater Rewards</Link>
         </nav>
         {/* address={address} provider={provider} */}
         <Switch>
-          <Route exact path="/">
-            <Home />
-          </Route>
-          <Route path="/play">
-            <PhaserIndex />
-          </Route>
-          <Route path="/create-stage">
-            <CreateStage />
-          </Route>
+          <Route exact path="/"><Home /></Route>
+          <Route path="/play"><StageSelect address={address} provider={provider} /></Route>
+          <Route path="/player-reward"><PlayerRewad address={address} provider={provider} /></Route>
+          <Route path="/create"><CrateStage address={address} provider={provider} /></Route>
+          <Route path="/creater-reward"><CreaterReward address={address} provider={provider} /></Route>
         </Switch>
       </div>
       <div className="footer">
