@@ -1,45 +1,49 @@
-// src/phaser-index.js
-
 import React, { useEffect, useState } from 'react';
 import Phaser from 'phaser';
 import Menu from "../scenes/Menu.js";
 import Runner from "../scenes/Runner.js";
-import Web3Connection from "../classes/utility/Web3Connection.js";
+import Modal from "../hooks/gameModal.js";
 import * as constants from "../constants.js";
 
-const PhaserIndex = () => {
+const PlayerScene = ({ tokenId }) => {
+  const [isModalOpen, setModalOpen] = useState(false);
+
   useEffect(() => {
+    if (isModalOpen && document.getElementById('phaser-game')) {
+      initializeGame();
+    }
+  }, [isModalOpen]);
+
+  const initializeGame = () => {
     var config = {
       type: Phaser.AUTO,
       width: constants.GAME.CANVAS_WIDTH,
       height: constants.GAME.CANVAS_HEIGHT,
+      parent: 'phaser-game',
       physics: {
         default: 'arcade',
         arcade: {
           gravity: { y: constants.GAME.GRAVITY_Y },
-          // Turn debug on to see collision boxes
-          // debug: true,
         }
       },
-      // Initializes both the menu and runner scene
       scene: [Menu, Runner],
-
-      // Center canvas element on website
       autoCenter: Phaser.Scale.CENTER_BOTH,
-    }
+    };
 
-    // Creates new instance of phaser game
     const game = new Phaser.Game(config);
-
-    // // Initialize web3 connection
-
-    // // Start game
-    // game.scene.start('Menu', { web3Connection: newWeb3Connection });
-  }, []);
+  };
 
   return (
-    <div id="phaser-game"></div>
+    <div>
+      <button onClick={() => setModalOpen(true)}>Start Here</button>
+
+      {isModalOpen && (
+        <Modal onClose={() => setModalOpen(false)}>
+          <div id="phaser-game" data-tokenid={tokenId}></div>
+        </Modal>
+      )}
+    </div>
   );
 };
 
-export default PhaserIndex;
+export default PlayerScene;

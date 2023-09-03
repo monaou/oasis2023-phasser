@@ -28,9 +28,9 @@ export default class CoinManager {
       // const coins_map = yaml.load(yaml_data)
       // 障害物を生成
       let index = 0
-      this.stageData[4].forEach((coin) => {
-        if (coin[4] === "coin") {
-          this.createCoin(index, coin[0], coin[1], coin[2], coin[3], coin[4])
+      this.stageData.forEach((coin) => {
+        if (coin[2] === "coin") {
+          this.createCoin(index, coin[0], coin[1], 80, 80, coin[2])
           index++
         }
       })

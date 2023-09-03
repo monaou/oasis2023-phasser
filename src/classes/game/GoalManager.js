@@ -28,9 +28,9 @@ export default class GoalManager {
       // const goals_map = yaml.load(yaml_data)
       // 障害物を生成
       let index = 0
-      this.stageData[4].forEach((goal) => {
-        if (goal[4] === "goal") {
-          this.createGoal(index, goal[0], goal[1], goal[2], goal[3], goal[4])
+      this.stageData.forEach((goal) => {
+        if (goal[2] === "goal") {
+          this.createGoal(index, goal[0], goal[1], 80, 80, goal[2])
           index++
         }
       })
