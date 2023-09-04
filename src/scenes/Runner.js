@@ -7,6 +7,7 @@ import rewardPool from '../shared_json/RewardPool.json';
 import EnvironmentManager from "../classes/game/EnvironmentManager.js"
 import GroundManager from "../classes/game/GroundManager.js"
 import ObstacleManager from "../classes/game/ObstacleManager.js"
+import NFTObjectManager from "../classes/game/NFTObjectManager.js"
 import StoneManager from "../classes/game/StoneManager.js"
 import GoalManager from "../classes/game/GoalManager.js"
 import CoinManager from "../classes/game/CoinManager.js"
@@ -22,6 +23,7 @@ export default class Runner extends Phaser.Scene {
     this.environmentManager = null
     this.groundManager = null
     this.obstacleManager = null
+    this.NFTObjectManager = null
     this.stoneManager = null
     this.goalManager = null
     this.coinManager = null
@@ -42,6 +44,8 @@ export default class Runner extends Phaser.Scene {
     this.enemyChannel = []
     this.enemyBossChannel = []
     this.enemyBossChannelProj = []
+    this.NFTObjectChannel = []
+    this.NFTObjectChannelProj = []
 
     this.isGameOver = false
     this.isGoal = false
@@ -68,7 +72,8 @@ export default class Runner extends Phaser.Scene {
 
     this.load.image('character', assets.img.characterImage)
     this.load.image('coin', assets.img.coinImage)
-    this.load.image('enemy_boss', assets.img.enemyBossImage)
+    this.load.image('enemyBoss', assets.img.enemyBossImage)
+    this.load.image('tomooneNFT', assets.img.tomooneImage)
     this.load.image('enemy', assets.img.enemyImage)
     this.load.image('fire', assets.img.fireImage)
     this.load.image('goal', assets.img.goalImage)
@@ -110,6 +115,7 @@ export default class Runner extends Phaser.Scene {
     this.environmentManager = new EnvironmentManager(this, this.playerCharacter.sprite)
     this.groundManager = new GroundManager(this, this.playerCharacter.sprite)
     this.obstacleManager = new ObstacleManager(this, this.playerCharacter.sprite, this.stageData)
+    this.NFTObjectManager = new NFTObjectManager(this, this.playerCharacter.sprite, this.stageData)
     this.stoneManager = new StoneManager(this, this.playerCharacter.sprite, this.stageData)
     this.goalManager = new GoalManager(this, this.playerCharacter.sprite, this.stageData)
     this.coinManager = new CoinManager(this, this.playerCharacter.sprite, this.stageData)
@@ -177,6 +183,15 @@ export default class Runner extends Phaser.Scene {
       })
     }
 
+    if (this.NFTObjectManager) {
+      this.NFTObjectManager.activeEnemies.forEach((enemy_ch, index) => {
+        this.NFTObjectChannel[index] = this.physics.add.overlap(this.playerCharacter.sprite, enemy_ch, this.hitObstacle)
+        if (this.groundManager) {
+          this.physics.add.collider(enemy_ch, this.groundManager.platforms)
+        }
+      })
+    }
+
     if (this.userInterface) {
     }
   }
@@ -237,6 +252,11 @@ export default class Runner extends Phaser.Scene {
           this.physics.add.overlap(this.playerCharacter.chain, enemy_ch, () => this.enemyBossManager.destroyEnemy(index));
         });
       }
+      if (this.NFTObjectManager) {
+        this.NFTObjectManager.activeEnemies.forEach((enemy_ch, index) => {
+          this.physics.add.overlap(this.playerCharacter.chain, enemy_ch, () => this.NFTObjectManager.destroyEnemy(index));
+        });
+      }
     }
 
     if (this.enemyManager && this.playerCharacter && this.playerCharacter.block) {
@@ -255,7 +275,16 @@ export default class Runner extends Phaser.Scene {
         this.physics.add.overlap(this.playerCharacter.sprite, proj, this.hitObstacle);
       });
     }
+    if (this.NFTObjectManager && this.playerCharacter && this.playerCharacter.block) {
+      this.NFTObjectManager.activeEnemies.forEach((enemy_ch, index) => {
+        this.NFTObjectChannel[index] = this.physics.add.collider(this.playerCharacter.block, enemy_ch);
+      });
 
+      this.NFTObjectManager.projectiles.forEach((proj, index) => {
+        this.NFTObjectChannelProj[index] = this.physics.add.collider(this.playerCharacter.block, proj);
+        this.physics.add.overlap(this.playerCharacter.sprite, proj, this.hitObstacle);
+      });
+    }
     if (this.groundManager) {
       this.groundManager.update()
     }
@@ -270,6 +299,10 @@ export default class Runner extends Phaser.Scene {
 
     if (this.enemyBossManager) {
       this.enemyBossManager.update()
+    }
+
+    if (this.NFTObjectManager) {
+      this.NFTObjectManager.update()
     }
   }
 

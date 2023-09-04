@@ -5,10 +5,15 @@ const MAX_ROWS = 64;
 const MAX_COLS = 128;
 const STEP = 16;
 
+<<<<<<< HEAD:src/components/StageBuilder.js
 const StageBuilder = ({ stageData, setStageData, selectedObject }) => {
+=======
+const StageBuilder = ({ selectedObject, setCellDataParam }) => {
+>>>>>>> 0c3b8297c2ef1a546436b7155c43c0836e765de6:src/stageHooks/StageBuilder.js
     console.log("Selected Object: ", selectedObject);
     const [selectedCell, setSelectedCell] = useState(null);
     const [cellData, setCellData] = useState({});
+    const [cellDataID, setCellDataID] = useState({});
     const [copiedCell, setCopiedCell] = useState(null);
 
     const [rows, setRows] = useState(16);
@@ -18,6 +23,7 @@ const StageBuilder = ({ stageData, setStageData, selectedObject }) => {
     const handleClick = (row, col) => {
         setSelectedCell({ row, col });
         if (selectedObject) {
+<<<<<<< HEAD:src/components/StageBuilder.js
             const newStageData = [...stageData];
 
             if (!newStageData[row]) {
@@ -28,7 +34,16 @@ const StageBuilder = ({ stageData, setStageData, selectedObject }) => {
             setStageData(newStageData);
 
             const newCellData = { ...cellData, [`${row}-${col}`]: selectedObject.objectCell };
+=======
+            const pos_row = rows - row;
+            const pos_col = col + 1;
+            const newCellData = { ...cellData, [`${row}-${col}`]: selectedObject.objectCell };
+            const newCellDataID = { ...cellDataID, [`${pos_col}-${pos_row}`]: selectedObject.objectName };
+            console.log("New cellData: ", newCellDataID);
+>>>>>>> 0c3b8297c2ef1a546436b7155c43c0836e765de6:src/stageHooks/StageBuilder.js
             setCellData(newCellData);
+            setCellDataID(newCellDataID);
+            setCellDataParam(newCellDataID);
         }
     };
 

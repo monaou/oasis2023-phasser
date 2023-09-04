@@ -69,8 +69,8 @@ const INTERFACE = {
 }
 
 const PROJECTILE = {
-  SPAWN_TIME: 150,
-  SPEED: 100,
+  SPAWN_TIME: 500,
+  SPEED: 150,
 }
 
 const ENEMY = {

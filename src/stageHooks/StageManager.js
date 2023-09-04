@@ -6,15 +6,19 @@ import StageDataToJson from './StageDataToJson';
 
 import './StageManager.css'; // 必要なCSSファイルをインポート
 
-const StageManager = () => {
+const StageManager = ({ provider }) => {
     const [selectedObject, setSelectedObject] = useState(null);
     const [copiedObject, setCopiedObject] = useState(null);
     const stageRef = useRef();
+<<<<<<< HEAD:src/components/StageManager.js
     const [stageData, setStageData] = useState([
         [null, null, null],
         [null, null, null],
         [null, null, null]
     ]);
+=======
+    const [celldata, setCellData] = useState([]); // celldataをstateとして追加
+>>>>>>> 0c3b8297c2ef1a546436b7155c43c0836e765de6:src/stageHooks/StageManager.js
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyPress);
@@ -51,8 +55,13 @@ const StageManager = () => {
 
     return (
         <div className="stage-manager-container" tabIndex="0" ref={stageRef}>
+<<<<<<< HEAD:src/components/StageManager.js
             <StageSettings />
             <StageBuilder stageData={stageData} setStageData={setStageData} selectedObject={selectedObject} />
+=======
+            <StageSettings cellData={celldata} provider={provider} />
+            <StageBuilder selectedObject={selectedObject} setCellDataParam={setCellData} />
+>>>>>>> 0c3b8297c2ef1a546436b7155c43c0836e765de6:src/stageHooks/StageManager.js
             <ObjectDisplay selectedObject={selectedObject} setSelectedObject={setSelectedObject} />
             <StageDataToJson stageData={stageData} />
         </div>

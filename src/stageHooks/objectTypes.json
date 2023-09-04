@@ -18,5 +18,9 @@
     {
         "objectType": "Other",
         "displayName": "Other"
+    },
+    {
+        "objectType": "NFT",
+        "displayName": "NFT"
     }
 ]

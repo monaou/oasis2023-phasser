@@ -18,6 +18,7 @@ import fireImage from '../../assets/images/other/fire.png'
 import goalImage from '../../assets/images/other/goal.png'
 import stoneImage from '../../assets/images/other/stone.png'
 import obstacleImage from '../../assets/images/other/obstacle.png'
+import tomooneImage from '../../assets/images/other/dino_tomoone.png'
 
 import pixelDinoGreenImage from "../../assets/images/dinos/pixelDinoGreen.png"
 import pixelDinoBlueImage from "../../assets/images/dinos/pixelDinoBlue.png"
@@ -63,11 +64,11 @@ import buttonRestartDownImage from "../../assets/images/buttons/btn_restart_down
 import buttonRightUpImage from "../../assets/images/buttons/btn_right_up.png"
 import buttonRightDownImage from "../../assets/images/buttons/btn_right_down.png"
 
-import jumpAudio  from "../../assets/audio/jump.wav"
-import walkAudio  from "../../assets/audio/walk.wav"
-import loseAudio  from "../../assets/audio/lose.wav"
-import winAudio  from "../../assets/audio/win.wav"
-import selectAudio  from "../../assets/audio/select.ogg"
+import jumpAudio from "../../assets/audio/jump.wav"
+import walkAudio from "../../assets/audio/walk.wav"
+import loseAudio from "../../assets/audio/lose.wav"
+import winAudio from "../../assets/audio/win.wav"
+import selectAudio from "../../assets/audio/select.ogg"
 import switchAudio from "../../assets/audio/switch.ogg"
 
 const img = {
@@ -93,6 +94,7 @@ const img = {
   goalImage,
   stoneImage,
   obstacleImage,
+  tomooneImage,
 }
 
 const ui = {

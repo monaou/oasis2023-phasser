@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { ethers } from 'ethers';
 import StageSelect from './components/StageSelect'
 import PlayerRewad from './components/PlayerRewad'
-import CrateStage from './components/CrateStage'
 import CreateStage from './components/CreateStage'
 import CreaterReward from './components/CreaterReward'
 import Home from './components/Home'
+import Market from './components/Market'
 
 import { connectMetaMask, disconnectMetaMask } from "./components/wallet";
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
@@ -75,18 +75,18 @@ function App() {
           <Link className="nav-button" to="/">Home</Link>
           <Link className="nav-button" to="/play">Play</Link>
           <Link className="nav-button" to="/player-reward">Player Rewards</Link>
-          <Link className="nav-button" to="/create">Create</Link>
           <Link className="nav-button" to="/create-stage">Create Stage</Link>
           <Link className="nav-button" to="/creater-reward">Creater Rewards</Link>
+          <Link className="nav-button" to="/market">Market</Link>
         </nav>
         {/* address={address} provider={provider} */}
         <Switch>
           <Route exact path="/"><Home /></Route>
           <Route path="/play"><StageSelect address={address} provider={provider} /></Route>
           <Route path="/player-reward"><PlayerRewad address={address} provider={provider} /></Route>
-          <Route path="/create"><CrateStage address={address} provider={provider} /></Route>
           <Route path="/create-stage"><CreateStage address={address} provider={provider} /></Route>
           <Route path="/creater-reward"><CreaterReward address={address} provider={provider} /></Route>
+          <Route path="/market"><Market address={address} provider={provider} /></Route>
         </Switch>
       </div>
       <div className="footer">
