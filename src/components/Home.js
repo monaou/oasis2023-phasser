@@ -15,14 +15,18 @@ function Home() {
             </div>
 
             <div className="updates-section">
-                <h2>Updates</h2>
-                <p>Latest news and updates about our game.</p>
+                <h2>Updates (9/4)</h2>
+                <p>・Add home, reward, market pages and layout</p>
+                <p>・Add payment contract</p>
+                <p>・fix stage select</p>
                 {/* 他のアップデートの詳細もこちらに */}
             </div>
 
             <div className="game-features-section">
                 <h2>Game Features</h2>
-                <p>Discover unique features of our game.</p>
+                <p>・Decentralized Game Economy For Users</p>
+                <p>・Utilize Creatre and Other Chain NFTs</p>
+                <p>・Web3 Technology and Scalability</p>
                 {/* ゲームの特徴に関する他の詳細もこちらに */}
             </div>
 
