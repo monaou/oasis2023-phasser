@@ -5,6 +5,7 @@ import PlayerRewad from './components/PlayerRewad'
 import CrateStage from './components/CrateStage'
 import CreaterReward from './components/CreaterReward'
 import Home from './components/Home'
+import Market from './components/Market'
 
 import { connectMetaMask, disconnectMetaMask } from "./components/wallet";
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
@@ -76,6 +77,7 @@ function App() {
           <Link className="nav-button" to="/player-reward">Player Rewards</Link>
           <Link className="nav-button" to="/create">Create</Link>
           <Link className="nav-button" to="/creater-reward">Creater Rewards</Link>
+          <Link className="nav-button" to="/market">Market</Link>
         </nav>
         {/* address={address} provider={provider} */}
         <Switch>
@@ -84,6 +86,7 @@ function App() {
           <Route path="/player-reward"><PlayerRewad address={address} provider={provider} /></Route>
           <Route path="/create"><CrateStage address={address} provider={provider} /></Route>
           <Route path="/creater-reward"><CreaterReward address={address} provider={provider} /></Route>
+          <Route path="/market"><Market address={address} provider={provider} /></Route>
         </Switch>
       </div>
       <div className="footer">
