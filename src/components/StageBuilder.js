@@ -5,7 +5,7 @@ const MAX_ROWS = 64;
 const MAX_COLS = 128;
 const STEP = 16;
 
-const StageBuilder = ({ selectedObject }) => {
+const StageBuilder = ({ stageData, setStageData, selectedObject }) => {
     console.log("Selected Object: ", selectedObject);
     const [selectedCell, setSelectedCell] = useState(null);
     const [cellData, setCellData] = useState({});
@@ -14,16 +14,24 @@ const StageBuilder = ({ selectedObject }) => {
     const [rows, setRows] = useState(16);
     const [cols, setCols] = useState(32);
 
+
     const handleClick = (row, col) => {
-        console.log("Clicked Cell: ", row, col);
-        console.log("Existing cellData: ", cellData);
         setSelectedCell({ row, col });
         if (selectedObject) {
+            const newStageData = [...stageData];
+
+            if (!newStageData[row]) {
+                newStageData[row] = [];
+            }
+
+            newStageData[row][col] = selectedObject.objectCell;
+            setStageData(newStageData);
+
             const newCellData = { ...cellData, [`${row}-${col}`]: selectedObject.objectCell };
-            console.log("New cellData: ", newCellData);
             setCellData(newCellData);
         }
     };
+
 
 
     const handleKeyPress = (e) => {

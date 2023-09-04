@@ -37,8 +37,9 @@ const StageSettings = ({ setStageTimeLimitProp, setStageNameProp }) => { // é–¢æ
                                 onChange={(e) => setTimeLimit(Number(e.target.value))}
                             >
                                 {Array.from({ length: (MAX_TIME_LIMIT - MIN_TIME_LIMIT) / TIME_STEP + 1 }, (_, i) => (i * TIME_STEP) + MIN_TIME_LIMIT)
-                                    .map(time => <option key={time} value={time}>{time} seconds</option>)}
+                                    .map(time => <option key={time} value={time}>{time} </option>)}
                             </select>
+                            seconds
                         </td>
                     </tr>
                 </tbody>
