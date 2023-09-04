@@ -23,17 +23,12 @@ const StageDataToJson = ({ stageData }) => {
 
     return (
         <div>
-<<<<<<< HEAD:src/components/StageDataToJson.js
             <h2>Stage Data to Json</h2>
             <button onClick={createJson}>Create Json</button>
             <div>
                 <h3>JSON Data</h3>
                 <textarea readOnly value={jsonData} rows="10" cols="30" />
             </div>
-=======
-            <h2>Convert JSON</h2>
-            <button onClick={handleToJson}>Convert</button>
->>>>>>> 0c3b8297c2ef1a546436b7155c43c0836e765de6:src/stageHooks/StageDataToJson.js
         </div>
     );
 };

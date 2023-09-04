@@ -1,5 +1,4 @@
 import React from 'react';
-import StageManager from './StageManager';
 import StageManager from './../stageHooks/StageManager';
 
 const CreateStage = (address, provider) => {
