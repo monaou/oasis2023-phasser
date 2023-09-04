@@ -51,7 +51,7 @@ export default class StoneManager {
     // Move spawn trigger to next position
     const stone = this.runnerScene.physics.add.sprite(
       Number(posX) + constants.GAME.START_POS,
-      Number(posY) + constants.GAME.START_HEIGHT,
+      -Number(posY) + Number(constants.GROUND.Y_POS),
       stoneType
     )
     // Adjust size, scale and offsets depending on stone type

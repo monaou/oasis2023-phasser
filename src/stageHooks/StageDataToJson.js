@@ -8,8 +8,8 @@ const StageDataToJson = ({ stageData }) => {
 
     return (
         <div>
-            <h2>JSON変換</h2>
-            <button onClick={handleToJson}>変換</button>
+            <h2>Convert JSON</h2>
+            <button onClick={handleToJson}>Convert</button>
         </div>
     );
 };

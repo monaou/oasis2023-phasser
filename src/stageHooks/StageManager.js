@@ -5,10 +5,11 @@ import ObjectDisplay from './ObjectDisplay';
 
 import './StageManager.css'; // 必要なCSSファイルをインポート
 
-const StageManager = () => {
+const StageManager = ({ provider }) => {
     const [selectedObject, setSelectedObject] = useState(null);
     const [copiedObject, setCopiedObject] = useState(null);
     const stageRef = useRef();
+    const [celldata, setCellData] = useState([]); // celldataをstateとして追加
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyPress);
@@ -45,8 +46,8 @@ const StageManager = () => {
 
     return (
         <div className="stage-manager-container" tabIndex="0" ref={stageRef}>
-            <StageSettings />
-            <StageBuilder selectedObject={selectedObject} />
+            <StageSettings cellData={celldata} provider={provider} />
+            <StageBuilder selectedObject={selectedObject} setCellDataParam={setCellData} />
             <ObjectDisplay selectedObject={selectedObject} setSelectedObject={setSelectedObject} />
         </div>
     );

@@ -25,7 +25,7 @@ function Home() {
             <div className="game-features-section">
                 <h2>Game Features</h2>
                 <p>・Decentralized Game Economy For Users</p>
-                <p>・Utilize Creatre and Other Chain NFTs</p>
+                <p>・Utilize Creater and Other Chain NFTs</p>
                 <p>・Web3 Technology and Scalability</p>
                 {/* ゲームの特徴に関する他の詳細もこちらに */}
             </div>

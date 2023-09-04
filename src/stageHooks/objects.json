@@ -10,7 +10,7 @@
     },
     {
         "objectID": "1",
-        "objectName": "rockDuo",
+        "objectName": "obstacle",
         "objectCell": "■",
         "objectType": "StageObject",
         "objectImagePath": "../assets/images/obstacles/rockDuo.png",
@@ -19,7 +19,7 @@
     },
     {
         "objectID": "2",
-        "objectName": "rockTall",
+        "objectName": "stone",
         "objectCell": "□",
         "objectType": "StageObject",
         "objectImagePath": "../assets/images/obstacles/rockTall.png",
@@ -28,7 +28,7 @@
     },
     {
         "objectID": "3",
-        "objectName": "Coin",
+        "objectName": "coin",
         "objectCell": "0",
         "objectType": "Item",
         "objectImagePath": "../assets/images/other/enemy_boss.png",
@@ -55,11 +55,20 @@
     },
     {
         "objectID": "6",
-        "objectName": "ゴール",
+        "objectName": "goal",
         "objectCell": "🚩",
         "objectType": "Other",
         "objectImagePath": "../assets/images/other/goal.png",
         "xCellSize": 1,
         "yCellSize": 1
-    }
+    },
+    {
+        "objectID": "7",
+        "objectName": "tomooneNFT",
+        "objectCell": "🙀",
+        "objectType": "NFT",
+        "objectImagePath": "../assets/images/other/tomo.png",
+        "xCellSize": 1,
+        "yCellSize": 1
+    },
 ]

@@ -1,13 +1,7 @@
 import * as utils from "../../utils.js"
 import * as constants from "../../constants.js"
-import fs from 'fs'
-import yaml from 'js-yaml'
-import enemies_map from "../../yaml/ipfs_data.yaml"
-// import ipfsClient from 'ipfs-http-client'
 
-// const ipfs = ipfsClient('http://localhost:5001') // あなたのIPFS APIのエンドポイントに変更
-
-export default class EnemyBossManager {
+export default class NFTObjectManager {
   constructor(runnerScene, player, stageData) {
     this.runnerScene = runnerScene
     this.player = player
@@ -22,16 +16,9 @@ export default class EnemyBossManager {
   // Prepare enemy collision group
   initEnemies = async () => {
     try {
-      // // IPFSからYAMLデータを取得
-      // const ipfsData = await ipfs.cat('Qm...') // あなたのIPFSハッシュに変更
-      // // YAMLをパース
-      // const enemies_map = yaml.load(ipfsData.toString())
-
-      // const enemies_map = yaml.load(yaml_data)
-      // 障害物を生成
       let index = 0
       this.stageData.forEach((enemy) => {
-        if (enemy[2] === "enemyBoss") {
+        if (enemy[2] === "tomooneNFT") {
           this.createEnemy(index, enemy[0], enemy[1], 80, 80, enemy[2])
           index++
         }
@@ -67,8 +54,6 @@ export default class EnemyBossManager {
     // Set boss enemy to bounce on world bounds
     enemy.setCollideWorldBounds(true)
     enemy.setBounce(1, 1)
-
-    this.activeEnemies[id] = enemy
 
     this.activeEnemies[id] = enemy
   }

@@ -5,10 +5,11 @@ const MAX_ROWS = 64;
 const MAX_COLS = 128;
 const STEP = 16;
 
-const StageBuilder = ({ selectedObject }) => {
+const StageBuilder = ({ selectedObject, setCellDataParam }) => {
     console.log("Selected Object: ", selectedObject);
     const [selectedCell, setSelectedCell] = useState(null);
     const [cellData, setCellData] = useState({});
+    const [cellDataID, setCellDataID] = useState({});
     const [copiedCell, setCopiedCell] = useState(null);
 
     const [rows, setRows] = useState(16);
@@ -19,9 +20,14 @@ const StageBuilder = ({ selectedObject }) => {
         console.log("Existing cellData: ", cellData);
         setSelectedCell({ row, col });
         if (selectedObject) {
+            const pos_row = rows - row;
+            const pos_col = col + 1;
             const newCellData = { ...cellData, [`${row}-${col}`]: selectedObject.objectCell };
-            console.log("New cellData: ", newCellData);
+            const newCellDataID = { ...cellDataID, [`${pos_col}-${pos_row}`]: selectedObject.objectName };
+            console.log("New cellData: ", newCellDataID);
             setCellData(newCellData);
+            setCellDataID(newCellDataID);
+            setCellDataParam(newCellDataID);
         }
     };
 

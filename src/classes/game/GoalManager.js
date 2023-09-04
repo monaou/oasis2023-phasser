@@ -51,7 +51,7 @@ export default class GoalManager {
     // Move spawn trigger to next position
     const goal = this.runnerScene.physics.add.sprite(
       Number(posX) + constants.GAME.START_POS,
-      Number(posY) + constants.GAME.START_HEIGHT,
+      -Number(posY) + Number(constants.GROUND.Y_POS),
       goalType
     )
     // Adjust size, scale and offsets depending on goal type

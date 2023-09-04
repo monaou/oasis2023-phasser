@@ -10,7 +10,17 @@
 }
 
 .setting-label,
-.setting-input,
+/* StageSettings.css の中で */
+
+.setting-input {
+    max-width: 100%;
+    /* この行を追加 */
+    overflow: hidden;
+    /* この行を追加 */
+    box-sizing: border-box;
+    /* この行を追加 */
+}
+
 .setting-select {
     margin-right: 8px;
 }

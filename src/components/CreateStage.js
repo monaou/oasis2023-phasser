@@ -1,12 +1,12 @@
 import React from 'react';
-import StageManager from './StageManager';
-import StageDataToJson from './StageDataToJson';
+import StageManager from './../stageHooks/StageManager';
+import StageDataToJson from './../stageHooks/StageDataToJson';
 
-const CreateStage = () => {
+const CreateStage = (address, provider) => {
     return (
         <div className="create-stage-container">
-            <StageManager />
-            <StageDataToJson />
+            <StageManager provider={provider} />
+            {/* <StageDataToJson /> */}
         </div>
     );
 };
