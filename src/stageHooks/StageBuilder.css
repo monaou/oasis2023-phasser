@@ -33,3 +33,7 @@
 .stage-cell.selected {
     border: 2px solid yellow;
 }
+
+.copied {
+    border: 2px dashed yellow;
+}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContextMenu } from 'react';
 import './StageBuilder.css';
 
 const MAX_ROWS = 64;
@@ -17,18 +17,13 @@ const StageBuilder = ({ stageData, setStageData, selectedObject }) => {
         setSelectedCell({ row, col });
         if (selectedObject) {
             const newStageData = [...stageData];
-
             if (!newStageData[row]) {
                 newStageData[row] = [];
             }
-
             newStageData[row][col] = selectedObject.objectCell;
-
+            setStageData(newStageData);
             const newCellData = { ...cellData, [`${row}-${col}`]: selectedObject.objectCell };
             setCellData(newCellData);
-
-            setStageData(newStageData);
-            console.log(stageData);
         }
     };
 
@@ -50,7 +45,6 @@ const StageBuilder = ({ stageData, setStageData, selectedObject }) => {
         if (selectedCell) {
             const newRow = selectedCell.row + rowDiff;
             const newCol = selectedCell.col + colDiff;
-
             if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
                 setSelectedCell({ row: newRow, col: newCol });
             }
@@ -64,11 +58,20 @@ const StageBuilder = ({ stageData, setStageData, selectedObject }) => {
     };
 
     const pasteCell = () => {
-        if (copiedCell) {
-            setSelectedCell(copiedCell);
-            setCopiedCell(null);
+        if (copiedCell && selectedCell) {
+            const newStageData = [...stageData];
+            if (!newStageData[selectedCell.row]) {
+                newStageData[selectedCell.row] = [];
+            }
+            newStageData[selectedCell.row][selectedCell.col] = cellData[`${copiedCell.row}-${copiedCell.col}`];
+
+            const newCellData = { ...cellData, [`${selectedCell.row}-${selectedCell.col}`]: cellData[`${copiedCell.row}-${copiedCell.col}`] };
+            setCellData(newCellData);
+
+            setStageData(newStageData);
         }
     };
+
 
     const generateOptions = (maxValue, step) => {
         const options = [];
@@ -82,17 +85,10 @@ const StageBuilder = ({ stageData, setStageData, selectedObject }) => {
         <div className="stage-builder-container" tabIndex="0" onKeyDown={handleKeyPress}>
             <h2>Stage Builder</h2>
             <div className="controls">
-                <select
-                    value={rows}
-                    onChange={(e) => setRows(Number(e.target.value))}
-                >
+                <select value={rows} onChange={(e) => setRows(Number(e.target.value))}>
                     {generateOptions(MAX_ROWS, STEP)}
                 </select>
-
-                <select
-                    value={cols}
-                    onChange={(e) => setCols(Number(e.target.value))}
-                >
+                <select value={cols} onChange={(e) => setCols(Number(e.target.value))}>
                     {generateOptions(MAX_COLS, STEP)}
                 </select>
             </div>
@@ -102,7 +98,7 @@ const StageBuilder = ({ stageData, setStageData, selectedObject }) => {
                         {[...Array(cols)].map((_, col) =>
                             <div
                                 key={col}
-                                className={`stage-cell ${selectedCell && selectedCell.row === row && selectedCell.col === col ? 'selected' : ''}`}
+                                className={`stage-cell ${selectedCell && selectedCell.row === row && selectedCell.col === col ? 'selected' : ''} ${copiedCell && copiedCell.row === row && copiedCell.col === col ? 'copied' : ''}`}
                                 onClick={() => handleClick(row, col)}
                             >
                                 {cellData[`${row}-${col}`] || ''}

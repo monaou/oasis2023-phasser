@@ -14,7 +14,7 @@ const StageDataToJson = ({ stageData }) => {
         for (let y = 0; y < height; y++) {
             const row = stageData[y];
             if (!row || !Array.isArray(row)) {
-                continue; // 行データが不正な場合、次の行に進む
+                continue;
             }
 
             for (let x = 0; x < row.length; x++) {
