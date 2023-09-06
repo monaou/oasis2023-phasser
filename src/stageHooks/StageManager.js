@@ -8,12 +8,8 @@ import './StageManager.css'; // 必要なCSSファイルをインポート
 
 const StageManager = () => {
     const [selectedObject, setSelectedObject] = useState(null);
-    const [copiedObject, setCopiedObject] = useState(null);
     const stageRef = useRef();
     const [stageData, setStageData] = useState([
-        [null, null, null],
-        [null, null, null],
-        [null, null, null]
     ]);
 
     useEffect(() => {

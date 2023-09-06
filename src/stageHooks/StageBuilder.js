@@ -6,14 +6,12 @@ const MAX_COLS = 128;
 const STEP = 16;
 
 const StageBuilder = ({ stageData, setStageData, selectedObject }) => {
-    console.log("Selected Object: ", selectedObject);
     const [selectedCell, setSelectedCell] = useState(null);
     const [cellData, setCellData] = useState({});
     const [copiedCell, setCopiedCell] = useState(null);
 
     const [rows, setRows] = useState(16);
     const [cols, setCols] = useState(32);
-
 
     const handleClick = (row, col) => {
         setSelectedCell({ row, col });
@@ -25,14 +23,14 @@ const StageBuilder = ({ stageData, setStageData, selectedObject }) => {
             }
 
             newStageData[row][col] = selectedObject.objectCell;
-            setStageData(newStageData);
 
             const newCellData = { ...cellData, [`${row}-${col}`]: selectedObject.objectCell };
             setCellData(newCellData);
+
+            setStageData(newStageData);
+            console.log(stageData);
         }
     };
-
-
 
     const handleKeyPress = (e) => {
         if (e.key === 'Escape') {
