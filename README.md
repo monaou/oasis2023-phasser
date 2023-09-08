@@ -40,17 +40,19 @@ Transitioning smart contract calls implemented on the frontend to the backend, a
 ## Team Members
 ### monaou
 - **Background:** Specialized in nanoscale mechanical engineering simulations during university. Gained 2 years of experience in an IT company as an intern. Experience in developing a human resources matching service for the hotel industry. After graduation, joined an automobile mega-supplier with 5 years of experience in autonomous driving AI development.
-- **Strengths:** Service planning utilizing AI and new technologies.
-- **Awards:** OASYS TOKYO HACKJAM 1st place.
+- **Expertise:** Service planning utilizing AI and new technologies.
 
 ### kazu
 - **Background:** Majored in information engineering during university. After graduation, planned and led a human resources matching service for the hotel industry.
-- **Strengths:** IT service operation and continuous development process improvement.
+- **Expertise:** IT service operation and continuous development process improvement.
 
 ### toko
 - **Background:** Majored in information engineering during university. Gained 2 years of experience in an IT company as an intern. Developed a human resources matching service for the hotel industry. After graduation, worked in a major System Integrator and an IT startup. Active as a security engineer for 5 years.
 - **Expertise:** Security domain.
 
+## Traction
+- **OASYS TOKYO HACKJAM :** 1st place.
+- **OASYS & AWS GAMEWAVE :** Finalist.
 
 # Quick Project Setup
 ```sh
