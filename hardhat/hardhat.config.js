@@ -11,5 +11,11 @@ module.exports = {
       accounts: [PRIVATE_KEY],
       chainId: 20197
     },
+    opbnb: {  // BNBのopBNBテストネット
+      url: "https://opbnb-testnet-rpc.bnbchain.org",
+      accounts: [PRIVATE_KEY],
+      gasPrice: 20000000000,
+      chainId: 5611
+    },
   },
 };
