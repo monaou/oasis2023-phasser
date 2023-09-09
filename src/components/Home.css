@@ -46,6 +46,7 @@ p {
     align-items: center;
     /* カード内の内容を中央揃え */
     justify-content: space-between;
+    border: 2px solid #2a2a2a;
     /* カード内の空間を均等に分散 */
 }
 
@@ -129,7 +130,7 @@ p {
     background-position: center;
     padding: 20px;
     border-radius: 8px;
-    margin-top: 200px;
+    margin-top: 350px;
     width: 700px;
     height: 150px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -139,6 +140,7 @@ p {
     align-items: center;
     justify-content: space-between;
     justify-items: center;
+    border: 2px solid #2a2a2a;
 }
 
 .updates-section {
@@ -156,6 +158,7 @@ p {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
+    border: 2px solid #2a2a2a;
 }
 
 .game-features-section {
@@ -173,4 +176,9 @@ p {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
+    border: 2px solid #2a2a2a;
+}
+
+.partners-section {
+    margin-bottom: 100px;
 }

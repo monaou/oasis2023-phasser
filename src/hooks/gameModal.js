@@ -1,13 +1,24 @@
+import ReactDOM from 'react-dom';
 const Modal = ({ onClose, children }) => {
-    return (
-        <div style={overlayStyle}>
-            <div style={modalStyle}>
+    const handleModalClick = (e) => {
+        e.stopPropagation();
+    };
+
+    const modalContent = (
+        <div style={overlayStyle} onClick={onClose}>
+            <div style={modalStyle} onClick={handleModalClick}>
                 <button onClick={onClose}>close</button>
                 {children}
             </div>
         </div>
     );
+
+    return ReactDOM.createPortal(
+        modalContent,
+        document.getElementById('modal-root') // これはpublic/index.htmlに配置する必要がある要素IDです
+    );
 };
+
 
 const overlayStyle = {
     position: 'fixed',
@@ -19,6 +30,7 @@ const overlayStyle = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex: 1000,   // zIndexを追加して最前面に表示
 };
 
 const modalStyle = {

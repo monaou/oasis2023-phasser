@@ -62,9 +62,7 @@ function Market({ address, provider }) {
     }
 
     return (
-        <div className="market-page">
-            <h1 className="market-title">Marketplace</h1>  {/* この行を追加 */}
-
+        <div className="home-container">
             <div className="card">
                 <h2 className="card-title">First Collaboration!! tomooneNFT.<br />*This is a hack demo.</h2>
                 <img src={url} alt="NFT" onError={(e) => console.error("Image loading error:", e)} style={{ width: '60%', marginBottom: '10px' }} />

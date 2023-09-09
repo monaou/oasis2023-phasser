@@ -1,0 +1,143 @@
+.nft-list {
+    margin-top: 200px;
+    /* お好みのマージンに調整 */
+}
+
+/* 3列表示 */
+.task-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    /* カード同士の間隔を20pxに */
+    justify-content: space-between;
+    justify-items: center;
+    width: 100%;
+    /* コンテナの幅を最大に */
+}
+
+/* カードデザイン */
+.task-card {
+    flex: none;
+    /* 固定の幅を持つように設定 */
+    width: calc(28% - 20px);
+    /* 3列表示のための設定 */
+    box-sizing: border-box;
+    /* paddingやborderを要素のサイズに含める */
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    background-image: url('../assets/react/link-card.jpg');
+    /* お好みの背景画像を設定 */
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #2a2a2a;
+}
+
+.task-card:hover {
+    transform: scale(1.05);
+    /* ホバー時にカードを少し大きくする */
+    box-shadow: 0px 7px 20px rgba(0, 0, 0, 0.2);
+}
+
+.task-card:active {
+    transform: scale(1);
+    /* クリック時（ホップ）に元のサイズに戻る */
+}
+
+.search-sort-container {
+    position: absolute;
+    top: 200px;
+    left: 10px;
+    z-index: 10;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+
+    /* 以下のスタイルでカードの外見を設定 */
+    padding: 15px 20px;
+    /* カードの内側の余白 */
+    background-color: #18bed4;
+    /* カードの背景色 */
+    border-radius: 10px;
+    border: 2px solid #2a2a2a;
+    /* カードの縁取り */
+    /* カードの角を丸める */
+    box-shadow: 0 5px 15px rgba(16, 219, 16, 0.15);
+    /* カードの影を追加 */
+}
+
+/* 入力フィールドとセレクトボックスのスタイルを微調整 */
+input[type="text"],
+select {
+    padding: 8px 12px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.8);
+    /* 背景色を少し透明にする */
+    font-size: 14px;
+    /* フォントサイズを調整 */
+}
+
+
+/* 必要に応じて、入力フィールドとセレクトボックスのスタイルを調整 */
+input[type="text"],
+select {
+    padding: 8px 12px;
+    /* パディングを適用 */
+    border: 2px solid #ccc;
+    /* 枠線を適用 */
+    border-radius: 5px;
+    /* 角を丸める */
+}
+
+
+/* 入力エリアのデザイン */
+input[type="text"] {
+    border: 2px solid #ccc;
+    /* 縁取り */
+    border-radius: 5px;
+    /* 角を丸く */
+    padding: 8px 10px;
+    /* 内部の余白 */
+    font-size: 14px;
+    /* フォントサイズを小さく */
+    transition: border-color 0.3s;
+    /* ホバーエフェクトのためのトランジション */
+    width: auto;
+    /* 幅を自動に */
+    margin: 10px 0;
+    /* 余白を上下に10pxずつ */
+}
+
+/* 入力エリアのホバーエフェクト */
+input[type="text"]:hover {
+    border-color: #007BFF;
+    /* ホバー時の縁取りの色 */
+}
+
+/* ソートセレクトボックスのデザイン */
+select {
+    border: 2px solid #ccc;
+    /* 縁取り */
+    border-radius: 5px;
+    /* 角を丸く */
+    padding: 8px 10px;
+    /* 内部の余白 */
+    font-size: 14px;
+    /* フォントサイズを小さく */
+    transition: border-color 0.3s;
+    /* ホバーエフェクトのためのトランジション */
+    appearance: none;
+    /* デフォルトのブラウザスタイルをリセット */
+    background-color: #fff;
+    /* 背景色 */
+    margin: 10px 0;
+    /* 余白を上下に10pxずつ */
+}
+
+/* ソートセレクトボックスのホバーエフェクト */
+select:hover {
+    border-color: #007BFF;
+    /* ホバー時の縁取りの色 */
+}
