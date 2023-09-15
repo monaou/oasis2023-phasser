@@ -1,15 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import StageSettings from './StageSettings';
 import StageBuilder from './StageBuilder';
-import ObjectDisplay from './ObjectDisplay';
+import ObjectDisplay from '../stageHooks/ObjectDisplay';
 import StageDataToJson from './StageDataToJson';
 
 import './StageManager.css'; // 必要なCSSファイルをインポート
 
 const StageManager = () => {
     const [selectedObject, setSelectedObject] = useState(null);
+    const [copiedObject, setCopiedObject] = useState(null);
     const stageRef = useRef();
     const [stageData, setStageData] = useState([
+        [null, null, null],
+        [null, null, null],
+        [null, null, null]
     ]);
 
     useEffect(() => {

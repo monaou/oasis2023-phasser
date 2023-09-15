@@ -11,10 +11,15 @@ const MAX_TIME_LIMIT = 300;
 const TIME_STEP = 5;
 
 const StageSettings = ({ cellData, provider }) => {
+    const [isSidebarVisible, setSidebarVisible] = useState(false);
     const [timeLimit, setTimeLimit] = useState(60);
     const [stageName, setStageName] = useState('');
     const [entryFee, setEntryFee] = useState();
     const [incentive, setIncentive] = useState();
+
+    const toggleSidebar = () => {
+        setSidebarVisible(!isSidebarVisible);
+    };
 
     const handleSave = async () => {
         const { ethereum } = window;
@@ -62,8 +67,10 @@ const StageSettings = ({ cellData, provider }) => {
 
     return (
         <div className="stage-settings-container">
-            <h3>Stage Settings</h3>
-            <table className="settings-table">
+            <button className="toggle-button" onClick={toggleSidebar}>
+                {isSidebarVisible ? '-' : '+'}
+            </button>
+            <div className={`sidebar ${isSidebarVisible ? 'visible' : 'hidden'}`}>
                 <tbody>
                     <tr>
                         <td>Stage Name:</td>
@@ -93,8 +100,10 @@ const StageSettings = ({ cellData, provider }) => {
                         </td>
                     </tr>
                 </tbody>
-            </table>
-            <SaveButtons onSave={handleSave} onTempSave={handleTempSave} />
+                <SaveButtons onSave={handleSave} onTempSave={handleTempSave} />
+            </div>
+            <div className="main-content">
+            </div>
         </div>
     );
 };
