@@ -52,9 +52,11 @@ const StageManager = () => {
     return (
         <div className="stage-manager-container" tabIndex="0" ref={stageRef}>
             <StageSettings cellData={{}} provider={null} />
-            <StageBuilder stageData={stageData} setStageData={setStageData} selectedObject={selectedObject} />
-            <ObjectDisplay selectedObject={selectedObject} setSelectedObject={setSelectedObject} />
-            <StageDataToJson stageData={stageData} />
+            <div className="stage-builder-object-container">
+                <StageBuilder stageData={stageData} setStageData={setStageData} selectedObject={selectedObject} />
+                <ObjectDisplay selectedObject={selectedObject} setSelectedObject={setSelectedObject} />
+            </div>
+            {/* <StageDataToJson stageData={stageData} /> */}
         </div>
     );
 };

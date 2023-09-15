@@ -23,7 +23,7 @@ const ObjectDisplay = ({ selectedObject, setSelectedObject }) => {
 
     return (
         <div className="object-display-container">
-            <h3>Object Display</h3>
+            {/* <h3>Object Display</h3> */}
             <div className="object-types-select">
                 <label htmlFor="object-type-select">Select Object Type:</label>
                 <select id="object-type-select" value={selectedObjectType} onChange={handleObjectTypeChange}>

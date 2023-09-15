@@ -24,8 +24,14 @@
 
 .object-display-container {
     flex-basis: calc(25% - 10px);
-    /* 100%のうち25% */
     padding: 10px;
     border: 1px solid #ccc;
     box-sizing: border-box;
+}
+
+.stage-builder-object-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 80%;
 }
