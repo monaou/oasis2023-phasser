@@ -29,7 +29,7 @@
     background-color: white;
     flex-shrink: 0;
     border-style: dashed;
-    border-width: 0.5px;
+    border-width: 1px;
     border-color: grey;
 }
 

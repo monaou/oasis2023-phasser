@@ -51,7 +51,7 @@ const StageManager = () => {
 
     return (
         <div className="stage-manager-container" tabIndex="0" ref={stageRef}>
-            <StageSettings />
+            <StageSettings cellData={{}} provider={null} />
             <StageBuilder stageData={stageData} setStageData={setStageData} selectedObject={selectedObject} />
             <ObjectDisplay selectedObject={selectedObject} setSelectedObject={setSelectedObject} />
             <StageDataToJson stageData={stageData} />

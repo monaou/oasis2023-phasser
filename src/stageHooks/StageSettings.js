@@ -11,7 +11,7 @@ const MAX_TIME_LIMIT = 300;
 const TIME_STEP = 5;
 
 const StageSettings = ({ cellData, provider }) => {
-    const [isSidebarVisible, setSidebarVisible] = useState(false);
+    const [isSidebarVisible, setSidebarVisible] = useState(true);
     const [timeLimit, setTimeLimit] = useState(60);
     const [stageName, setStageName] = useState('');
     const [entryFee, setEntryFee] = useState();
@@ -67,9 +67,6 @@ const StageSettings = ({ cellData, provider }) => {
 
     return (
         <div className="stage-settings-container">
-            <button className="toggle-button" onClick={toggleSidebar}>
-                {isSidebarVisible ? '-' : '+'}
-            </button>
             <div className={`sidebar ${isSidebarVisible ? 'visible' : 'hidden'}`}>
                 <tbody>
                     <tr>
@@ -101,8 +98,9 @@ const StageSettings = ({ cellData, provider }) => {
                     </tr>
                 </tbody>
                 <SaveButtons onSave={handleSave} onTempSave={handleTempSave} />
-            </div>
-            <div className="main-content">
+                <button className="toggle-button" onClick={toggleSidebar}>
+                    {isSidebarVisible ? '<' : '>'}
+                </button>
             </div>
         </div>
     );

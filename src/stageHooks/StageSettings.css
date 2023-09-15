@@ -1,26 +1,32 @@
 .stage-settings-container {
+    position: relative;
+    width: 100px;
     display: flex;
     flex-direction: row;
     align-items: flex-start;
 }
 
 .toggle-button {
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 10;
+    position: absolute;
+    right: 0;
+    bottom: 50px;
 }
 
 .sidebar {
     width: 300px;
-    position: fixed;
+    position: absolute;
     left: 0;
-    top: 120px;
+    top: 0;
     bottom: 0;
     background-color: #f2f2f2;
     overflow-y: auto;
     transition: all 0.3s ease;
     transform: translateX(-290px);
+}
+
+.sidebar.hidden {
+    /* width: 40px; */
+    overflow: hidden;
 }
 
 .sidebar.visible {
@@ -33,26 +39,15 @@
     bottom: 10px;
 }
 
-.main-content {
-    margin-left: 5%;
-    flex: 1;
-}
-
 .setting-row {
     display: flex;
     align-items: center;
 }
 
-.setting-label,
-/* StageSettings.css の中で */
-
 .setting-input {
     max-width: 100%;
-    /* この行を追加 */
     overflow: hidden;
-    /* この行を追加 */
     box-sizing: border-box;
-    /* この行を追加 */
 }
 
 .setting-select {
