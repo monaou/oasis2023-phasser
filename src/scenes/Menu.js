@@ -3,11 +3,7 @@ import * as constants from "../constants.js"
 import CustomContainerButton from "../classes/interfaceElements/CustomContainerButton.js"
 import * as assets from "../classes/utility/Assets.js"
 import WebFontFile from "../classes/utility/WebFontFile.js"
-import { ethers } from "ethers"
-import { ERC20_ABI } from '../shared_json/Erc20_abi';
-import currency from '../shared_json/currency.json';
-import rewardPool from '../shared_json/RewardPool.json';
-import stageContract from '../shared_json/StageContract.json';
+import { startGame } from '../api/interface.js';
 
 // Main menu and customization scene
 export default class Menu extends Phaser.Scene {
@@ -59,39 +55,12 @@ export default class Menu extends Phaser.Scene {
     this.add.existing(startButton)
     startButton.setInteractive()
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, async () => {
-        const { ethereum } = window;
-        if (!ethereum) {
-          console.error("No web3 provider detected");
-        }
-
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        const signer = provider.getSigner();
-
-        const contract = new ethers.Contract(stageContract.address, stageContract.abi, signer);
-        const oasContract = new ethers.Contract(currency.sandverse, ERC20_ABI, signer);
         try {
-          const stage_data = await contract.getStageDetails(this.tokenId)
-          const entryFee = (stage_data[2] * 1000000).toString()
-          console.log("you must pay entryFee : ", entryFee);
-
-          const tx = await oasContract.approve(rewardPool.address, ethers.utils.parseUnits(entryFee, 6));  // USDCは小数点以下6桁なので、6を指定
-          await tx.wait();
-          console.log("Allowance set successfully");
-        } catch (err) {
-          console.error("An error occurred while setting the allowance", err);
-        }
-
-        const pay_contract = new ethers.Contract(rewardPool.address, rewardPool.abi, signer);
-        try {
-          const tx = await pay_contract.stakeEntreeFee(this.tokenId);
-          const receipt = await tx.wait();
-
-          const event = receipt.events?.find(e => e.event === 'StakeEntreeFeeEvent');
-          if (event) {
-            const stage_data = event.args.extraDataArr;
+          const { stage_data, gameInstanceId } = await startGame(this.tokenId);
+          if (stage_data) {
+            const gameInstanceIdNumber = parseInt(gameInstanceId.hex, 16);
             console.log(stage_data);
-            console.log("Pay set successfully");
-            this.scene.start('runner', { stage_data: stage_data, tokenId: this.tokenId });
+            this.scene.start('runner', { stage_data: stage_data, tokenId: this.tokenId, gameInstanceId: 8 });
           }
         } catch (err) {
           console.error("An error occurred while fetching stages", err);

@@ -16,6 +16,8 @@ import EnemyBossManager from "../classes/game/EnemyBossManager.js"
 import UserInterface from "../classes/game/UserInterface.js"
 import PlayerCharacter from "../classes/game/PlayerCharacter.js"
 
+import { recordAction, clearGame, FailedGame } from '../api/interface.js';
+
 // Main game scene
 export default class Runner extends Phaser.Scene {
   constructor() {
@@ -32,6 +34,7 @@ export default class Runner extends Phaser.Scene {
     this.playerCharacter = null
     this.stageData
     this.tokenId
+    this.gameInstanceId
 
     this.score = 0
     this.coin = 0
@@ -59,6 +62,9 @@ export default class Runner extends Phaser.Scene {
     }
     if (data.tokenId) {
       this.tokenId = data.tokenId
+    }
+    if (data.gameInstanceId) {
+      this.gameInstanceId = data.gameInstanceId
     }
   }
 
@@ -206,14 +212,17 @@ export default class Runner extends Phaser.Scene {
 
     if (this.cursors.space.isDown) {
       this.playerCharacter.tryJump()
+      recordAction(this.tokenId, this.gameInstanceId, constants.ACTIONTYPE.JUMP)
     }
 
     if (this.cursors.right.isDown) {
       this.playerCharacter.tryWalkRight()
+      recordAction(this.tokenId, this.gameInstanceId, constants.ACTIONTYPE.RIGHT_START)
     }
 
     if (this.cursors.left.isDown) {
       this.playerCharacter.tryWalkLeft()
+      recordAction(this.tokenId, this.gameInstanceId, constants.ACTIONTYPE.LEFT_START)
     }
 
     if (this.cursors.right.isUp && this.cursors.left.isUp) {
@@ -222,6 +231,7 @@ export default class Runner extends Phaser.Scene {
 
     if (this.cursors.down.isDown) {
       this.playerCharacter.tryGuard()
+      recordAction(this.tokenId, this.gameInstanceId, constants.ACTIONTYPE.GURAD_START)
     }
 
     if (this.cursors.down.isUp) {
@@ -230,6 +240,7 @@ export default class Runner extends Phaser.Scene {
 
     if (this.cursors.up.isDown) {
       this.playerCharacter.tryNormalAttack()
+      recordAction(this.tokenId, this.gameInstanceId, constants.ACTIONTYPE.ATTACK)
     }
 
     if (this.playerCharacter) {
@@ -317,6 +328,7 @@ export default class Runner extends Phaser.Scene {
   hitObstacle = () => {
     if (!this.isGameOver) {
       this.audioRefs.loseSfx.play()
+      FailedGame(this.tokenId, this.gameInstanceId)
     }
     this.isGameOver = true
     this.playerCharacter.die()
@@ -330,9 +342,13 @@ export default class Runner extends Phaser.Scene {
     }
   }
 
-  hitGoal = (index) => {
+  hitGoal = async (index) => {
+    if (!this.isGoal) {
+      clearGame(this.tokenId, this.gameInstanceId)
+    }
     this.isGoal = true
     this.playerCharacter.win()
+
     // this.audioRefs.loseSfx.play()
 
     if (this.userInterface) {
@@ -359,21 +375,6 @@ export default class Runner extends Phaser.Scene {
   restartGame = async () => {
     this.scene.remove("runner")
 
-    const { ethereum } = window;
-    if (!ethereum) {
-      console.error("No web3 provider detected");
-    }
-
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const signer = provider.getSigner();
-
-    const pay_contract = new ethers.Contract(rewardPool.address, rewardPool.abi, signer);
-    try {
-      const tx = await pay_contract.setStageClear(this.tokenId);
-      console.log("Clear Stage flag set successfully", tx);
-    } catch (err) {
-      console.error("Clear Stage glag set not successfully", err);
-    }
   }
 
   // Destroy scene and create new one with same options

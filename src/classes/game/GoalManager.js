@@ -30,7 +30,7 @@ export default class GoalManager {
       let index = 0
       this.stageData.forEach((goal) => {
         if (goal[2] === "goal") {
-          this.createGoal(index, goal[0], goal[1], 80, 80, goal[2])
+          this.createGoal(index, parseInt(goal[0].hex), 16, parseInt(goal[1].hex, 16), 80, 80, goal[2])
           index++
         }
       })

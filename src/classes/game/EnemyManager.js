@@ -30,7 +30,7 @@ export default class EnemyManager {
       let index = 0
       this.stageData.forEach((enemy) => {
         if (enemy[2] === "enemy") {
-          this.createEnemy(index, enemy[0], enemy[1], 80, 80, enemy[2])
+          this.createEnemy(index, parseInt(enemy[0].hex), parseInt(enemy[1].hex), 80, 80, enemy[2])
           index++
         }
       })

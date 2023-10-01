@@ -15,7 +15,24 @@ contract RewardPool {
     address public admin;
     uint256 public feePercentage = 5;
 
-    event StakeEntreeFeeEvent(ExtraDataLib.ExtraData[] extraDataArr);
+    enum GameState {
+        NotStarted,
+        Started,
+        Cleared,
+        Failed
+    }
+    mapping(uint256 => uint256) private gameInstanceMaxId;
+    mapping(uint256 => mapping(uint256 => GameState)) private gameStates;
+
+    modifier onlyAdmin() {
+        require(msg.sender == admin, "Only admin can call this function.");
+        _;
+    }
+    // Event definition
+    event StakeEntreeFeeEvent(
+        ExtraDataLib.ExtraData[] extraDataArr,
+        uint256 gameInstanceId
+    );
 
     constructor(
         address _nftContractAddress,
@@ -62,10 +79,12 @@ contract RewardPool {
             oasToken.transferFrom(msg.sender, address(this), stakingAmount),
             "OAS transfer failed in stakeReward"
         );
+
+        gameInstanceMaxId[tokenId] = 0;
         pendingRewards[tokenId] += stakingAmount;
     }
 
-    function stakeEntreeFee(uint256 tokenId) external {
+    function stakeEntreeFee(uint256 tokenId) external onlyAdmin {
         (
             address addr,
             string memory name,
@@ -95,15 +114,40 @@ contract RewardPool {
             "OAS transfer failed in stakeEntreeFee"
         );
 
+        // Generating a unique game instance ID
+        uint256 currentId = gameInstanceMaxId[tokenId];
+        gameStates[tokenId][currentId] = GameState.Started;
+        gameInstanceMaxId[tokenId]++;
+
         ditributeStageRewards[addr] += createrAmount;
         pendingRewards[tokenId] += stageAmount;
 
-        emit StakeEntreeFeeEvent(extraDataArr);
+        emit StakeEntreeFeeEvent(extraDataArr, currentId);
     }
 
-    function setStageClear(uint256 tokenId) external {
+    function setStageClear(
+        uint256 tokenId,
+        uint256 gameInstanceId
+    ) external onlyAdmin {
+        require(
+            gameStates[tokenId][gameInstanceId] == GameState.Started,
+            "Game is not in a valid state to clear"
+        );
+        gameStates[tokenId][gameInstanceId] = GameState.Cleared;
+
         ditributeClearRewards[msg.sender] = pendingRewards[tokenId];
         pendingRewards[tokenId] = 0;
+    }
+
+    function setStageFailed(
+        uint256 tokenId,
+        uint256 gameInstanceId
+    ) external onlyAdmin {
+        require(
+            gameStates[tokenId][gameInstanceId] == GameState.Started,
+            "Game is not in a valid state to clear"
+        );
+        gameStates[tokenId][gameInstanceId] = GameState.Failed;
     }
 
     function claimClearReward() external {
