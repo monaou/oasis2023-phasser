@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "parcel src/index.html --no-cache",
+    "dev": "parcel src/index.html --no-cache -p 3000",
     "before": "npm install",
     "build": "parcel build src/index.html"
   },
