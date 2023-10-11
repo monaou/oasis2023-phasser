@@ -2,10 +2,10 @@
 
 const ethers = require('ethers');
 const RewardPool = require('../../src/shared_json/RewardPool.json');
+const TicketPlatform = require('../../src/shared_json/TicketPlatform.json');
 
 // あなたのプライベートキーとプロバイダのURLを設定します
 const privateKey = process.env.PRIVATE_KEY;
-const projectID = process.env.PROJECT_ID;
 const providerUrl = 'https://rpc.sandverse.oasys.games';
 
 // ウォレットとプロバイダを作成します
@@ -33,4 +33,5 @@ module.exports = {
     abi,
     contract,
     gameInstanceFlags,
+    TicketPlatform,
 };
