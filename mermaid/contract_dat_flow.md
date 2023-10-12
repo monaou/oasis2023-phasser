@@ -45,7 +45,7 @@ sequenceDiagram
     E1 -->> C: Burn Confirmation
     C ->> E2: [Function related to game instance creation]
     E2 -->> C: Game Instance ID
-    C -->> B: Game Instance ID
+    C -->> B: Game Instance ID and Stage Data
 
 ```
 ## Stage flags on playing and finishing
