@@ -43,8 +43,8 @@ sequenceDiagram
     B ->> C: start game and select stage
     C ->> E1: burnTicket()
     E1 -->> C: Burn Confirmation
-    C ->> E2: [Function related to game instance creation]
-    E2 -->> C: Game Instance ID
+    C ->> E2: stakeEntreeFee()
+    E2 -->> C: Game Instance ID and Stage Data
     C -->> B: Game Instance ID and Stage Data
 
 ```
