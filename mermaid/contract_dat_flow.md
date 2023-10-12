@@ -37,7 +37,7 @@ sequenceDiagram
     participant B as Client
     participant C as Backend
     participant E1 as TicketPlatform Contract
-    participant E2 as StageContract Contract
+    participant E2 as RewardPool Contract
     
     A ->> B: start game and select stage
     B ->> C: start game and select stage
@@ -46,6 +46,7 @@ sequenceDiagram
     C ->> E2: stakeEntreeFee()
     E2 -->> C: Game Instance ID and Stage Data
     C -->> B: Game Instance ID and Stage Data
+    E2 ->> E2: reward distribution
 
 ```
 ## Stage flags on playing and finishing
@@ -64,7 +65,7 @@ sequenceDiagram
     C ->> D: validation user action
     D -->> C: validation result
     C ->> E: setStageClear() or setStageFailed()
-    E ->> E: [Function related to reward distribution]
+    E ->> E: reward distribution
 
 ``` 
 

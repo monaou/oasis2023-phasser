@@ -152,6 +152,7 @@ contract RewardPool is ReentrancyGuard {
 
     // Function to set a game instance as cleared, callable by admin
     function setStageClear(
+        address userAddress,
         uint256 stageId,
         uint256 gameInstanceId
     ) external onlyAdmin {
@@ -161,7 +162,7 @@ contract RewardPool is ReentrancyGuard {
         );
         _gameStates[stageId][gameInstanceId] = GameState.Cleared;
 
-        _ditributeClearRewards[msg.sender] = _pendingRewards[stageId];
+        _ditributeClearRewards[userAddress] = _pendingRewards[stageId];
         _pendingRewards[stageId] = 0;
     }
 
