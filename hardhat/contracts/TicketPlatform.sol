@@ -1,187 +1,164 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+// SPDX-License-Identifier: MIT License
+pragma solidity ^0.8.17;
 
+import "./libraries/TicketPlatformLib.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-/**
- * @title TicketPlatform
- * @dev A contract to facilitate ticket sales and management on the Ethereum blockchain.
- *
- * Tickets can be purchased using a specified ERC20 token. Each type of ticket is represented with a unique `ticketType`.
- * Ticket purchasing information and available ticket types with their respective details are emitted as events.
- */
-contract TicketPlatform {
-    // Represents a purchased ticket.
-    struct Ticket {
-        uint256 ticketNum; // Number of tickets purchased by a user of a specific type.
-        uint256 ticketType; // Represents the type/ID of the ticket.
-    }
+contract TicketPlatform is ReentrancyGuard {
+    using TicketPlatformLib for TicketPlatformLib.TicketInfo;
 
-    // Represents information about a particular type of ticket available for purchase.
-    struct TicketInfo {
-        uint256 ticketMaxNum; // Maximum number of these tickets that can be bought per user (if isTicketRange is true).
-        uint256 ticketPrice; // Price per ticket of this type.
-        bool isTicketRange; // Indicates whether there is a restricted range/limit for purchasing this ticket type.
-        uint256 ticketType; // An ID to uniquely identify this type of ticket.
-        string ticketName; // A human-readable name for this ticket type.
-        string ticketImageURL; // A image url for this ticket type.
-        string ticketDescription; // A ticket description for this ticket type.
-    }
+    address private _admin;
+    IERC20 private _token;
+    uint256 private _currentTicketId = 0;
 
-    // Admin is the address with permissions to set ticket details.
-    address private admin;
+    mapping(address => mapping(uint256 => uint256)) private _userTickets;
+    mapping(address => mapping(uint256 => uint256)) private _usedTickets;
+    mapping(uint256 => TicketPlatformLib.TicketInfo) private _ticketInfos;
 
-    // The ERC20 token used for purchasing tickets.
-    IERC20 private token;
-
-    // A nested mapping from user addresses to ticket types to Tickets.
-    // Keeps track of how many tickets of each type each user has purchased.
-    mapping(address => mapping(uint256 => Ticket)) private userTickets;
-
-    // An array to store info for each type of ticket available for purchase.
-    TicketInfo[] public ticketInfos;
-
-    // Emitted when a user purchases a ticket.
     event TicketPurchased(
         address indexed user,
         uint256 ticketType,
         uint256 ticketNum
     );
 
-    // Emitted when new ticket info/type is added.
-    event TicketInfoPurchased(
-        uint256 ticketType,
-        uint256 ticketPrice,
-        bool isTicketRange,
-        uint256 ticketMaxNum,
+    event TicketInfoAdded(
+        uint256 ticketId,
         string ticketName,
         string ticketImageURL,
-        string ticketDescription
+        string ticketDescription,
+        uint256 ticketType,
+        uint256 ticketPrice,
+        uint256 ticketMaxNum,
+        bool isTicketRange
     );
 
-    // Ensures only the admin can call a function.
     modifier onlyAdmin() {
-        require(msg.sender == admin, "Not the admin");
+        require(msg.sender == _admin, "Not the admin");
         _;
     }
 
-    /**
-     * @dev Sets the admin to the account that deploys the contract and specifies the ERC20 token to use for purchases.
-     * @param _tokenAddress The address of the ERC20 token contract.
-     */
-    constructor(address _tokenAddress) {
-        admin = msg.sender;
-        token = IERC20(_tokenAddress);
+    constructor(address tokenAddress) {
+        _admin = msg.sender;
+        _token = IERC20(tokenAddress);
     }
 
-    /**
-     * @dev Adds a new type of ticket available for purchase.
-     * @param _ticketMaxNum Maximum number of this type of tickets that can be bought per user.
-     * @param _ticketPrice Price per ticket for this type.
-     * @param _isTicketRange Whether there is a purchase limit for this type of ticket.
-     * @param _ticketName A name for this type of ticket.
-     * @param _ticketImageURL A image url for this ticket type.
-     * @param _ticketDescription A ticket description of this ticket.
-     *
-     * Emits a {TicketInfoPurchased} event.
-     */
     function setTicketPrice(
-        uint256 _ticketMaxNum,
-        uint256 _ticketPrice,
-        bool _isTicketRange,
-        string memory _ticketName,
-        string memory _ticketImageURL,
-        string memory _ticketDescription
+        string memory ticketName,
+        string memory ticketImageURL,
+        string memory ticketDescription,
+        uint256 ticketType,
+        uint256 ticketPrice,
+        uint256 ticketMaxNum,
+        bool isTicketRange
     ) external onlyAdmin {
-        uint256 newTicketType = ticketInfos.length; // Using length as a new unique ID
-        TicketInfo memory newTicketInfo = TicketInfo({
-            ticketMaxNum: _ticketMaxNum,
-            ticketPrice: _ticketPrice,
-            isTicketRange: _isTicketRange,
-            ticketType: newTicketType,
-            ticketName: _ticketName,
-            ticketImageURL: _ticketImageURL,
-            ticketDescription: _ticketDescription
-        });
-        ticketInfos.push(newTicketInfo);
-        emit TicketInfoPurchased(
-            newTicketType,
-            _ticketPrice,
-            _isTicketRange,
-            _ticketMaxNum,
-            _ticketName,
-            _ticketImageURL,
-            _ticketDescription
+        _currentTicketId++;
+        TicketPlatformLib.TicketInfo memory newTicketInfo = TicketPlatformLib
+            .TicketInfo({
+                ticketName: ticketName,
+                ticketImageURL: ticketImageURL,
+                ticketDescription: ticketDescription,
+                ticketType: ticketType,
+                ticketPrice: ticketPrice,
+                ticketMaxNum: ticketMaxNum,
+                isTicketRange: isTicketRange
+            });
+        _ticketInfos[_currentTicketId] = newTicketInfo;
+
+        emit TicketInfoAdded(
+            _currentTicketId,
+            ticketName,
+            ticketImageURL,
+            ticketDescription,
+            ticketType,
+            ticketPrice,
+            ticketMaxNum,
+            isTicketRange
         );
     }
 
-    /**
-     * @dev Allows a user to purchase a specific type and number of tickets.
-     * @param _buyTicketType The ID/type of ticket the user wants to purchase.
-     * @param _buyTicketNum The number of tickets the user wants to purchase.
-     *
-     * Requirements:
-     * - `_buyTicketType` must be a valid ticket type.
-     * - If `isTicketRange` is true, user must not exceed the maximum number of tickets allowed.
-     * - User must have sufficient tokens to pay for tickets.
-     *
-     * Emits a {TicketPurchased} event.
-     */
     function purchaseTicket(
-        uint256 _buyTicketType,
-        uint256 _buyTicketNum
-    ) external {
-        require(_buyTicketType < ticketInfos.length, "Invalid ticket type");
+        uint256 buyTicketId,
+        uint256 buyTicketNum
+    ) external nonReentrant {
+        require(buyTicketId <= _currentTicketId, "Invalid ticket type");
+        TicketPlatformLib.TicketInfo memory ticketInfo = _ticketInfos[
+            buyTicketId
+        ];
 
-        TicketInfo memory ticketInfo = ticketInfos[_buyTicketType];
-
-        // Check total tickets if it's range restricted
         if (ticketInfo.isTicketRange) {
-            Ticket memory userTicket = getUserTicket(
-                msg.sender,
-                _buyTicketType
-            );
+            uint256 userTicket = getUserTicket(msg.sender, buyTicketId);
             require(
-                userTicket.ticketNum + _buyTicketNum <= ticketInfo.ticketMaxNum,
+                userTicket + buyTicketNum <= ticketInfo.ticketMaxNum,
                 "Exceeding max number of tickets"
             );
         }
 
-        // Transfer tokens
-        uint256 totalCost = ticketInfo.ticketPrice * _buyTicketNum;
+        uint256 totalCost = ticketInfo.ticketPrice * buyTicketNum;
         require(
-            token.transferFrom(msg.sender, address(this), totalCost),
+            _token.transferFrom(msg.sender, address(this), totalCost),
             "Transfer failed"
         );
 
-        // Update or add ticket
-        Ticket storage userTicketToUpdate = userTickets[msg.sender][
-            _buyTicketType
-        ];
-        userTicketToUpdate.ticketType = _buyTicketType;
-        userTicketToUpdate.ticketNum += _buyTicketNum;
+        _userTickets[msg.sender][buyTicketId] += buyTicketNum;
 
-        emit TicketPurchased(msg.sender, _buyTicketType, _buyTicketNum);
+        emit TicketPurchased(msg.sender, buyTicketId, buyTicketNum);
     }
 
-    /**
-     * @dev Returns the ticket data for a specific user and ticket type.
-     * @param userAddress The address of the user to retrieve ticket data for.
-     * @param _ticketType The type/ID of ticket to retrieve data for.
-     * @return The Ticket struct for the specified user and ticket type.
-     */
+    function burnTicket(
+        address addr,
+        uint256 burnTicketId,
+        uint256 burnTicketNum
+    ) external onlyAdmin returns (bool) {
+        require(burnTicketId <= _currentTicketId, "Invalid ticket type");
+
+        uint256 userTicketNum = getUserTicket(addr, burnTicketId);
+        uint256 usedTicketNum = getUsedTicket(addr, burnTicketId);
+        require(
+            userTicketNum >= usedTicketNum + burnTicketNum,
+            "Already used max number of tickets"
+        );
+
+        setUsedTicket(addr, burnTicketId, usedTicketNum + burnTicketNum);
+        return true;
+    }
+
     function getUserTicket(
-        address userAddress,
-        uint256 _ticketType
-    ) public view returns (Ticket memory) {
-        return userTickets[userAddress][_ticketType];
+        address addr,
+        uint256 ticketId
+    ) public view returns (uint256) {
+        return _userTickets[addr][ticketId];
     }
 
-    /**
-     * @dev Returns all available ticket types and their details.
-     * @return An array of TicketInfo structs, each representing a different ticket type.
-     */
-    function getDetails() external view returns (TicketInfo[] memory) {
-        return ticketInfos;
+    function getUsedTicket(
+        address addr,
+        uint256 ticketId
+    ) public view returns (uint256) {
+        return _usedTickets[addr][ticketId];
+    }
+
+    function setUsedTicket(
+        address addr,
+        uint256 ticketId,
+        uint256 ticketNum
+    ) internal onlyAdmin {
+        _usedTickets[addr][ticketId] += ticketNum;
+    }
+
+    function getDetails()
+        external
+        view
+        returns (TicketPlatformLib.TicketInfo[] memory)
+    {
+        TicketPlatformLib.TicketInfo[]
+            memory ticketsArray = new TicketPlatformLib.TicketInfo[](
+                _currentTicketId
+            );
+
+        for (uint256 i = 1; i <= _currentTicketId; i++) {
+            ticketsArray[i - 1] = _ticketInfos[i];
+        }
+
+        return ticketsArray;
     }
 }

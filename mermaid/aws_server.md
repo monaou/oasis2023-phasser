@@ -5,8 +5,8 @@ graph TD
     C(CDN: chache server)
     D(App: EC2)
     E(Backend: EC2)
-    F(DB: mysql)
-    G(MCHverse)
+    F(DB: mysql or other DB)
+    G(Contract)
     H(NAT instance)
     
     A -->|HTTP/HTTPS, TCP 3000| B

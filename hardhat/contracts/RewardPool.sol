@@ -1,179 +1,204 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT License
 pragma solidity ^0.8.17;
 
 import "./StageContract.sol";
+import "./TicketPlatform.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract RewardPool {
+contract RewardPool is ReentrancyGuard {
     using ExtraDataLib for ExtraDataLib.ExtraData;
-    address private owner;
-    IERC20 public oasToken;
-    mapping(uint256 => uint256) public pendingRewards;
-    mapping(address => uint256) public ditributeStageRewards;
-    mapping(address => uint256) public ditributeClearRewards;
-    StageContract public stageContract;
-    address public admin;
-    uint256 public feePercentage = 5;
+    using ExtraDataLib for ExtraDataLib.StageData;
+    using TicketPlatformLib for TicketPlatformLib.TicketInfo;
 
+    // Contract that manages stages
+    StageContract private _stageContract;
+    // Contract managing tickets
+    TicketPlatform private _ticketContract;
+
+    // Admin address which has special permissions
+    address private _admin;
+    // Stablecoin used in the platform (assumed)
+    IERC20 private _token;
+    // Percentage of fee taken by the platform
+    uint256 private _feePercentage = 5;
+
+    // Stores rewards yet to be claimed per stage
+    mapping(uint256 => uint256) private _pendingRewards;
+    // Rewards to be distributed for stage clearance, mapped by address
+    mapping(address => uint256) private _ditributeStageRewards;
+    // Rewards to be distributed for clear actions, mapped by address
+    mapping(address => uint256) private _ditributeClearRewards;
+
+    // Possible states of a game instance
     enum GameState {
         NotStarted,
         Started,
         Cleared,
         Failed
     }
-    mapping(uint256 => uint256) private gameInstanceMaxId;
-    mapping(uint256 => mapping(uint256 => GameState)) private gameStates;
+    // Max instance ID per stage to manage concurrent games
+    mapping(uint256 => uint256) private _maxGameInstanceId;
+    // Keeps track of the state of each game instance
+    mapping(uint256 => mapping(uint256 => GameState)) private _gameStates;
 
+    // Modifier to restrict function access to admin only
     modifier onlyAdmin() {
-        require(msg.sender == admin, "Only admin can call this function.");
+        require(msg.sender == _admin, "Only admin can call this function.");
         _;
     }
-    // Event definition
+    // Event emitted when entry fee is staked
     event StakeEntreeFeeEvent(
         ExtraDataLib.ExtraData[] extraDataArr,
         uint256 gameInstanceId
     );
 
+    // Constructor initializes contract addresses and admin
     constructor(
-        address _nftContractAddress,
-        address _adminAddress,
-        address _oasAddress
+        address stageContractAddress,
+        address ticketContractAddress,
+        address tokenAddress
     ) {
-        owner = msg.sender;
-        stageContract = StageContract(_nftContractAddress);
-        admin = _adminAddress;
-        oasToken = IERC20(_oasAddress);
+        _admin = msg.sender;
+        _stageContract = StageContract(stageContractAddress);
+        _ticketContract = TicketPlatform(ticketContractAddress);
+        _token = IERC20(tokenAddress);
     }
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only owner can call this function.");
-        _;
-    }
-
+    // Function to stake rewards for a stage, callable by admin
     function stakeReward(
-        string memory _name,
-        uint _entryFee,
-        uint _incentive,
-        ExtraDataLib.ExtraData[] memory _extraDataArr
-    ) external {
-        uint256 tokenId = stageContract.mintStage(
-            msg.sender,
-            _name,
-            _entryFee,
-            _incentive,
-            _extraDataArr
-        );
-
-        require(stageContract.ownerOf(tokenId) == msg.sender, "Not the owner");
-
-        uint256 fee = (_incentive * feePercentage) / 100;
-        uint256 stakingAmount = _incentive - fee;
-
-        // Transfer OAS for the fee to the admin
+        address userAddress,
+        uint256 stageId
+    ) external onlyAdmin nonReentrant {
         require(
-            oasToken.transferFrom(msg.sender, admin, fee),
+            _stageContract.ownerOf(stageId) == userAddress,
+            "Not the owner"
+        );
+        ExtraDataLib.StageData memory stageData = _stageContract
+            .getStageDetails(stageId);
+        TicketPlatformLib.TicketInfo[] memory ticketInfo = _ticketContract
+            .getDetails();
+
+        uint256 incentive = ticketInfo[stageData.rewardTicketId].ticketPrice *
+            stageData.rewardTicketNum;
+
+        uint256 fee = (incentive * _feePercentage) / 100;
+        uint256 stakingAmount = incentive - fee;
+
+        require(
+            _token.transferFrom(address(_ticketContract), _admin, fee),
             "OAS transfer failed in stakeReward"
         );
-        // Transfer stakingAmount to this contract
         require(
-            oasToken.transferFrom(msg.sender, address(this), stakingAmount),
+            _token.transferFrom(
+                address(_ticketContract),
+                address(this),
+                stakingAmount
+            ),
             "OAS transfer failed in stakeReward"
         );
 
-        gameInstanceMaxId[tokenId] = 0;
-        pendingRewards[tokenId] += stakingAmount;
+        _maxGameInstanceId[stageId] = 0;
+        _pendingRewards[stageId] += stakingAmount;
     }
 
-    function stakeEntreeFee(uint256 tokenId) external onlyAdmin {
-        (
-            address addr,
-            string memory name,
-            uint entryFee,
-            uint incentive,
-            ExtraDataLib.ExtraData[] memory extraDataArr
-        ) = stageContract.getStageDetails(tokenId);
+    // Function to stake entry fee for participating, callable by admin
+    function stakeEntreeFee(
+        address userAddress,
+        uint256 stageId
+    ) external onlyAdmin nonReentrant {
+        ExtraDataLib.StageData memory stageData = _stageContract
+            .getStageDetails(stageId);
+        TicketPlatformLib.TicketInfo[] memory ticketInfo = _ticketContract
+            .getDetails();
+        uint256 entryFee = ticketInfo[stageData.needTicketId].ticketPrice *
+            stageData.needTicketNum;
 
-        uint256 fee = (entryFee * feePercentage) / 100;
-        uint256 stakingAmount = (entryFee - fee);
-        uint256 createrAmount = (stakingAmount) / 2;
-        uint256 stageAmount = (stakingAmount) - createrAmount;
+        uint256 fee = (entryFee * _feePercentage) / 100;
+        uint256 stakingAmount = entryFee - fee;
+        uint256 createrAmount = stakingAmount / 2;
+        uint256 stageAmount = stakingAmount - createrAmount;
 
-        // Transfer OAS for the fee to the admin
         require(
-            oasToken.transferFrom(msg.sender, admin, fee),
+            _token.transferFrom(address(_ticketContract), _admin, fee),
             "OAS transfer failed in stakeEntreeFee"
         );
-        // Transfer OAS for the fee to the admin
         require(
-            oasToken.transferFrom(msg.sender, addr, createrAmount),
+            _token.transferFrom(
+                address(_ticketContract),
+                _stageContract.ownerOf(stageId),
+                createrAmount
+            ),
             "OAS transfer failed in stakeEntreeFee"
         );
-        // Transfer stakingAmount to this contract
         require(
-            oasToken.transferFrom(msg.sender, address(this), stageAmount),
+            _token.transferFrom(
+                address(_ticketContract),
+                address(this),
+                stageAmount
+            ),
             "OAS transfer failed in stakeEntreeFee"
         );
 
-        // Generating a unique game instance ID
-        uint256 currentId = gameInstanceMaxId[tokenId];
-        gameStates[tokenId][currentId] = GameState.Started;
-        gameInstanceMaxId[tokenId]++;
+        uint256 currentGameInstanceId = _maxGameInstanceId[stageId];
+        _gameStates[stageId][currentGameInstanceId] = GameState.Started;
+        _maxGameInstanceId[stageId]++;
 
-        ditributeStageRewards[addr] += createrAmount;
-        pendingRewards[tokenId] += stageAmount;
+        _ditributeStageRewards[userAddress] += createrAmount;
+        _pendingRewards[stageId] += stageAmount;
 
-        emit StakeEntreeFeeEvent(extraDataArr, currentId);
+        emit StakeEntreeFeeEvent(stageData.extraDataArr, currentGameInstanceId);
     }
 
+    // Function to set a game instance as cleared, callable by admin
     function setStageClear(
-        uint256 tokenId,
+        uint256 stageId,
         uint256 gameInstanceId
     ) external onlyAdmin {
         require(
-            gameStates[tokenId][gameInstanceId] == GameState.Started,
+            _gameStates[stageId][gameInstanceId] == GameState.Started,
             "Game is not in a valid state to clear"
         );
-        gameStates[tokenId][gameInstanceId] = GameState.Cleared;
+        _gameStates[stageId][gameInstanceId] = GameState.Cleared;
 
-        ditributeClearRewards[msg.sender] = pendingRewards[tokenId];
-        pendingRewards[tokenId] = 0;
+        _ditributeClearRewards[msg.sender] = _pendingRewards[stageId];
+        _pendingRewards[stageId] = 0;
     }
 
+    // Function to set a game instance as failed, callable by admin
     function setStageFailed(
-        uint256 tokenId,
+        uint256 stageId,
         uint256 gameInstanceId
     ) external onlyAdmin {
         require(
-            gameStates[tokenId][gameInstanceId] == GameState.Started,
+            _gameStates[stageId][gameInstanceId] == GameState.Started,
             "Game is not in a valid state to clear"
         );
-        gameStates[tokenId][gameInstanceId] = GameState.Failed;
+        _gameStates[stageId][gameInstanceId] = GameState.Failed;
     }
 
-    function claimClearReward() external {
-        uint256 rewardAmount = ditributeClearRewards[msg.sender];
+    // Function for users to claim rewards after a clear
+    function claimClearReward() external nonReentrant {
+        uint256 rewardAmount = _ditributeClearRewards[msg.sender];
         require(rewardAmount > 0, "No reward available");
 
-        // Prevent double claiming by resetting the reward for this tokenId for this user.
-        ditributeClearRewards[msg.sender] = 0;
+        _ditributeClearRewards[msg.sender] = 0;
 
-        // Instead of using Ether's transfer, use OAS's transfer method to send the reward.
         require(
-            oasToken.transfer(msg.sender, rewardAmount),
+            _token.transfer(msg.sender, rewardAmount),
             "OAS transfer failed in claimClearReward"
         );
     }
 
-    function claimStageReward() external {
-        uint256 rewardAmount = ditributeStageRewards[msg.sender];
+    // Function for users to claim rewards for a stage
+    function claimStageReward() external nonReentrant {
+        uint256 rewardAmount = _ditributeStageRewards[msg.sender];
         require(rewardAmount > 0, "No reward available");
 
-        // Prevent double claiming by resetting the reward for this tokenId for this user.
-        ditributeStageRewards[msg.sender] = 0;
+        _ditributeStageRewards[msg.sender] = 0;
 
-        // Instead of using Ether's transfer, use OAS's transfer method to send the reward.
         require(
-            oasToken.transfer(msg.sender, rewardAmount),
+            _token.transfer(msg.sender, rewardAmount),
             "OAS transfer failed in claimStageReward"
         );
     }
