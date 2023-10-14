@@ -3,14 +3,14 @@ const {
     contract,
     connectedWallet
 } = require('../sharedResources/sharedResources');
-const { validateActionExistence } = require('../utils/gameFunctions');
+const { validateAction } = require('../utils/gameFunctions');
 
 module.exports = async (req, res) => {
     try {
         const { tokenId, gameInstanceId } = req.body;
 
         // Validate the start flag for the given game instance ID
-        if (!validateActionExistence(tokenId, gameInstanceId)) {
+        if (!validateAction(tokenId, gameInstanceId)) {
             throw new Error('Invalid game instance ID or game has expired');
         }
         const nonce = await connectedWallet.provider.getTransactionCount(connectedWallet.address, 'pending');

@@ -1,63 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import rewardContract from '../shared_json/RewardPool.json';
-import { ERC20_ABI } from '../shared_json/Erc20_abi';
-import currency from '../shared_json/currency.json';
-import SaveButtons from './SaveButtons';
+import TicketPlatform from "../shared_json/TicketPlatform.json";
+import { createStage } from '../api/interface';
 import './StageSettings.css';
 
-const MIN_TIME_LIMIT = 10;
-const MAX_TIME_LIMIT = 300;
-const TIME_STEP = 5;
-
-const StageSettings = ({ cellData, provider }) => { // 関数名を変更
-    const [timeLimit, setTimeLimit] = useState(60);
+function StageSettings({ cellData, address, provider }) { // 関数名を変更
+    const [errorMessage, setErrorMessage] = useState(null);
     const [stageName, setStageName] = useState('');
-    const [entryFee, setEntryFee] = useState();
-    const [incentive, setIncentive] = useState();
+    const [description, setDescription] = useState('');
+    const [needTicketId, setNeedTicketId] = useState(1);
+    const [needTicketNum, setNeedTicketNum] = useState(1);
+    const [rewardTicketId, setRewardTicketId] = useState(2);
+    const [inputRewardTicketNum, setInputRewardTicketNum] = useState(0);
+    const [rewardTicketNum, setRewardTicketNum] = useState(1);
+    const contract = new ethers.Contract(TicketPlatform.address, TicketPlatform.abi, provider);
+
+    useEffect(() => {
+        const fetchTicketInfos = async () => {
+            try {
+                if (address) {
+                    let num = await contract.getUserTicket(address, rewardTicketId);
+                    setInputRewardTicketNum(num.toNumber())
+                }
+            } catch (error) {
+                console.error("Error fetching ticket data: ", error);
+                setErrorMessage("Failed to load ticket information. Please try again later.");
+            }
+        }
+
+        fetchTicketInfos();
+    }, [contract, address]);
 
     const handleSave = async () => {
-        const { ethereum } = window;
-
-        if (!ethereum) {
-            console.error("No web3 provider detected");
-            return;
-        }
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        if (!provider) {
-            console.log("No provider is set");
-            return;
-        }
-        const signer = await provider.getSigner();
-        const contract = new ethers.Contract(rewardContract.address, rewardContract.abi, signer);
-
-        // Convert the JSON string from textarea to an array of objects
-        const transformedArray = Object.keys(cellData).map(key => {
-            const [x, y] = key.split('-').map(Number);
-            return [x * 80, y * 80, cellData[key]];//TODO: fix magic number
-        });
-        console.log(transformedArray)
-        // const dataStr = JSON.stringify(transformedArray);
-        // const extraDataArr = JSON.parse(dataStr).map(item => [
-        //     Number(item.x),
-        //     Number(item.y),
-        //     item.type
-        // ]);
-
-        const incentiveValue = (Number(incentive) * 1000000).toString();
-        const oasContract = new ethers.Contract(currency.sandverse, ERC20_ABI, signer);  // NOTE: ERC20トークンのABIにはapproveメソッドが含まれている必要があります
         try {
-            const tx = await oasContract.approve(rewardContract.address, ethers.utils.parseUnits(incentiveValue, 6));  // USDCは小数点以下6桁なので、6を指定
-            await tx.wait();
-            console.log("Allowance set successfully");
-        } catch (err) {
-            console.error("An error occurred while setting the allowance", err);
-        }
-
-        try {
-            const tx = await contract.stakeReward(stageName, Number(entryFee * 1000000), Number(incentive * 1000000), transformedArray);
-            await tx.wait();
-            console.log('Data has been saved successfully', { stageName, transformedArray });
+            await createStage(stageName, description, needTicketId, needTicketNum, rewardTicketId, rewardTicketNum, cellData);
+            console.log('Data has been saved successfully');
         } catch (err) {
             console.error("An error occurred while saving the data", err);
         }
@@ -67,7 +44,11 @@ const StageSettings = ({ cellData, provider }) => { // 関数名を変更
         // 一時保存処理をここに書く
     };
 
-    /* JS の中で */
+    const validateRewardTicketNum = () => {
+        if (rewardTicketNum > inputRewardTicketNum) {
+            setRewardTicketNum(inputRewardTicketNum);
+        }
+    };
 
     return (
         <div className="stage-settings-container">
@@ -75,34 +56,37 @@ const StageSettings = ({ cellData, provider }) => { // 関数名を変更
             <table className="settings-table">
                 <tbody>
                     <tr>
-                        <td>Stage Name:</td>
-                        <td><input type="text" value={stageName} onChange={(e) => setStageName(e.target.value)} placeholder="Enter stage name" /></td>
+                        <td>Stage Name</td>
+                        <td><input className="setting-input" type="text" value={stageName} onChange={(e) => setStageName(e.target.value)} placeholder="Enter stage name" /></td>
                     </tr>
                     <tr>
-                        <td>Entry Fee:</td>
-                        <td><input type="text" value={entryFee} onChange={(e) => setEntryFee(e.target.value)} placeholder="Enter entry fee" /></td>
+                        <td>Description</td>
+                        <td><input className="setting-input" type="text" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Enter Description" /></td>
                     </tr>
                     <tr>
-                        <td>Incentive:</td>
-                        <td><input type="text" value={incentive} onChange={(e) => setIncentive(e.target.value)} placeholder="Enter incentive" /></td>
+                        <td>Player Ticket</td>
+                        <td><input className="setting-input" type="number" value={needTicketNum} onChange={(e) => setNeedTicketNum(e.target.value)} placeholder="Enter number" /></td>
                     </tr>
                     <tr>
-                        <td>Time Limit:</td>
+                        <td>Creater Ticket(you must own)</td>
                         <td>
-                            <select
-                                id="timeLimit"
-                                className="setting-select"
-                                value={timeLimit}
-                                onChange={(e) => setTimeLimit(Number(e.target.value))}
-                            >
-                                {Array.from({ length: (MAX_TIME_LIMIT - MIN_TIME_LIMIT) / TIME_STEP + 1 }, (_, i) => (i * TIME_STEP) + MIN_TIME_LIMIT)
-                                    .map(time => <option key={time} value={time}>{time} seconds</option>)}
-                            </select>
+                            <input
+                                className="setting-input"
+                                type="number"
+                                value={rewardTicketNum}
+                                onChange={(e) => setRewardTicketNum(e.target.value)}
+                                onBlur={validateRewardTicketNum} // フォーカスが外れたときに検証
+                                placeholder="Enter number"
+                            />
                         </td>
                     </tr>
+
                 </tbody>
             </table>
-            <SaveButtons onSave={handleSave} onTempSave={handleTempSave} />
+            <div className="save-buttons">
+                <button onClick={handleSave}>Save</button>
+                <button onClick={handleTempSave}>Temp Save</button>
+            </div>
         </div>
     );
 

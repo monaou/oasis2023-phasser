@@ -2,25 +2,37 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    padding: 0;
+    margin: 0;
 }
 
-.setting-row {
-    display: flex;
-    align-items: center;
+.settings-table {
+    width: 100%;
+    border-collapse: collapse;
+    /* ボーダーを重ねる */
 }
 
-.setting-label,
-/* StageSettings.css の中で */
+.settings-table tr {
+    height: 30px;
+    /* ここで行の高さを指定しているので、適切な値を設定してください */
+}
+
+.settings-table td {
+    padding: 0px 5px;
+    /* 右左のパディングを追加して、テキストとボーダーとの余白を作る */
+    vertical-align: middle;
+    /* テキストとinputを中央揃えにする */
+}
 
 .setting-input {
-    max-width: 100%;
-    /* この行を追加 */
-    overflow: hidden;
-    /* この行を追加 */
+    width: 100%;
     box-sizing: border-box;
-    /* この行を追加 */
+    height: 100%;
+    /* inputの高さを親要素(<td>)と同じに設定 */
+    padding: 0px;
+    margin: 0;
 }
 
-.setting-select {
+.save-buttons button {
     margin-right: 8px;
 }

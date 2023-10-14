@@ -1,12 +1,16 @@
-import React from 'react';
-import StageManager from './../stageHooks/StageManager';
-import StageDataToJson from './../stageHooks/StageDataToJson';
+import React, { useState, useRef, useEffect } from 'react';
+import StageSettings from '../stageHooks/StageSettings';
+import StageBuilder from '../stageHooks/StageBuilder';
 
-const CreateStage = (address, provider) => {
+import './CreateStage.css'; // 必要なCSSファイルをインポート
+
+function CreateStage({ address, provider }) {
+    const [celldata, setCellData] = useState([]); // celldataをstateとして追加
+
     return (
-        <div className="create-stage-container">
-            <StageManager provider={provider} />
-            {/* <StageDataToJson /> */}
+        <div className="stage-manager-container" tabIndex="0" >
+            <StageBuilder setCellDataParam={setCellData} />
+            <StageSettings cellData={celldata} address={address} provider={provider} />
         </div>
     );
 };

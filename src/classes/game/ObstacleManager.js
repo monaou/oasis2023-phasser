@@ -1,11 +1,5 @@
 import * as utils from "../../utils.js"
 import * as constants from "../../constants.js"
-import fs from 'fs'
-import yaml from 'js-yaml'
-import obstacles_map from "../../yaml/ipfs_data.yaml"
-// import ipfsClient from 'ipfs-http-client'
-
-// const ipfs = ipfsClient('http://localhost:5001') // あなたのIPFS APIのエンドポイントに変更
 
 export default class ObstacleManager {
   constructor(runnerScene, player, stageData) {

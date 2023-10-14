@@ -17,16 +17,19 @@ function Market({ address, provider }) {
                 const fetchedTicketInfos = await contract.getDetails();
                 // Mapping with additional user-specific ticket data
                 const enrichedTicketInfos = await Promise.all(
-                    fetchedTicketInfos.map(async (info) => {
-                        const userTicket = await contract.getUserTicket(address, info.ticketType);
+                    fetchedTicketInfos.map(async (info, index) => {
+                        let userTicket = await contract.getUserTicket(address, index + 1);
+                        let usedTicket = await contract.getUsedTicket(address, index + 1);
                         return {
                             maxNum: !info.isTicketRange ? "∞" : info.ticketMaxNum.toString(),
                             price: ethers.utils.formatEther(info.ticketPrice),
                             type: info.ticketType.toString(),
+                            id: index + 1,
                             name: info.ticketName,
                             imageURL: info.ticketImageURL,
                             description: info.ticketDescription,
-                            userOwned: userTicket.ticketNum.toString()  // Adding user-owned count
+                            userTicket: userTicket.toNumber(),
+                            usedTicket: usedTicket.toNumber()
                         };
                     })
                 );
@@ -100,7 +103,7 @@ function Market({ address, provider }) {
                         <strong>Description:</strong> {ticket.description}
                     </div>
                     <div>
-                        <strong>You own:</strong> {ticket.userOwned} {/* Displaying user-owned count */}
+                        <strong>You owned / You purchased:</strong> {ticket.userTicket - ticket.usedTicket}/{ticket.userTicket}
                     </div>
                     <div>
                         <strong>Quantity:</strong>
@@ -110,7 +113,7 @@ function Market({ address, provider }) {
                         />
                         <button onClick={() => adjustQuantity(1)}>+</button>
                     </div>
-                    <button onClick={() => handleMint(ticket.type, selectedQuantity, ticket.price)}>Pay Item</button>
+                    <button onClick={() => handleMint(ticket.id, selectedQuantity, ticket.price)}>Pay Item</button>
                 </div>
             ))}
         </div>

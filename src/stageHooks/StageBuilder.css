@@ -33,3 +33,29 @@
 .stage-cell.selected {
     border: 2px solid yellow;
 }
+
+.stage-cell.highlight {
+    background-color: #574e4e;
+    /* またはお好きな暗い色 */
+}
+
+.controls,
+.controls-message {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* optional: adds space between elements */
+}
+
+.selection-message {
+    color: rgb(85, 42, 42);
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.object-item {
+    padding: 5px;
+    /* 内側のパディングを調整 */
+    margin: 0;
+    /* 要素同士のマージンをなくす、もしくは調整 */
+}

@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
+import ObjectDisplay from '../stageHooks/ObjectDisplay';
 import './StageBuilder.css';
 
 const MAX_ROWS = 64;
 const MAX_COLS = 128;
 const STEP = 16;
 
-const StageBuilder = ({ selectedObject, setCellDataParam }) => {
-    console.log("Selected Object: ", selectedObject);
+const StageBuilder = ({ setCellDataParam }) => {
     const [selectedCell, setSelectedCell] = useState(null);
+    const [selectedObject, setSelectedObject] = useState(null);
     const [cellData, setCellData] = useState({});
     const [cellDataID, setCellDataID] = useState({});
     const [copiedCell, setCopiedCell] = useState(null);
@@ -81,20 +82,26 @@ const StageBuilder = ({ selectedObject, setCellDataParam }) => {
     return (
         <div className="stage-builder-container" tabIndex="0" onKeyDown={handleKeyPress}>
             <h2>Stage Builder</h2>
-            <div className="controls">
-                <select
-                    value={rows}
-                    onChange={(e) => setRows(Number(e.target.value))}
-                >
-                    {generateOptions(MAX_ROWS, STEP)}
-                </select>
-
-                <select
-                    value={cols}
-                    onChange={(e) => setCols(Number(e.target.value))}
-                >
-                    {generateOptions(MAX_COLS, STEP)}
-                </select>
+            <ObjectDisplay selectedObject={selectedObject} setSelectedObject={setSelectedObject} />
+            <div className="controls-message">
+                <div className="controls">
+                    <select
+                        value={rows}
+                        onChange={(e) => setRows(Number(e.target.value))}
+                    >
+                        {generateOptions(MAX_ROWS, STEP)}
+                    </select>
+                    <select
+                        value={cols}
+                        onChange={(e) => setCols(Number(e.target.value))}
+                    >
+                        {generateOptions(MAX_COLS, STEP)}
+                    </select>
+                </div>
+                {!selectedObject ?
+                    <p className="selection-message">Please select an object!</p> :
+                    <p className="selection-message">Please select a cell!</p>
+                }
             </div>
             <div className={`stage-field ${rows > 32 || cols > 64 ? 'scrollable' : ''}`}>
                 {[...Array(rows)].map((_, row) =>
@@ -102,7 +109,7 @@ const StageBuilder = ({ selectedObject, setCellDataParam }) => {
                         {[...Array(cols)].map((_, col) =>
                             <div
                                 key={col}
-                                className={`stage-cell ${selectedCell && selectedCell.row === row && selectedCell.col === col ? 'selected' : ''}`}
+                                className={`stage-cell ${selectedCell && selectedCell.row === row && selectedCell.col === col ? 'selected' : ''} ${selectedObject ? '' : 'highlight'}`}
                                 onClick={() => handleClick(row, col)}
                             >
                                 {cellData[`${row}-${col}`] || ''}
