@@ -33,7 +33,7 @@ function StageSettings({ cellData, address, provider }) { // 関数名を変更
 
     const handleSave = async () => {
         try {
-            await createStage(stageName, description, needTicketId, needTicketNum, rewardTicketId, rewardTicketNum, cellData);
+            await createStage(address, stageName, description, needTicketId, needTicketNum, rewardTicketId, rewardTicketNum, cellData);
             console.log('Data has been saved successfully');
         } catch (err) {
             console.error("An error occurred while saving the data", err);

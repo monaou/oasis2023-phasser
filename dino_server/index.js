@@ -34,8 +34,11 @@ app.post('/record-game', recordGameHandler);
 app.post('/clear-game', clearGameHandler);
 app.post('/failed-game', failedGameHandler);
 
-app.listen(CLIENT_POST, CLIENT_HOST, async () => {
-  console.log(`Server is running on http://${CLIENT_HOST}:${CLIENT_POST}`);
+const BACKEND_HOST = process.env.BACKEND_HOST || 'localhost';
+const BACKEND_POST = process.env.BACKEND_POST || 1234;
+
+app.listen(BACKEND_POST, BACKEND_HOST, async () => {
+  console.log(`Server is running on http://${BACKEND_HOST}:${BACKEND_POST}`);
 
   await createTables();
 });

@@ -33,6 +33,13 @@ contract TicketPlatform is ReentrancyGuard {
         bool isTicketRange
     );
 
+    event TicketBurned(
+        address indexed addr,
+        uint256 indexed burnTicketId,
+        uint256 burnTicketNum,
+        bool success
+    );
+
     modifier onlyAdmin() {
         require(msg.sender == _admin, "Not the admin");
         _;
@@ -109,7 +116,7 @@ contract TicketPlatform is ReentrancyGuard {
         address addr,
         uint256 burnTicketId,
         uint256 burnTicketNum
-    ) external onlyAdmin returns (bool) {
+    ) external onlyAdmin {
         require(burnTicketId <= _currentTicketId, "Invalid ticket type");
 
         uint256 userTicketNum = getUserTicket(addr, burnTicketId);
@@ -120,7 +127,7 @@ contract TicketPlatform is ReentrancyGuard {
         );
 
         setUsedTicket(addr, burnTicketId, usedTicketNum + burnTicketNum);
-        return true;
+        emit TicketBurned(addr, burnTicketId, burnTicketNum, true);
     }
 
     function getUserTicket(

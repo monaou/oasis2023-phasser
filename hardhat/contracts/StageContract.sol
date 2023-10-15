@@ -18,6 +18,8 @@ contract StageContract is ERC721Enumerable {
     // A counter to generate unique IDs for the stages.
     uint256 private _currentStageId = 0;
 
+    event MinStageIdEvent(uint256 _currentStageId, bool success);
+
     /**
      * @dev Initializes the contract by setting the admin and providing names for ERC721 tokens.
      */
@@ -44,7 +46,6 @@ contract StageContract is ERC721Enumerable {
      * @param rewardTicketId ID of the ticket rewarded upon completing the stage.
      * @param rewardTicketNum Number of tickets rewarded upon completing the stage.
      * @param extraDataArr Additional data for the stage.
-     * @return newStageId The ID of the newly minted stage.
      */
     function mintStage(
         address addr,
@@ -56,7 +57,7 @@ contract StageContract is ERC721Enumerable {
         uint256 rewardTicketId,
         uint256 rewardTicketNum,
         ExtraDataLib.ExtraData[] memory extraDataArr
-    ) external onlyAdmin returns (uint256 newStageId) {
+    ) external onlyAdmin {
         _currentStageId++;
 
         // Minting a new ERC721 token (a stage) to the specified address.
@@ -79,7 +80,7 @@ contract StageContract is ERC721Enumerable {
             stageData.extraDataArr.push(extraDataArr[i]);
         }
 
-        return _currentStageId;
+        emit MinStageIdEvent(_currentStageId, true);
     }
 
     /**

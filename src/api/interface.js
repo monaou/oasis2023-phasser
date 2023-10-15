@@ -3,9 +3,9 @@ const BACKEND_POST = 3000;
 const BASE_URL = `http://${BACKEND_HOST}:${BACKEND_POST}`;
 
 // Start-game interaction
-export async function createStage(name, description,
+export async function createStage(addr, name, description,
     needTicketId, needTicketNum, rewardTicketId, rewardTicketNum, extraDataArr) {
-    const userAddress = "";
+    const userAddress = addr;
     try {
         const response = await fetch(`${BASE_URL}/create-stage`, {
             method: 'POST',
@@ -23,8 +23,8 @@ export async function createStage(name, description,
 }
 
 // Start-game interaction
-export async function startGame(stageId) {
-    const userAddress = "";
+export async function startGame(addr, stageId) {
+    const userAddress = addr;
     try {
         const response = await fetch(`${BASE_URL}/start-game`, {
             method: 'POST',
