@@ -66,7 +66,7 @@ async function main() {
     "https://bafybeie5l4nwfz3rt5kvfuafsz5obiwmfz2artg3vsihowheuyox3yvtry.ipfs.w3s.link/player_ticket.png", // _ticketImageURL
     "This is a player ticket", // _ticketDescription
     1, // _ticketType
-    hre.ethers.utils.parseEther("1"), // _ticketPrice
+    hre.ethers.utils.parseEther("0.1"), // _ticketPrice
     0, // _ticketMaxNum
     false, // _isTicketRange
   );
@@ -76,11 +76,16 @@ async function main() {
     "https://bafybeiem55c2voshcurz6mhmqdvwb2mwmr3lwut7lh3cuajj3ykngkph7a.ipfs.w3s.link/creater_ticket.png", // _ticketImageURL
     "This is a creater ticket",// _ticketDescription
     0, // _ticketType
-    hre.ethers.utils.parseEther("20"), // _ticketPrice
+    hre.ethers.utils.parseEther("5"), // _ticketPrice
     0, // _ticketMaxNum
     false, // _isTicketRange
   );
   console.log("ticketInstance initial data deployed");
+
+  // deployスクリプトのRewardPoolデプロイ後の部分に追加
+  await ticketInstance.setEntryContractAddress(rewardInstance.address);
+  await stageInstance.setEntryContractAddress(rewardInstance.address);
+  console.log("RewardPool has been approved in TicketPlatform.");
 }
 
 // Handle errors

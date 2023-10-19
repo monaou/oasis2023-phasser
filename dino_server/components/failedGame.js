@@ -2,8 +2,8 @@ const { setStageFailed } = require('../utils/gameFunctions');
 
 module.exports = async (req, res) => {
     try {
-        const { tokenId, gameInstanceId } = req.body;
-        setStageFailed(tokenId, gameInstanceId)
+        const { stageId, gameInstanceId } = req.body;
+        setStageFailed(stageId, gameInstanceId)
         res.status(200).send({ message: 'Falied game successfully' });
     } catch (error) {
         console.error('Error:', error.message);

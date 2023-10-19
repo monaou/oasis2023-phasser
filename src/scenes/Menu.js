@@ -18,8 +18,8 @@ export default class Menu extends Phaser.Scene {
     this.showStageText
     this.showNameText
     const modalElement = document.getElementById('phaser-game');
-    this.tokenId = modalElement.dataset.tokenid;
-    console.log("open modal tokenid", this.tokenId)
+    this.stageId = modalElement.dataset.tokenid;
+    console.log("open modal stageId", this.stageId)
   }
 
   // Preload all images used in the menu
@@ -56,11 +56,12 @@ export default class Menu extends Phaser.Scene {
     startButton.setInteractive()
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, async () => {
         try {
-          const { stage_data, gameInstanceId } = await startGame(this.tokenId);
+          // TODO
+          const { stage_data, gameInstanceIdObj } = await startGame("0x3a8Ab45D926A1007E3C987e0F5b7eeB96CC77AF7", this.stageId);
           if (stage_data) {
-            const gameInstanceIdNumber = parseInt(gameInstanceId.hex, 16);
-            console.log(stage_data);
-            this.scene.start('runner', { stage_data: stage_data, tokenId: this.tokenId, gameInstanceId: 8 });
+            const gameInstanceIdNumber = parseInt(gameInstanceIdObj.hex, 16);
+            console.log(gameInstanceIdNumber);
+            this.scene.start('runner', { stage_data: stage_data, tokenId: this.stageId, gameInstanceId: gameInstanceIdNumber });
           }
         } catch (err) {
           console.error("An error occurred while fetching stages", err);

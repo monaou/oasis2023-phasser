@@ -9,6 +9,8 @@ contract TicketPlatform is ReentrancyGuard {
     using TicketPlatformLib for TicketPlatformLib.TicketInfo;
 
     address private _admin;
+    address private _entryContractAddress;
+
     IERC20 private _token;
     uint256 private _currentTicketId = 0;
 
@@ -33,15 +35,13 @@ contract TicketPlatform is ReentrancyGuard {
         bool isTicketRange
     );
 
-    event TicketBurned(
-        address indexed addr,
-        uint256 indexed burnTicketId,
-        uint256 burnTicketNum,
-        bool success
-    );
-
     modifier onlyAdmin() {
         require(msg.sender == _admin, "Not the admin");
+        _;
+    }
+
+    modifier onlyEntryContract() {
+        require(msg.sender == _entryContractAddress, "Not the approved caller");
         _;
     }
 
@@ -116,7 +116,7 @@ contract TicketPlatform is ReentrancyGuard {
         address addr,
         uint256 burnTicketId,
         uint256 burnTicketNum
-    ) external onlyAdmin {
+    ) external onlyEntryContract returns (bool) {
         require(burnTicketId <= _currentTicketId, "Invalid ticket type");
 
         uint256 userTicketNum = getUserTicket(addr, burnTicketId);
@@ -127,7 +127,7 @@ contract TicketPlatform is ReentrancyGuard {
         );
 
         setUsedTicket(addr, burnTicketId, usedTicketNum + burnTicketNum);
-        emit TicketBurned(addr, burnTicketId, burnTicketNum, true);
+        return true;
     }
 
     function getUserTicket(
@@ -148,8 +148,8 @@ contract TicketPlatform is ReentrancyGuard {
         address addr,
         uint256 ticketId,
         uint256 ticketNum
-    ) internal onlyAdmin {
-        _usedTickets[addr][ticketId] += ticketNum;
+    ) internal onlyEntryContract {
+        _usedTickets[addr][ticketId] = ticketNum;
     }
 
     function getDetails()
@@ -167,5 +167,13 @@ contract TicketPlatform is ReentrancyGuard {
         }
 
         return ticketsArray;
+    }
+
+    function setEntryContractAddress(address newCaller) external onlyAdmin {
+        _entryContractAddress = newCaller;
+    }
+
+    function autoApprove(uint256 amount) external onlyEntryContract {
+        _token.approve(msg.sender, amount);
     }
 }

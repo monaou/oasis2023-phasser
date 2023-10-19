@@ -15,30 +15,12 @@ module.exports = async (req, res) => {
         return;
     }
     try {
-        const burnTicketTx = await TicketPlatformContract.burnTicket(userAddress, rewardTicketId, rewardTicketNum);
-        await burnTicketTx.wait();
+        const receipt = await RewardPoolContract.stakeReward(userAddress, name, imageURL, description,
+            needTicketId, needTicketNum, rewardTicketId, rewardTicketNum, extraDataArr);
+        console.log("Success: mint");
 
-        const is_ticket_burn = await new Promise((resolve) => {
-            TicketPlatformContract.once('TicketBurned', (addr, ticketId, ticketNum, success) => {
-                resolve(success);
-            });
-        });
-        console.log("is_ticket_burn", is_ticket_burn)
-        if (is_ticket_burn) {
-            const mintStage_tx = await StageContract.mintStage(userAddress, name, imageURL, description,
-                needTicketId, needTicketNum, rewardTicketId, rewardTicketNum, extraDataArr);
-            await mintStage_tx.wait();
-            const newStageId = await new Promise((resolve) => {
-                StageContract.once('MinStageIdEvent', (stageId, success) => {
-                    resolve(stageId);
-                });
-            });
+        res.status(200).send("Success : mint stage");
 
-            console.log("newStageId", newStageId)
-            const receipt = await RewardPoolContract.stakeReward(userAddress, newStageId);
-
-            res.status(200).send("Succsess : mint stage ");
-        }
     } catch (error) {
         console.error('Error:', error.message);
         res.status(400).send(error.message);

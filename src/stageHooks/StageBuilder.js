@@ -16,6 +16,19 @@ const StageBuilder = ({ setCellDataParam }) => {
     const [rows, setRows] = useState(16);
     const [cols, setCols] = useState(32);
 
+    const transformCellData = (cellData) => {
+        const transformed = [];
+        for (let key in cellData) {
+            const [x, y] = key.split('-').map(Number);
+            transformed.push({
+                x: x,
+                y: y,
+                _type: cellData[key]
+            });
+        }
+        return transformed;
+    };
+
     const handleClick = (row, col) => {
         console.log("Clicked Cell: ", row, col);
         console.log("Existing cellData: ", cellData);
@@ -28,7 +41,8 @@ const StageBuilder = ({ setCellDataParam }) => {
             console.log("New cellData: ", newCellDataID);
             setCellData(newCellData);
             setCellDataID(newCellDataID);
-            setCellDataParam(newCellDataID);
+            const transformedCellData = transformCellData(newCellDataID);
+            setCellDataParam(transformedCellData);
         }
     };
 

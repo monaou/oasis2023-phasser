@@ -7,20 +7,10 @@ const {
 } = require('../sharedResources/sharedResources');
 const { validateStage, recordAction, validateGame, validateAction } = require('../utils/verify');
 
-function initializeGame(stageId, gameInstanceId) {
-    const key = `${stageId}-${gameInstanceId}`;
-    console.log(key)
-    gameInstanceFlags[key] = { isActive: true, actions: [], startTime: Date.now() };
-
-    // 1時間後にステータスを変更
-    setTimeout(() => {
-        setStageFailed(stageId, gameInstanceId)
-    }, 3600000);
-}
-
 async function setStageFailed(stageId, gameInstanceId) {
     try {
-        if (!validateGame(stageId, gameInstanceId)) {
+        const is_validate = await validateGame(stageId, gameInstanceId)
+        if (!is_validate) {
             throw new Error('Invalid game instance ID or game has expired');
         }
 
@@ -47,4 +37,4 @@ async function setStageFailed(stageId, gameInstanceId) {
     }
 }
 
-module.exports = { initializeGame, setStageFailed };
+module.exports = { setStageFailed };

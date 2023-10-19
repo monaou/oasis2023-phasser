@@ -7,10 +7,11 @@ const { validateAction } = require('../utils/gameFunctions');
 
 module.exports = async (req, res) => {
     try {
-        const { tokenId, gameInstanceId } = req.body;
+        const { stageId, gameInstanceId } = req.body;
 
         // Validate the start flag for the given game instance ID
-        if (!validateAction(tokenId, gameInstanceId)) {
+        const is_validate = await validateGame(stageId, gameInstanceId)
+        if (!is_validate) {
             throw new Error('Invalid game instance ID or game has expired');
         }
         const nonce = await connectedWallet.provider.getTransactionCount(connectedWallet.address, 'pending');
@@ -18,7 +19,7 @@ module.exports = async (req, res) => {
         // Prepare the transaction data
         const txData = {
             to: contract.address,
-            data: contract.interface.encodeFunctionData('setStageClear', [tokenId, gameInstanceId]),
+            data: contract.interface.encodeFunctionData('setStageClear', [stageId, gameInstanceId]),
             gasPrice: ethers.utils.parseUnits('10', 'gwei'),
             gasLimit: ethers.BigNumber.from(100000),
             nonce  // Setting the nonce explicitly

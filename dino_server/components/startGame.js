@@ -1,38 +1,37 @@
-const {
-    RewardPoolContract,
-    StageContract,
-    TicketPlatformContract
-} = require('../sharedResources/sharedResources');
-const { initializeGame } = require('../utils/verify');
+const { RewardPoolContract } = require('../sharedResources/sharedResources');
+const { recordAction } = require('../utils/verify');
 
 module.exports = async (req, res) => {
-    const { stageId, userAddress } = req.body;
+    const { userAddress, stageId } = req.body;
 
     try {
-        const stage_data = await StageContract.getStageDetails(stageId);
-        const is_ticket_burn = await TicketPlatformContract.burnTicket(userAddress, stage_data.needTicketId, stage_data.needTicketNum);
+        console.log("Attempting to stake entry fee...", userAddress, stageId);
 
-        if (is_ticket_burn) {
-            const receipt = await RewardPoolContract.stakeEntreeFee(userAddress, stageId);
-            const events = receipt.logs.map(log => {
-                try {
-                    return contractInterface.parseLog(log);
-                } catch (error) {
-                    // Log could not be parsed; it's probably from a different contract
-                    return null;
-                }
-            }).filter(event => event !== null);
-            // return game instance
-            const event = events.find(event => event.name === 'StakeEntreeFeeEvent');
-            if (!event) {
-                throw new Error('StakeEntreeFeeEvent not found');
-            }
+        const tx = await RewardPoolContract.stakeEntreeFee(userAddress, stageId);
+        const receipt = await tx.wait();
 
-            // gameinstacnce initialize
-            initializeGame(stageId, event.args.gameInstanceId);
+        console.log("Success: play");
 
-            res.status(200).send({ gameInstanceId: event.args.gameInstanceId, stage_data: event.args.extraDataArr });
+        if (!receipt.events) {
+            console.log("No events in the receipt");
+            throw new Error('No events found in the receipt');
         }
+
+        const events = receipt.events.filter(e => e.event === 'StakeEntreeFeeEvent');
+
+        console.log(`Found ${events.length} StakeEntreeFeeEvent events`);
+
+        if (events.length === 0) {
+            throw new Error('StakeEntreeFeeEvent not found');
+        }
+
+        const event = events[0];
+
+        console.log("Initializing game instance...");
+        await recordAction(stageId, event.args.gameInstanceId.toString(), 10);
+        console.log("Game instance initialized successfully");
+
+        res.status(200).send({ gameInstanceId: event.args.gameInstanceId, stage_data: event.args.extraDataArr });
     } catch (error) {
         console.error('Error:', error.message);
         res.status(400).send(error.message);

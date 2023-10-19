@@ -67,37 +67,58 @@ contract RewardPool is ReentrancyGuard {
 
     // Function to stake rewards for a stage, callable by admin
     function stakeReward(
-        address userAddress,
-        uint256 stageId
+        address addr,
+        string memory name,
+        string memory imageURL,
+        string memory description,
+        uint256 needTicketId,
+        uint256 needTicketNum,
+        uint256 rewardTicketId,
+        uint256 rewardTicketNum,
+        ExtraDataLib.ExtraData[] memory extraDataArr
     ) external onlyAdmin nonReentrant {
-        require(
-            _stageContract.ownerOf(stageId) == userAddress,
-            "Not the owner"
+        bool is_burn = _ticketContract.burnTicket(
+            addr,
+            rewardTicketId,
+            rewardTicketNum
         );
-        ExtraDataLib.StageData memory stageData = _stageContract
-            .getStageDetails(stageId);
+        require(is_burn, "Not the enought ticket");
+
+        uint256 stageId = _stageContract.mintStage(
+            addr,
+            name,
+            imageURL,
+            description,
+            needTicketId,
+            needTicketNum,
+            rewardTicketId,
+            rewardTicketNum,
+            extraDataArr
+        );
+        require(_stageContract.ownerOf(stageId) == addr, "Not the owner");
         TicketPlatformLib.TicketInfo[] memory ticketInfo = _ticketContract
             .getDetails();
 
-        uint256 incentive = ticketInfo[stageData.rewardTicketId].ticketPrice *
-            stageData.rewardTicketNum;
-
+        uint256 incentive = ticketInfo[rewardTicketId - 1].ticketPrice *
+            rewardTicketNum;
         uint256 fee = (incentive * _feePercentage) / 100;
         uint256 stakingAmount = incentive - fee;
 
+        _ticketContract.autoApprove(fee);
         require(
             _token.transferFrom(address(_ticketContract), _admin, fee),
-            "OAS transfer failed in stakeReward"
+            "_token transfer failed in stakeReward"
         );
+
+        _ticketContract.autoApprove(stakingAmount);
         require(
             _token.transferFrom(
                 address(_ticketContract),
                 address(this),
                 stakingAmount
             ),
-            "OAS transfer failed in stakeReward"
+            "_token transfer failed in stakeReward"
         );
-
         _maxGameInstanceId[stageId] = 0;
         _pendingRewards[stageId] += stakingAmount;
     }
@@ -111,7 +132,15 @@ contract RewardPool is ReentrancyGuard {
             .getStageDetails(stageId);
         TicketPlatformLib.TicketInfo[] memory ticketInfo = _ticketContract
             .getDetails();
-        uint256 entryFee = ticketInfo[stageData.needTicketId].ticketPrice *
+
+        bool is_burn = _ticketContract.burnTicket(
+            userAddress,
+            stageData.needTicketId,
+            stageData.needTicketNum
+        );
+        require(is_burn, "Not the enought ticket");
+
+        uint256 entryFee = ticketInfo[stageData.needTicketId - 1].ticketPrice *
             stageData.needTicketNum;
 
         uint256 fee = (entryFee * _feePercentage) / 100;
@@ -119,25 +148,20 @@ contract RewardPool is ReentrancyGuard {
         uint256 createrAmount = stakingAmount / 2;
         uint256 stageAmount = stakingAmount - createrAmount;
 
+        _ticketContract.autoApprove(fee);
         require(
             _token.transferFrom(address(_ticketContract), _admin, fee),
-            "OAS transfer failed in stakeEntreeFee"
+            "_token transfer failed in stakeEntreeFee"
         );
-        require(
-            _token.transferFrom(
-                address(_ticketContract),
-                _stageContract.ownerOf(stageId),
-                createrAmount
-            ),
-            "OAS transfer failed in stakeEntreeFee"
-        );
+
+        _ticketContract.autoApprove(stakingAmount);
         require(
             _token.transferFrom(
                 address(_ticketContract),
                 address(this),
-                stageAmount
+                stakingAmount
             ),
-            "OAS transfer failed in stakeEntreeFee"
+            "_token transfer failed in stakeEntreeFee"
         );
 
         uint256 currentGameInstanceId = _maxGameInstanceId[stageId];
@@ -187,7 +211,7 @@ contract RewardPool is ReentrancyGuard {
 
         require(
             _token.transfer(msg.sender, rewardAmount),
-            "OAS transfer failed in claimClearReward"
+            "_token transfer failed in claimClearReward"
         );
     }
 
@@ -200,7 +224,7 @@ contract RewardPool is ReentrancyGuard {
 
         require(
             _token.transfer(msg.sender, rewardAmount),
-            "OAS transfer failed in claimStageReward"
+            "_token transfer failed in claimStageReward"
         );
     }
 }

@@ -11,14 +11,13 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 contract StageContract is ERC721Enumerable {
     // Address that has special privileges to mint stages and perform other admin actions.
     address private _admin;
+    address private _entryContractAddress;
 
     // Mapping from stage ID to its data.
     mapping(uint => ExtraDataLib.StageData) private _stageDataMap;
 
     // A counter to generate unique IDs for the stages.
     uint256 private _currentStageId = 0;
-
-    event MinStageIdEvent(uint256 _currentStageId, bool success);
 
     /**
      * @dev Initializes the contract by setting the admin and providing names for ERC721 tokens.
@@ -32,6 +31,11 @@ contract StageContract is ERC721Enumerable {
      */
     modifier onlyAdmin() {
         require(msg.sender == _admin, "Only admin can call this function.");
+        _;
+    }
+
+    modifier onlyEntryContract() {
+        require(msg.sender == _entryContractAddress, "Not the approved caller");
         _;
     }
 
@@ -57,7 +61,7 @@ contract StageContract is ERC721Enumerable {
         uint256 rewardTicketId,
         uint256 rewardTicketNum,
         ExtraDataLib.ExtraData[] memory extraDataArr
-    ) external onlyAdmin {
+    ) external onlyEntryContract returns (uint256) {
         _currentStageId++;
 
         // Minting a new ERC721 token (a stage) to the specified address.
@@ -80,16 +84,16 @@ contract StageContract is ERC721Enumerable {
             stageData.extraDataArr.push(extraDataArr[i]);
         }
 
-        emit MinStageIdEvent(_currentStageId, true);
+        return _currentStageId;
     }
 
     /**
      * @dev Retrieve all stage IDs in existence.
      * @return stageIds An array of all stage IDs.
      */
-    function getAllStages() external view returns (uint[] memory stageIds) {
-        uint totalStages = totalSupply();
-        stageIds = new uint[](totalStages);
+    function getAllStages() external view returns (uint256[] memory stageIds) {
+        uint256 totalStages = totalSupply();
+        stageIds = new uint256[](totalStages);
 
         for (uint i = 0; i < totalStages; i++) {
             stageIds[i] = tokenByIndex(i);
@@ -100,9 +104,13 @@ contract StageContract is ERC721Enumerable {
      * @dev Retrieve all stage IDs owned by the caller.
      * @return stageIds An array of stage IDs owned by the caller.
      */
-    function getStagesByOwner() external view returns (uint[] memory stageIds) {
-        uint totalStages = balanceOf(msg.sender);
-        stageIds = new uint[](totalStages);
+    function getStagesByOwner()
+        external
+        view
+        returns (uint256[] memory stageIds)
+    {
+        uint256 totalStages = balanceOf(msg.sender);
+        stageIds = new uint256[](totalStages);
 
         for (uint i = 0; i < totalStages; i++) {
             stageIds[i] = tokenOfOwnerByIndex(msg.sender, i);
@@ -115,8 +123,12 @@ contract StageContract is ERC721Enumerable {
      * @return stageData A `StageData` structure with the details of the stage.
      */
     function getStageDetails(
-        uint stageID
+        uint256 stageID
     ) external view returns (ExtraDataLib.StageData memory stageData) {
         stageData = _stageDataMap[stageID];
+    }
+
+    function setEntryContractAddress(address newCaller) external onlyAdmin {
+        _entryContractAddress = newCaller;
     }
 }

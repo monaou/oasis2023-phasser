@@ -1,17 +1,20 @@
 // recordGame.js
-const { validateGame, recordAction } = require('../utils/gameFunctions');
+const { validateStage, recordAction, validateGame, validateAction } = require('../utils/verify');
 
 module.exports = async (req, res) => {
     try {
-        const { tokenId, gameInstanceId, actionType } = req.body;
+        const { stageId, gameInstanceId, actionType } = req.body;
 
         // Validate the game instance ID
-        if (!validateGame(tokenId, gameInstanceId)) {
+        console.log("validateGame:", stageId, gameInstanceId, actionType)
+        const is_validate = await validateGame(stageId, gameInstanceId)
+        if (!is_validate) {
             throw new Error('Invalid game instance ID or game has expired');
         }
 
         // Record the action with a timestamp
-        recordAction(tokenId, gameInstanceId, actionType);
+        console.log("ecordAction:", stageId, gameInstanceId, actionType)
+        await recordAction(stageId, gameInstanceId, actionType);
 
         res.status(200).send({ message: 'Action recorded successfully' });
     } catch (error) {
