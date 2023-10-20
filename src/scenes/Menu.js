@@ -17,9 +17,18 @@ export default class Menu extends Phaser.Scene {
     this.customizationMenuItems = []
     this.showStageText
     this.showNameText
-    const modalElement = document.getElementById('phaser-game');
-    this.stageId = modalElement.dataset.tokenid;
-    console.log("open modal stageId", this.stageId)
+  }
+
+  init(data) {
+    if (data.tokenId) {
+      this.stageId = data.tokenId; // ここでtokenIdを取得
+      console.log("open modal stageId", this.stageId);
+    }
+    if (data.address) {
+      this.address = data.address; // ここでtokenIdを取得
+      console.log("open modal address", this.address);
+    }
+
   }
 
   // Preload all images used in the menu
@@ -57,10 +66,9 @@ export default class Menu extends Phaser.Scene {
       .on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, async () => {
         try {
           // TODO
-          const { stage_data, gameInstanceIdObj } = await startGame("0x3a8Ab45D926A1007E3C987e0F5b7eeB96CC77AF7", this.stageId);
+          const { stage_data, gameInstanceIdObj } = await startGame(this.address, this.stageId);
           if (stage_data) {
             const gameInstanceIdNumber = parseInt(gameInstanceIdObj.hex, 16);
-            console.log(gameInstanceIdNumber);
             this.scene.start('runner', { stage_data: stage_data, tokenId: this.stageId, gameInstanceId: gameInstanceIdNumber });
           }
         } catch (err) {

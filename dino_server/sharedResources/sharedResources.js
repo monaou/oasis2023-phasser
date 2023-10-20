@@ -30,6 +30,7 @@ module.exports = {
     wallet,
     provider,
     connectedWallet,
+    RewardPool,
     RewardPoolInterface,
     StageInterface,
     TicketPlatformInterface,

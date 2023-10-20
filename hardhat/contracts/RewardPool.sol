@@ -41,6 +41,8 @@ contract RewardPool is ReentrancyGuard {
     mapping(uint256 => uint256) private _maxGameInstanceId;
     // Keeps track of the state of each game instance
     mapping(uint256 => mapping(uint256 => GameState)) private _gameStates;
+    mapping(uint256 => mapping(uint256 => address))
+        private _gameInstanceAddress;
 
     // Modifier to restrict function access to admin only
     modifier onlyAdmin() {
@@ -166,6 +168,7 @@ contract RewardPool is ReentrancyGuard {
 
         uint256 currentGameInstanceId = _maxGameInstanceId[stageId];
         _gameStates[stageId][currentGameInstanceId] = GameState.Started;
+        _gameInstanceAddress[stageId][currentGameInstanceId] = userAddress;
         _maxGameInstanceId[stageId]++;
 
         _ditributeStageRewards[userAddress] += createrAmount;
@@ -176,7 +179,6 @@ contract RewardPool is ReentrancyGuard {
 
     // Function to set a game instance as cleared, callable by admin
     function setStageClear(
-        address userAddress,
         uint256 stageId,
         uint256 gameInstanceId
     ) external onlyAdmin {
@@ -186,7 +188,9 @@ contract RewardPool is ReentrancyGuard {
         );
         _gameStates[stageId][gameInstanceId] = GameState.Cleared;
 
-        _ditributeClearRewards[userAddress] = _pendingRewards[stageId];
+        _ditributeClearRewards[
+            _gameInstanceAddress[stageId][gameInstanceId]
+        ] = _pendingRewards[stageId];
         _pendingRewards[stageId] = 0;
     }
 

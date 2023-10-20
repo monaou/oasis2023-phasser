@@ -5,7 +5,7 @@ import Runner from "../scenes/Runner.js";
 import Modal from "../hooks/gameModal.js";
 import * as constants from "../constants.js";
 
-const PlayerScene = ({ tokenId }) => {
+const PlayerScene = ({ address, tokenId }) => {
   const [isModalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
@@ -31,6 +31,7 @@ const PlayerScene = ({ tokenId }) => {
     };
 
     const game = new Phaser.Game(config);
+    game.scene.start('menu', { address: address, tokenId: tokenId });
   };
 
   return (
@@ -39,7 +40,7 @@ const PlayerScene = ({ tokenId }) => {
 
       {isModalOpen && (
         <Modal onClose={() => setModalOpen(false)}>
-          <div id="phaser-game" data-tokenid={tokenId}></div>
+          <div id="phaser-game"></div>
         </Modal>
       )}
     </div>

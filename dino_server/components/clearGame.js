@@ -1,16 +1,19 @@
 const {
     ethers,
-    contract,
+    RewardPool,
+    RewardPoolInterface,
     connectedWallet
 } = require('../sharedResources/sharedResources');
-const { validateAction } = require('../utils/gameFunctions');
+const { validateStage, recordAction, validateGame, validateAction } = require('../utils/verify');
 
 module.exports = async (req, res) => {
     try {
+        console.log("stageId, gameInstanceId")
         const { stageId, gameInstanceId } = req.body;
+        console.log(stageId, gameInstanceId)
 
         // Validate the start flag for the given game instance ID
-        const is_validate = await validateGame(stageId, gameInstanceId)
+        const is_validate = await validateAction(stageId, gameInstanceId)
         if (!is_validate) {
             throw new Error('Invalid game instance ID or game has expired');
         }
@@ -18,8 +21,8 @@ module.exports = async (req, res) => {
 
         // Prepare the transaction data
         const txData = {
-            to: contract.address,
-            data: contract.interface.encodeFunctionData('setStageClear', [stageId, gameInstanceId]),
+            to: RewardPool.address,
+            data: RewardPoolInterface.encodeFunctionData('setStageClear', [stageId, gameInstanceId]),
             gasPrice: ethers.utils.parseUnits('10', 'gwei'),
             gasLimit: ethers.BigNumber.from(100000),
             nonce  // Setting the nonce explicitly

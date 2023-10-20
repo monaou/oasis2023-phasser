@@ -35,7 +35,6 @@ export async function startGame(addr, stageId) {
         const responseData = await response.json();  // ここで一度だけjson()を呼び出す
         const stage_data = responseData.stage_data;
         const gameInstanceIdObj = responseData.gameInstanceId;
-        console.log(gameInstanceIdObj)
         return { stage_data, gameInstanceIdObj };  // 修正された戻り値
     } catch (error) {
         console.error('Error:', error.message);
@@ -45,9 +44,6 @@ export async function startGame(addr, stageId) {
 // Record-action interaction
 export function recordAction(stageId, gameInstanceId, actionType) {
     // fetch処理を非同期関数として実行
-    console.log('stageId:', stageId);
-    console.log('gameInstanceId:', gameInstanceId);
-    console.log('actionType:', actionType);
     async function sendRequest() {
         try {
             const response = await fetch(`${BASE_URL}/record-game`, {

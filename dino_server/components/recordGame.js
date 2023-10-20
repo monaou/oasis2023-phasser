@@ -6,7 +6,6 @@ module.exports = async (req, res) => {
         const { stageId, gameInstanceId, actionType } = req.body;
 
         // Validate the game instance ID
-        console.log("validateGame:", stageId, gameInstanceId, actionType)
         const is_validate = await validateGame(stageId, gameInstanceId)
         if (!is_validate) {
             throw new Error('Invalid game instance ID or game has expired');

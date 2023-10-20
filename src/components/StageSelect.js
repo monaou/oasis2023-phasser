@@ -52,7 +52,7 @@ function StageSelect({ address, provider }) {
                 <p>Owner: {task.owner.slice(0, 6)}...{task.owner.slice(-6)}</p>
                 <p>Entry Fee: {task.entryFee}</p>
                 <p>Incentive: {task.incentive}</p>
-                <PlayerScene tokenId={task.id} />
+                <PlayerScene address={address} tokenId={task.id} />
               </div>
             ))}
           </div>

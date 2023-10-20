@@ -5,7 +5,6 @@ function validateStage() {
 }
 
 async function recordAction(stageId, gameInstanceId, actionType) {
-    console.log("ecordAction:", stageId, gameInstanceId, actionType)
     let connection;
     try {
         connection = await createConnection();
@@ -20,7 +19,6 @@ async function recordAction(stageId, gameInstanceId, actionType) {
 
 
 async function validateGame(stageId, gameInstanceId) {
-    console.log("validateGame:", stageId, gameInstanceId)
     let connection;
     try {
         connection = await createConnection();
